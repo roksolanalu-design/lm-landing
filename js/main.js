@@ -267,7 +267,7 @@ function sendLead(data) {
     }
 
     // Пастка заповнена — це бот: тихо нічого не надсилаємо
-    if (form.elements.website.value) {
+    if (form.elements.hp_field.value) {
       form.reset();
       return;
     }

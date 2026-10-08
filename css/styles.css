@@ -1219,8 +1219,10 @@ html:not(.js) .faq__icon {
 
 /* ---------- Попапи форми ---------- */
 /* Червона картка по центру екрана: іконка, заголовок, текст, біла кнопка */
+/* Десктоп 480×320; на мобайлі — на всю ширину екрана, як у макеті (390×320) */
 .popup {
-  width: min(100% - 2 * var(--space-16), 480px);
+  width: min(100%, 480px);
+  max-width: 100%;
   min-height: 320px;
   padding: var(--space-32) var(--space-16);
   color: var(--text-inverse);
@@ -1244,9 +1246,16 @@ html:not(.js) .faq__icon {
 }
 
 .popup__icon {
-  width: auto;
+  width: 28px;
   height: 28px;
   margin-bottom: var(--space-32);
+}
+
+/* Галочка в макеті трохи виступає за свою рамку 28×28 (намальована 31×31) */
+.popup__icon--done {
+  width: 31px;
+  height: 31px;
+  margin-block: -1.5px calc(var(--space-32) - 1.5px);
 }
 
 .popup__title {
