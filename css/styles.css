@@ -589,11 +589,19 @@ p {
 }
 
 /* ---------- Патерн-смуга ---------- */
-/* Декоративна смуга: плитка 48px заввишки повторюється по горизонталі */
+/* Декоративна смуга: плитка 48px заввишки повторюється по горизонталі.
+   Відступи однакові з обох боків: зверху — margin смуги,
+   знизу — padding-top наступної секції (48px моб. / 80px десктоп) */
 .pattern-strip {
-  height: 68px;
-  background: url("../images/pattern-tile.svg") center / auto var(--space-48) repeat-x;
+  height: var(--space-48);
+  margin-top: var(--section-gap);
+  background: url("../images/pattern-tile.svg") center / auto 100% repeat-x;
   opacity: 0.1;
+}
+
+/* Смуга статистики над нею вже має 32px знизу — добираємо решту */
+.pattern-strip--after-stats {
+  margin-top: calc(var(--section-gap) - var(--space-32));
 }
 
 /* У мобільному макеті смуга стоїть в інших місцях, ніж у десктопному */
@@ -631,7 +639,7 @@ p {
 }
 
 .about__text {
-  padding: var(--space-8);
+  padding-block: var(--space-8);
 }
 
 .about__subtitle {
