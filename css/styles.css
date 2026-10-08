@@ -528,6 +528,65 @@ h3 { font: var(--text-h3, var(--text-title)); }
   }
 }
 
+/* ---------- Для кого ---------- */
+/* Картки: 1 колонка → 2 (від 600px) → 4 (від 1280px) */
+.for-whom__cards {
+  display: grid;
+  gap: var(--space-12);
+}
+
+.for-whom__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  min-height: 160px;
+  padding: var(--space-16);
+  text-align: center;
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+}
+
+.for-whom__card-title {
+  font: var(--text-title);
+}
+
+.for-whom__card-text {
+  font: var(--text-body-s);
+}
+
+@media (min-width: 600px) {
+  .for-whom__cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .for-whom__cards {
+    gap: var(--space-24);
+  }
+
+  .for-whom__card {
+    gap: var(--space-12);
+    padding: var(--space-24);
+  }
+
+  .for-whom__card-title {
+    font: var(--text-h3);
+  }
+}
+
+@media (min-width: 1280px) {
+  .for-whom__cards {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .for-whom__card {
+    min-height: 242px;
+  }
+}
+
 /* ---------- Десктоп ---------- */
 @media (min-width: 1024px) {
   .grid {
