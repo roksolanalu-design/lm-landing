@@ -80,6 +80,15 @@ h1 { font: var(--text-h1); }
 h2 { font: var(--text-h2); }
 h3 { font: var(--text-h3, var(--text-title)); }
 
+/* Переноси рядків: заголовки — рівними рядками, абзаци — без «висячих» слів */
+h1, h2, h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
 /* Якір зупиняється під липкою шапкою, а не за нею */
 [id] {
   scroll-margin-top: var(--header-height);
@@ -419,11 +428,6 @@ h3 { font: var(--text-h3, var(--text-title)); }
   font: var(--text-body-s);
 }
 
-/* Перенос рядка з макета потрібен лише на десктопі */
-.hero__br {
-  display: none;
-}
-
 /* На мобайлі кнопка на всю ширину контенту, 48px заввишки, текст 14px */
 .hero__cta {
   font: var(--text-button-s);
@@ -518,10 +522,6 @@ h3 { font: var(--text-h3, var(--text-title)); }
     margin-bottom: var(--space-24);
   }
 
-  .hero__br {
-    display: inline;
-  }
-
   .stats {
     margin-top: var(--space-40);
     padding-block: 0;
@@ -554,6 +554,7 @@ h3 { font: var(--text-h3, var(--text-title)); }
 
 .for-whom__card-text {
   font: var(--text-body-s);
+  text-wrap: balance;
 }
 
 @media (min-width: 600px) {
