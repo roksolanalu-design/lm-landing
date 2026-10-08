@@ -806,6 +806,106 @@ p {
   }
 }
 
+/* ---------- Послуги | Вартість ---------- */
+/* Картки: 1 колонка → 2 (від 768px) → 3 (від 1280px).
+   Сітка сама вирівнює висоту карток у ряду */
+.services__cards {
+  display: grid;
+  gap: var(--space-16);
+}
+
+.service-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-24);
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+}
+
+/* text-box обрізає порожнє місце над і під літерами, як у макеті */
+.service-card__title {
+  margin-bottom: var(--space-12);
+  font: var(--text-title);
+  text-wrap: pretty;
+  text-box: trim-both cap alphabetic;
+}
+
+.service-card--popular .service-card__title {
+  padding-right: var(--space-80);
+}
+
+.service-card__badge {
+  position: absolute;
+  top: var(--space-24);
+  right: var(--space-24);
+  font: var(--text-caption);
+  color: var(--text-accent);
+}
+
+/* Опис розтягується, тому низ картки з ціною завжди притиснутий донизу */
+.service-card__text {
+  flex-grow: 1;
+  font: var(--text-body-s);
+}
+
+.service-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+  margin-top: var(--space-20);
+  white-space: nowrap;
+}
+
+.service-card__price {
+  font: var(--text-body);
+  font-weight: 700;
+}
+
+.service-card__link {
+  position: relative;
+  font: var(--text-body-s);
+  font-weight: 700;
+  color: var(--text-accent);
+  text-decoration: none;
+}
+
+/* Невидиме поле навколо посилання: зона натискання не менша за 44px */
+.service-card__link::after {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--space-12)) calc(-1 * var(--space-8));
+}
+
+.services__note {
+  margin-top: var(--space-16);
+  font: var(--text-body-s);
+}
+
+@media (min-width: 768px) {
+  .services__cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .services__cards {
+    gap: var(--space-24);
+  }
+
+  .services__note {
+    margin-top: var(--space-20);
+    font: var(--text-body);
+  }
+}
+
+@media (min-width: 1280px) {
+  .services__cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 /* ---------- Десктоп ---------- */
 @media (min-width: 1024px) {
   .grid {

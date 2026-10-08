@@ -237,6 +237,63 @@
     <section class="section services" id="services" aria-labelledby="services-title">
       <div class="container">
         <h2 class="section__title" id="services-title">Послуги | Вартість</h2>
+
+        <!-- Єдиний список послуг: з data-service цих карток JS збирає
+             варіанти поля «Тема звернення» у формі. Назва в data-service
+             має точно збігатися із заголовком картки. -->
+        <div class="services__cards">
+          <article class="service-card">
+            <h3 class="service-card__title">Відкриття / закриття ФОП</h3>
+            <p class="service-card__text">Реєстрація, вибір групи, КВЕДи, навчання роботі в&nbsp;Кабінеті платника.</p>
+            <div class="service-card__footer">
+              <p class="service-card__price">від&nbsp;2&nbsp;000&nbsp;грн</p>
+              <a class="service-card__link" href="#contact" data-service="Відкриття / закриття ФОП">Обрати<span class="visually-hidden"> — Відкриття / закриття ФОП</span> <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+          <article class="service-card service-card--popular">
+            <h3 class="service-card__title">Супровід ФОП</h3>
+            <p class="service-card__badge">Популярне</p>
+            <p class="service-card__text">Щомісячна звітність, нагадування про дедлайни, консультації, формування платіжних документів, контроль Електронного кабінету платника податків, контроль лімітів.</p>
+            <div class="service-card__footer">
+              <p class="service-card__price">від&nbsp;1&nbsp;500&nbsp;грн</p>
+              <a class="service-card__link" href="#contact" data-service="Супровід ФОП">Обрати<span class="visually-hidden"> — Супровід ФОП</span> <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+          <article class="service-card">
+            <h3 class="service-card__title">Супровід ТОВ</h3>
+            <p class="service-card__text">Повне ведення бухгалтерського та податкового обліку, зарплата, ПДВ, ЗЕД, НКРЕКП, звітність.</p>
+            <div class="service-card__footer">
+              <p class="service-card__price">від&nbsp;5&nbsp;000&nbsp;грн</p>
+              <a class="service-card__link" href="#contact" data-service="Супровід ТОВ">Обрати<span class="visually-hidden"> — Супровід ТОВ</span> <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+          <article class="service-card">
+            <h3 class="service-card__title">Супровід неприбуткових організацій та БФ</h3>
+            <p class="service-card__text">Облік цільових коштів, звіт неприбуткової організації, зарплата, підтримка статусу неприбутковості, робота з&nbsp;АСРГД.</p>
+            <div class="service-card__footer">
+              <p class="service-card__price">від&nbsp;4&nbsp;000&nbsp;грн</p>
+              <a class="service-card__link" href="#contact" data-service="Супровід неприбуткових організацій та БФ">Обрати<span class="visually-hidden"> — Супровід неприбуткових організацій та БФ</span> <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+          <article class="service-card">
+            <h3 class="service-card__title">Подача разових звітів</h3>
+            <p class="service-card__text">Декларація ФОП, фінансова звітність, об’єднана звітність ПДФО та ЄСВ чи інша форма. Підготуємо без абонплати.</p>
+            <div class="service-card__footer">
+              <p class="service-card__price">від&nbsp;800&nbsp;грн</p>
+              <a class="service-card__link" href="#contact" data-service="Подача разових звітів">Обрати<span class="visually-hidden"> — Подача разових звітів</span> <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+          <article class="service-card">
+            <h3 class="service-card__title">Консультація</h3>
+            <p class="service-card__text">Розбір вашої ситуації: вибір системи оподаткування, податки, перевірки, робота з&nbsp;ПРРО.</p>
+            <div class="service-card__footer">
+              <p class="service-card__price">1&nbsp;500&nbsp;грн&nbsp;/&nbsp;година</p>
+              <a class="service-card__link" href="#contact" data-service="Консультація">Обрати<span class="visually-hidden"> — Консультація</span> <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+        </div>
+
+        <p class="services__note">Точна вартість залежить від обсягу операцій і&nbsp;розраховується індивідуально.</p>
       </div>
     </section>
 

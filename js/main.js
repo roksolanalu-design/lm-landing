@@ -65,3 +65,43 @@
     if (event.matches) setOpen(false);
   });
 })();
+
+// ---------- Послуги → форма ----------
+// Список послуг один: це картки в HTML (атрибут data-service).
+// Звідси ж беруться варіанти поля «Тема звернення», тому вони не можуть розійтися.
+(function () {
+  var TOPIC_ID = 'contact-topic'; // <select> «Тема звернення»
+  var NAME_ID = 'contact-name';   // поле «Ім'я»
+
+  var links = document.querySelectorAll('[data-service]');
+  if (!links.length) return;
+
+  // Заповнюємо селект назвами послуг із карток
+  var topic = document.getElementById(TOPIC_ID);
+  if (topic) {
+    links.forEach(function (link) {
+      var option = document.createElement('option');
+      option.value = option.textContent = link.dataset.service;
+      topic.appendChild(option);
+    });
+  }
+
+  // «Обрати →»: підставляємо послугу і ставимо курсор у поле «Ім'я».
+  // Сам перехід до форми робить браузер за посиланням #contact.
+  links.forEach(function (link) {
+    link.addEventListener('click', function () {
+      var topic = document.getElementById(TOPIC_ID);
+      var name = document.getElementById(NAME_ID);
+      if (topic) {
+        topic.value = link.dataset.service;
+        topic.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      // setTimeout — щоб фокус поставився після переходу за якорем
+      if (name) {
+        setTimeout(function () {
+          name.focus({ preventScroll: true });
+        }, 0);
+      }
+    });
+  });
+})();
