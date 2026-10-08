@@ -23,8 +23,8 @@ p, ul, ol, figure, blockquote, dl, dd {
   margin: 0;
 }
 
-ul[class],
-ol[class] {
+/* :where() — щоб скидання не перебивало відступи компонентів */
+:where(ul[class], ol[class]) {
   padding: 0;
   list-style: none;
 }
@@ -380,6 +380,167 @@ h3 { font: var(--text-h3, var(--text-title)); }
   .site-header__cta {
     display: inline-flex;
     width: 180px;
+  }
+}
+
+/* ---------- Hero ---------- */
+/* Мобайл: фото зверху, під ним текст, далі смуга статистики */
+.hero {
+  background: var(--bg-page);
+}
+
+.hero__media {
+  display: block;
+}
+
+.hero__media img {
+  width: 100%;
+  aspect-ratio: 390 / 300;
+  object-fit: cover;
+}
+
+.hero__text {
+  display: flex;
+  flex-direction: column;
+  padding-block: var(--space-24) var(--space-8);
+}
+
+.hero__title {
+  margin-bottom: var(--space-16);
+}
+
+/* Червоне слово завжди з нового рядка, як у макеті */
+.hero__title-accent {
+  display: block;
+  color: var(--text-brand);
+}
+
+.hero__lead {
+  margin-bottom: var(--space-12);
+  font: var(--text-body-s);
+}
+
+/* Перенос рядка з макета потрібен лише на десктопі */
+.hero__br {
+  display: none;
+}
+
+/* На мобайлі кнопка нижча (40px), але зона натискання — 48px через ::after */
+.hero__cta {
+  position: relative;
+  min-height: var(--space-40);
+  margin: var(--space-4) var(--space-8);
+  font: var(--text-button-s);
+}
+
+.hero__cta::after {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--space-4)) 0;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding-block: var(--space-32);
+  text-align: center;
+}
+
+.stats__value,
+.stats__label {
+  display: block;
+}
+
+.stats__value {
+  font: var(--text-stat);
+  font-variant-numeric: tabular-nums;
+}
+
+.stats__label {
+  margin-top: var(--space-4);
+  font: var(--text-body-s);
+}
+
+/* Планшет: широке фото, кнопка звичайного розміру */
+@media (min-width: 600px) {
+  .hero__media img {
+    aspect-ratio: 1440 / 712;
+  }
+
+  .hero__cta {
+    align-self: flex-start;
+    width: 282px;
+    min-height: var(--space-48);
+    margin: 0;
+    font: var(--text-button);
+  }
+
+  .hero__cta::after {
+    content: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero__lead {
+    font: var(--text-body-l);
+  }
+
+  .stats {
+    display: flex;
+    gap: var(--space-64);
+    text-align: left;
+  }
+
+  .stats__label {
+    font: var(--text-body);
+  }
+}
+
+/* Десктоп: текст поверх фото. З 1280px — вужче текст наїжджає на людину */
+@media (min-width: 1280px) {
+  .hero {
+    position: relative;
+    min-height: 700px;
+    background: var(--bg-surface);
+  }
+
+  .hero__media {
+    position: absolute;
+    inset: 0;
+  }
+
+  .hero__media img {
+    height: 100%;
+    aspect-ratio: auto;
+    object-position: right top;
+  }
+
+  .hero__content {
+    position: relative;
+    padding-block: var(--space-120);
+  }
+
+  .hero__text {
+    max-width: 691px;
+    padding-block: 0;
+  }
+
+  .hero__title {
+    margin-bottom: var(--space-12);
+  }
+
+  .hero__lead {
+    max-width: 588px;
+    margin-bottom: var(--space-24);
+  }
+
+  .hero__br {
+    display: inline;
+  }
+
+  .stats {
+    margin-top: var(--space-40);
+    padding-block: 0;
   }
 }
 

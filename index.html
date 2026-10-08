@@ -84,8 +84,40 @@
 
     <!-- 2. Hero -->
     <section class="hero" id="hero" aria-labelledby="hero-title">
-      <div class="container">
-        <h1 id="hero-title">Ваш спокій — наша відповідальність</h1>
+      <!-- До 600px — окремий кадр 390×300, далі — широке фото -->
+      <picture class="hero__media">
+        <source media="(max-width: 599px)" type="image/webp" sizes="100vw" width="390" height="300"
+                srcset="images/hero-mobile-390.webp 390w, images/hero-mobile-780.webp 780w, images/hero-mobile-1170.webp 1170w">
+        <source media="(max-width: 599px)" sizes="100vw" width="390" height="300"
+                srcset="images/hero-mobile-390.jpg 390w, images/hero-mobile-780.jpg 780w, images/hero-mobile-1170.jpg 1170w">
+        <source type="image/webp" sizes="100vw" width="1440" height="712"
+                srcset="images/hero-1440.webp 1440w, images/hero-2880.webp 2880w">
+        <img src="images/hero-1440.jpg" sizes="100vw" width="1440" height="712"
+             srcset="images/hero-1440.jpg 1440w, images/hero-2880.jpg 2880w"
+             alt="Бухгалтерка за робочим столом із записником і ноутбуком" fetchpriority="high">
+      </picture>
+
+      <div class="container hero__content">
+        <div class="hero__text">
+          <h1 class="hero__title" id="hero-title">Ваш спокій — наша <span class="hero__title-accent">відповідальність</span></h1>
+          <p class="hero__lead">Ми беремо на себе всю бухгалтерію — від первинної документації до подачі звітності. Ви займаєтесь бізнесом, <br class="hero__br">ми дбаємо про цифри.</p>
+          <a class="btn hero__cta" href="#contact">Почати співпрацю</a>
+        </div>
+
+        <ul class="stats">
+          <li class="stats__item">
+            <span class="stats__value">300+</span>
+            <span class="stats__label">подано звітів</span>
+          </li>
+          <li class="stats__item">
+            <span class="stats__value">25+</span>
+            <span class="stats__label">років досвіду</span>
+          </li>
+          <li class="stats__item">
+            <span class="stats__value">7</span>
+            <span class="stats__label">років компанії</span>
+          </li>
+        </ul>
       </div>
     </section>
 

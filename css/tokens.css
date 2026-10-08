@@ -33,6 +33,7 @@
   --text-placeholder:   var(--color-neutral-600);
   --text-inverse:       var(--color-neutral-0);
   --text-accent:        var(--color-red-600);   /* дрібний червоний текст до 18px */
+  --text-brand:         var(--color-red-500);   /* великий червоний текст від 18px */
 
   --bg-page:            var(--color-neutral-0);
   --bg-surface:         var(--color-neutral-100);
@@ -78,6 +79,7 @@
   --text-body-s:  400 14px/1.5 var(--font-brand);
   --text-caption: 400 12px/1.5 var(--font-brand);
   --text-button:  700 16px/1 var(--font-brand);
+  --text-button-s: 700 14px/1 var(--font-brand);  /* Figma: Mobile/Button S */
 
   /* ---------- Анімація ---------- */
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
