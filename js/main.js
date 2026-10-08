@@ -66,6 +66,18 @@
   });
 })();
 
+// ---------- Акордеон FAQ ----------
+// Кожне питання відкривається і закривається незалежно від інших.
+(function () {
+  document.querySelectorAll('.faq__toggle').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var open = button.getAttribute('aria-expanded') !== 'true';
+      button.setAttribute('aria-expanded', String(open));
+      button.closest('.faq__item').classList.toggle('is-open', open);
+    });
+  });
+})();
+
 // ---------- Послуги → форма ----------
 // Список послуг один: це картки в HTML (атрибут data-service).
 // Звідси ж беруться варіанти поля «Тема звернення», тому вони не можуть розійтися.

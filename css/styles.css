@@ -176,6 +176,12 @@ p {
   transition: background-color var(--duration-hover);
 }
 
+/* Нижча кнопка (40px) для другорядних місць */
+.btn--compact {
+  min-height: var(--space-40);
+  padding-inline: var(--space-32);
+}
+
 @media (hover: hover) {
   .btn:hover {
     background: var(--action-primary-hover);
@@ -934,6 +940,106 @@ p {
 @media (min-width: 1280px) {
   .services__cards {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Питання та відповіді ---------- */
+.faq .section__title {
+  margin-bottom: var(--space-24);
+}
+
+/* Підказка і кнопка є лише в десктопному макеті */
+.faq__lead,
+.faq__cta {
+  display: none;
+}
+
+.faq__lead {
+  margin-bottom: var(--space-24);
+  color: var(--text-secondary);
+}
+
+.faq__list {
+  border-top: 1px solid var(--border-subtle);
+}
+
+.faq__item {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Кнопка займає весь рядок питання — натискати можна будь-де */
+.faq__toggle {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-24);
+  width: 100%;
+  padding: var(--space-20) 0;
+  font: var(--text-title);
+  text-align: left;
+  background: none;
+  border: 0;
+}
+
+.faq__icon {
+  flex: none;
+  transition: transform var(--duration-hover);
+}
+
+.faq__item.is-open .faq__icon {
+  transform: rotate(180deg);
+}
+
+.faq__answer {
+  margin-top: calc(-1 * var(--space-8));
+  padding-bottom: var(--space-20);
+  color: var(--text-secondary);
+}
+
+/* Згортаємо відповіді лише коли працює JS */
+.js .faq__item:not(.is-open) .faq__answer {
+  display: none;
+}
+
+html:not(.js) .faq__icon {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .faq__toggle {
+    padding-block: var(--space-24);
+  }
+
+  .faq__answer {
+    margin-top: calc(-1 * var(--space-12));
+    padding-bottom: var(--space-24);
+  }
+}
+
+/* Десктоп: зліва заголовок із кнопкою, справа акордеон */
+@media (min-width: 1280px) {
+  .faq__inner {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-80);
+  }
+
+  .faq__intro {
+    flex: none;
+    width: 330px;
+  }
+
+  .faq__lead {
+    display: block;
+  }
+
+  .faq__cta {
+    display: inline-flex;
+  }
+
+  .faq__list {
+    flex: 1;
+    min-width: 0;
   }
 }
 
