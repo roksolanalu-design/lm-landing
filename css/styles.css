@@ -57,6 +57,17 @@ a {
 }
 
 /* ---------- База ---------- */
+/* Висота шапки: потрібна і самій шапці, і якорям секцій */
+:root {
+  --header-height: 60px;
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --header-height: 72px;
+  }
+}
+
 body {
   min-height: 100vh;
   font: var(--text-body);
@@ -68,6 +79,11 @@ body {
 h1 { font: var(--text-h1); }
 h2 { font: var(--text-h2); }
 h3 { font: var(--text-h3, var(--text-title)); }
+
+/* Якір зупиняється під липкою шапкою, а не за нею */
+[id] {
+  scroll-margin-top: var(--header-height);
+}
 
 /* ---------- Доступність ---------- */
 :focus-visible {
@@ -159,9 +175,26 @@ h3 { font: var(--text-h3, var(--text-title)); }
 
 /* ---------- Header ---------- */
 .site-header {
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 10;
   background: var(--bg-page);
+  transition: box-shadow var(--duration-hover);
+}
+
+/* Лінія з'являється після початку скролу (клас ставить JS) */
+.site-header.is-scrolled {
+  box-shadow: 0 1px 0 var(--border-subtle);
+}
+
+/* Невидима мітка вгорі сторінки: коли вона зникає з екрана — сторінку прокручено */
+.scroll-sentinel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
 }
 
 .site-header__inner {
@@ -169,7 +202,7 @@ h3 { font: var(--text-h3, var(--text-title)); }
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  min-height: 60px;
+  min-height: var(--header-height);
   padding-block: var(--space-8);
 }
 
@@ -285,6 +318,9 @@ h3 { font: var(--text-h3, var(--text-title)); }
     left: 0;
     right: 0;
     display: none;
+    max-height: calc(100vh - var(--header-height));
+    max-height: calc(100dvh - var(--header-height));
+    overflow-y: auto;
     padding: var(--space-8) var(--page-margin) var(--space-16);
     background: var(--bg-page);
     border-block: 1px solid var(--border-subtle);
@@ -307,7 +343,6 @@ h3 { font: var(--text-h3, var(--text-title)); }
 @media (min-width: 1280px) {
   .site-header__inner {
     flex-wrap: nowrap;
-    min-height: 72px;
     padding-block: var(--space-12);
   }
 

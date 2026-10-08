@@ -1,6 +1,23 @@
 // LM Бухгалтерські послуги — скрипти сторінки
 // Далі тут з'являться: акордеон FAQ, форма (sendLead), анімації.
 
+// ---------- Липка шапка: лінія після початку скролу ----------
+// Замість слухача scroll стежимо за міткою вгорі сторінки:
+// браузер сам повідомляє, коли вона виходить з екрана.
+(function () {
+  var header = document.querySelector('.site-header');
+  if (!header || !('IntersectionObserver' in window)) return;
+
+  var sentinel = document.createElement('div');
+  sentinel.className = 'scroll-sentinel';
+  sentinel.setAttribute('aria-hidden', 'true');
+  document.body.prepend(sentinel);
+
+  new IntersectionObserver(function (entries) {
+    header.classList.toggle('is-scrolled', !entries[0].isIntersecting);
+  }).observe(sentinel);
+})();
+
 // ---------- Бургер-меню ----------
 (function () {
   var burger = document.querySelector('.burger');
