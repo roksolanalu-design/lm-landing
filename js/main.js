@@ -126,9 +126,12 @@ function sendLead(data) {
         topic.value = link.dataset.service;
         topic.dispatchEvent(new Event('change', { bubbles: true }));
       }
-      // setTimeout — щоб фокус поставився після переходу за якорем
+      // setTimeout — щоб фокус поставився після переходу за якорем.
+      // Позначка каже формі: фокус поставив скрипт, а не людина,
+      // тож вихід із порожнього поля ще не привід показувати помилку.
       if (name) {
         setTimeout(function () {
+          name.dataset.autoFocused = 'true';
           name.focus({ preventScroll: true });
         }, 0);
       }
@@ -198,14 +201,24 @@ function sendLead(data) {
     });
   }
 
-  // Перевіряємо при виході з поля, а не під час набору.
-  // Для селекта ще й одразу після вибору — щоб помилка зникла без зайвого кроку.
+  // Помилку показуємо, коли людина вийшла з поля (blur) або спробувала надіслати.
+  // Під час набору нових помилок не показуємо, але вже показана зникає,
+  // щойно поле виправлено.
   // popupOpen: коли відкривається попап, поле теж втрачає фокус —
   // це не привід показувати помилку в щойно очищеній формі.
   var popupOpen = false;
   Object.keys(fields).forEach(function (key) {
-    fields[key].addEventListener('blur', function () {
-      if (!popupOpen) validateField(key);
+    var input = fields[key];
+    input.addEventListener('blur', function () {
+      // Фокус поставив скрипт (кнопка «Обрати» на картці), і людина нічого не ввела —
+      // це ще не взаємодія з полем
+      var untouched = input.dataset.autoFocused && !input.value;
+      delete input.dataset.autoFocused;
+      if (!popupOpen && !untouched) validateField(key);
+    });
+    input.addEventListener('input', function () {
+      delete input.dataset.autoFocused;
+      if (input.hasAttribute('aria-invalid') && !rules[key](input.value.trim())) validateField(key);
     });
   });
   fields.topic.addEventListener('change', function () {

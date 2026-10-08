@@ -886,12 +886,18 @@ p {
   border-radius: var(--radius-full);
 }
 
-/* Опис лежить вище за накладку посилання, щоб текст можна було виділити мишкою */
 .service-card__text {
-  position: relative;
-  z-index: 1;
   margin-bottom: var(--space-20);
   font: var(--text-body-s);
+}
+
+/* З мишкою опис лежить вище за накладку посилання, щоб текст можна було виділити.
+   На сенсорних екранах виділяти нічим, тому там клікабельна вся картка разом з описом */
+@media (hover: hover) and (pointer: fine) {
+  .service-card__text {
+    position: relative;
+    z-index: 1;
+  }
 }
 
 .service-card__footer {
