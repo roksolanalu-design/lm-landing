@@ -211,7 +211,6 @@ h3 { font: var(--text-h3, var(--text-title)); }
   display: flex;
   align-items: center;
   min-height: 44px;
-  padding-inline: var(--space-8);
 }
 
 .site-header__logo img {
@@ -222,13 +221,14 @@ h3 { font: var(--text-h3, var(--text-title)); }
 .site-header__actions {
   display: flex;
   align-items: center;
+  gap: var(--space-8);
 }
 
 .site-header__phone {
   display: flex;
   align-items: center;
   min-height: 44px;
-  padding-inline: var(--space-4) 1px;
+  padding-inline: var(--space-4);
   font: var(--text-body-s);
   text-decoration: none;
   white-space: nowrap;
@@ -349,7 +349,6 @@ h3 { font: var(--text-h3, var(--text-title)); }
   .site-header__logo {
     align-self: flex-start;
     min-height: 0;
-    padding-inline: 0;
   }
 
   .site-header__logo img {
@@ -425,18 +424,9 @@ h3 { font: var(--text-h3, var(--text-title)); }
   display: none;
 }
 
-/* На мобайлі кнопка нижча (40px), але зона натискання — 48px через ::after */
+/* На мобайлі кнопка на всю ширину контенту, 48px заввишки, текст 14px */
 .hero__cta {
-  position: relative;
-  min-height: var(--space-40);
-  margin: var(--space-4) var(--space-8);
   font: var(--text-button-s);
-}
-
-.hero__cta::after {
-  content: "";
-  position: absolute;
-  inset: calc(-1 * var(--space-4)) 0;
 }
 
 .stats {
@@ -470,13 +460,7 @@ h3 { font: var(--text-h3, var(--text-title)); }
   .hero__cta {
     align-self: flex-start;
     width: 282px;
-    min-height: var(--space-48);
-    margin: 0;
     font: var(--text-button);
-  }
-
-  .hero__cta::after {
-    content: none;
   }
 }
 
