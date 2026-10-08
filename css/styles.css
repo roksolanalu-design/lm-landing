@@ -619,6 +619,108 @@ p {
   }
 }
 
+/* ---------- Як ми працюємо ---------- */
+.steps {
+  display: grid;
+  gap: var(--space-8);
+}
+
+/* Номер вирівняний по верху тексту, не по центру */
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-16);
+  padding-block: var(--space-12);
+}
+
+.step__num {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 55px;
+  height: var(--space-48);
+  font: var(--text-step-number);
+  color: var(--text-inverse);
+  background: var(--action-primary);
+  border-radius: var(--radius-md);
+}
+
+.step__body {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.step__title {
+  font: var(--text-title);
+}
+
+.step__text {
+  font: var(--text-body-s);
+}
+
+.step__label {
+  font-weight: 700;
+  color: var(--text-accent);
+}
+
+.how__cta {
+  display: flex;
+  margin-top: var(--space-12);
+}
+
+.how__logo {
+  display: none;
+}
+
+@media (min-width: 600px) {
+  .how__content {
+    max-width: 486px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .steps {
+    gap: var(--space-24);
+  }
+
+  .step {
+    gap: var(--space-24);
+  }
+
+  .step__num {
+    width: 78px;
+    height: 72px;
+  }
+
+  .how__cta {
+    margin-block: calc(var(--space-40) + var(--space-12)) var(--space-12);
+  }
+}
+
+/* Десктоп: кроки зліва, великий блідий логотип справа по центру висоти */
+@media (min-width: 1280px) {
+  .how__inner {
+    display: flex;
+    align-items: center;
+    gap: 228px;
+  }
+
+  .how__content {
+    flex: none;
+    width: 486px;
+  }
+
+  .how__logo {
+    display: block;
+    flex: none;
+    width: 455px;
+    height: auto;
+    opacity: 0.065;
+  }
+}
+
 /* ---------- Про нас ---------- */
 /* Мобайл: заголовок → фото → текст. Від 768px: фото зліва, текст справа */
 .about__inner {

@@ -153,10 +153,62 @@
     <!-- 4. Патерн-смуга (декоративна): на десктопі — після «Для кого» -->
     <div class="pattern-strip pattern-strip--desktop" aria-hidden="true"></div>
 
-    <!-- 5. Як ми працюємо — ЗАГЛУШКА: чекаємо тексти від клієнтки -->
+    <!-- 5. Як ми працюємо -->
     <section class="section how" id="how" aria-labelledby="how-title">
-      <div class="container">
-        <h2 class="section__title" id="how-title">Як ми працюємо</h2>
+      <div class="container how__inner">
+        <div class="how__content">
+          <h2 class="section__title" id="how-title">Як ми працюємо</h2>
+
+          <!-- Номер у квадраті декоративний: нумерацію вже дає <ol> -->
+          <ol class="steps">
+            <li class="step">
+              <span class="step__num" aria-hidden="true">1</span>
+              <div class="step__body">
+                <h3 class="step__title">Дзвінок-знайомство ·&nbsp;безкоштовно</h3>
+                <p class="step__text">Розповідаєте про задачу.</p>
+                <p class="step__text"><strong class="step__label"><span aria-hidden="true">→&nbsp;</span>Ви отримуєте:</strong> чесну відповідь, чи можемо допомогти.</p>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step__num" aria-hidden="true">2</span>
+              <div class="step__body">
+                <h3 class="step__title">Аналіз ситуації</h3>
+                <p class="step__text">Дивимося документи, звіти й&nbsp;Електронний кабінет.</p>
+                <p class="step__text"><strong class="step__label"><span aria-hidden="true">→&nbsp;</span>Ви отримуєте:</strong> зрозумілу картину — що в&nbsp;порядку, а&nbsp;що потребує уваги.</p>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step__num" aria-hidden="true">3</span>
+              <div class="step__body">
+                <h3 class="step__title">Договір</h3>
+                <p class="step__text">Узгоджуємо обсяг робіт і&nbsp;вартість.</p>
+                <p class="step__text"><strong class="step__label"><span aria-hidden="true">→&nbsp;</span>Ви отримуєте:</strong> фіксовану ціну і&nbsp;відповідальність за помилки, прописані в&nbsp;договорі.</p>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step__num" aria-hidden="true">4</span>
+              <div class="step__body">
+                <h3 class="step__title">Передача справ</h3>
+                <p class="step__text">Приймаємо документи й&nbsp;доступи, налаштовуємо графік.</p>
+                <p class="step__text"><strong class="step__label"><span aria-hidden="true">→&nbsp;</span>Ви отримуєте:</strong> перехід без зупинки роботи, нічого не загубиться.</p>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step__num" aria-hidden="true">5</span>
+              <div class="step__body">
+                <h3 class="step__title">Щомісячний супровід</h3>
+                <p class="step__text">Ведемо облік і&nbsp;звітність.</p>
+                <p class="step__text"><strong class="step__label"><span aria-hidden="true">→&nbsp;</span>Ви отримуєте:</strong> звіти вчасно, нагадування про дедлайни, акт щомісяця і&nbsp;людину на зв’язку.</p>
+              </div>
+            </li>
+          </ol>
+
+          <a class="btn how__cta" href="#contact">Почати співпрацю</a>
+        </div>
+
+        <!-- Великий декоративний логотип, лише на десктопі -->
+        <img class="how__logo" src="images/logo-vertical-black.svg" alt="" aria-hidden="true"
+             width="455" height="473" loading="lazy" decoding="async">
       </div>
     </section>
 
