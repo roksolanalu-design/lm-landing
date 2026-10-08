@@ -14,6 +14,7 @@
 
 :root {
   /* ---------- Primitives: колір ---------- */
+  --color-red-50:  #FDECEC;
   --color-red-500: #E30613;
   --color-red-600: #D60511;
   --color-red-700: #C70511;
@@ -38,6 +39,7 @@
   --bg-page:            var(--color-neutral-0);
   --bg-surface:         var(--color-neutral-100);
   --bg-dark:            var(--color-neutral-900);
+  --bg-accent-subtle:   var(--color-red-50);    /* фон бейджа */
 
   --action-primary:       var(--color-red-500);
   --action-primary-hover: var(--color-red-700);
