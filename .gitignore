@@ -1,0 +1,29 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Редактори
+.vscode/
+.idea/
+*.swp
+*~
+
+# Claude Code — особисті локальні налаштування
+.claude/settings.local.json
+
+# Логи та тимчасові файли
+*.log
+*.tmp
+
+# Секрети (токени, ключі) — ніколи не в репозиторій
+.env
+.env.*
+
+# На випадок локальних інструментів
+node_modules/
