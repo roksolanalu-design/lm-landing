@@ -656,6 +656,12 @@ p {
   font: var(--text-title);
 }
 
+/* Крапка-розділювач у заголовку: на мобайлі заголовок ламається на два рядки,
+   і крапка там зайва — показуємо її лише коли він стоїть одним рядком */
+.step__dot {
+  display: none;
+}
+
 .step__text {
   font: var(--text-body-s);
 }
@@ -677,6 +683,10 @@ p {
 @media (min-width: 600px) {
   .how__content {
     max-width: 486px;
+  }
+
+  .step__dot {
+    display: inline;
   }
 }
 
