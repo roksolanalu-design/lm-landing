@@ -1291,6 +1291,133 @@ html:not(.js) .faq__icon {
   outline-color: var(--text-inverse);
 }
 
+/* ---------- Footer ---------- */
+.site-footer {
+  padding-block: var(--space-24);
+  font: var(--text-body-s);
+  color: var(--text-inverse);
+  background: var(--bg-dark);
+}
+
+.site-footer__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-40);
+}
+
+.site-footer__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.site-footer__logo {
+  align-self: flex-start;
+  display: block;
+}
+
+.site-footer__logo-v {
+  display: none;
+}
+
+.site-footer__nav {
+  padding: var(--space-4);
+}
+
+/* На мобайлі кожне посилання — рядок 44px (зона натискання) */
+.site-footer__link {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  text-decoration: none;
+}
+
+.site-footer__contacts {
+  margin-top: var(--space-12);
+}
+
+.site-footer__contact {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  min-height: 44px;
+}
+
+/* Іконки намальовані чорним — на темному тлі робимо їх білими */
+.site-footer__contact img {
+  flex: none;
+  filter: invert(1);
+}
+
+.site-footer__legal p {
+  margin-top: var(--space-8);
+}
+
+.site-footer :focus-visible {
+  outline-color: var(--text-inverse);
+}
+
+@media (hover: hover) {
+  .site-footer__link:hover {
+    text-decoration: underline;
+    text-underline-position: from-font;
+  }
+}
+
+/* Десктоп: лого, меню й контакти зліва в ряд, правові рядки справа внизу */
+@media (min-width: 1280px) {
+  .site-footer__inner {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .site-footer__main {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--space-120);
+  }
+
+  .site-footer__logo {
+    align-self: center;
+    margin-right: calc(96px - var(--space-120));
+  }
+
+  .site-footer__logo-h {
+    display: none;
+  }
+
+  .site-footer__logo-v {
+    display: block;
+  }
+
+  .site-footer__list {
+    display: grid;
+    gap: var(--space-12);
+  }
+
+  .site-footer__contacts {
+    display: grid;
+    gap: var(--space-8);
+    margin-top: 0;
+  }
+
+  .site-footer__link,
+  .site-footer__contact {
+    min-height: 0;
+  }
+
+  .site-footer__legal {
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+  }
+
+  .site-footer__legal p {
+    margin-top: 0;
+  }
+}
+
 /* ---------- Десктоп ---------- */
 @media (min-width: 1024px) {
   .grid {
