@@ -1,5 +1,23 @@
 // LM Бухгалтерські послуги — скрипти сторінки
-// Далі тут з'являться: акордеон FAQ, форма (sendLead), анімації.
+
+// ---------- Відправка заявки ----------
+// ЗАГЛУШКА. Куди надсилати (Telegram / e-mail) — ще не вирішено.
+// Щоб підключити справжню відправку, замініть лише тіло цієї функції.
+// Вона отримує об'єкт { topic, name, phone, email } і має повернути Promise:
+// resolve — заявку прийнято, reject — сталася помилка.
+// УВАГА: не вставляйте сюди секретні ключі (наприклад, токен Telegram-бота) —
+// код сайту бачать усі. Запит має йти на власний сервер або сервіс форм.
+//
+// Для перевірки попапа помилки введіть у поле «Ім'я» слово test-error.
+function sendLead(data) {
+  return new Promise(function (resolve, reject) {
+    console.info('sendLead (заглушка):', data);
+    setTimeout(function () {
+      if (data.name === 'test-error') reject(new Error('Тестова помилка'));
+      else resolve();
+    }, 1000);
+  });
+}
 
 // ---------- Липка шапка: лінія після початку скролу ----------
 // Замість слухача scroll стежимо за міткою вгорі сторінки:
@@ -114,6 +132,150 @@
           name.focus({ preventScroll: true });
         }, 0);
       }
+    });
+  });
+})();
+
+// ---------- Форма ----------
+(function () {
+  var form = document.getElementById('contact-form');
+  if (!form) return;
+
+  var button = form.querySelector('.form__button');
+  var buttonText = button.textContent;
+  var fields = {
+    topic: form.elements.topic,
+    name: form.elements.name,
+    phone: form.elements.phone,
+    email: form.elements.email
+  };
+
+  // Кожне правило повертає текст помилки або порожній рядок, якщо все гаразд
+  var rules = {
+    topic: function (value) {
+      return value ? '' : 'Оберіть тему звернення.';
+    },
+    name: function (value) {
+      return value.length < 2 ? 'Вкажіть ім’я.' : '';
+    },
+    phone: function (value) {
+      if (!value) return 'Вкажіть номер телефону.';
+      var digits = value.replace(/\D/g, '');
+      var ok = /^[\d\s()+-]+$/.test(value) && digits.length >= 10 && digits.length <= 13;
+      return ok ? '' : 'Перевірте номер: наприклад, 067 208 46 31.';
+    },
+    email: function (value) {
+      if (!value) return ''; // e-mail необов'язковий
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? '' : 'Перевірте e-mail: наприклад, name@example.com.';
+    }
+  };
+
+  // Показує або прибирає помилку під полем і повертає її текст
+  function validateField(key) {
+    var input = fields[key];
+    var error = document.getElementById(input.id + '-error');
+    var message = rules[key](input.value.trim());
+    error.textContent = message;
+    error.hidden = !message;
+    if (message) {
+      input.setAttribute('aria-invalid', 'true');
+      input.setAttribute('aria-describedby', error.id);
+    } else {
+      input.removeAttribute('aria-invalid');
+      input.removeAttribute('aria-describedby');
+    }
+    return message;
+  }
+
+  function clearErrors() {
+    Object.keys(fields).forEach(function (key) {
+      var input = fields[key];
+      var error = document.getElementById(input.id + '-error');
+      error.textContent = '';
+      error.hidden = true;
+      input.removeAttribute('aria-invalid');
+      input.removeAttribute('aria-describedby');
+    });
+  }
+
+  // Перевіряємо при виході з поля, а не під час набору.
+  // Для селекта ще й одразу після вибору — щоб помилка зникла без зайвого кроку.
+  // popupOpen: коли відкривається попап, поле теж втрачає фокус —
+  // це не привід показувати помилку в щойно очищеній формі.
+  var popupOpen = false;
+  Object.keys(fields).forEach(function (key) {
+    fields[key].addEventListener('blur', function () {
+      if (!popupOpen) validateField(key);
+    });
+  });
+  fields.topic.addEventListener('change', function () {
+    validateField('topic');
+  });
+
+  function showPopup(id) {
+    var popup = document.getElementById(id);
+    popupOpen = true;
+    popup.showModal(); // сам переводить фокус усередину і закривається по Esc
+  }
+
+  document.querySelectorAll('.popup').forEach(function (popup) {
+    popup.querySelector('[data-popup-close]').addEventListener('click', function () {
+      popup.close();
+    });
+    // Клік по затемненню навколо попапа теж закриває його
+    popup.addEventListener('click', function (event) {
+      if (event.target === popup) popup.close();
+    });
+    // Хай як закрили (кнопка, Esc, клік повз) — фокус повертається на кнопку форми
+    popup.addEventListener('close', function () {
+      button.focus();
+      popupOpen = false; // після focus(), щоб перехід фокуса не запустив перевірку полів
+    });
+  });
+
+  // Поки заявка надсилається, кнопка неактивна — подвійних заявок не буде
+  function setBusy(busy) {
+    button.disabled = busy;
+    button.setAttribute('aria-busy', String(busy));
+    button.textContent = busy ? 'Надсилаємо…' : buttonText;
+  }
+
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+    if (button.disabled) return;
+
+    var firstInvalid = null;
+    Object.keys(fields).forEach(function (key) {
+      if (validateField(key) && !firstInvalid) firstInvalid = fields[key];
+    });
+    if (firstInvalid) {
+      firstInvalid.focus();
+      return;
+    }
+
+    // Пастка заповнена — це бот: тихо нічого не надсилаємо
+    if (form.elements.website.value) {
+      form.reset();
+      return;
+    }
+
+    var data = {
+      topic: fields.topic.value,
+      name: fields.name.value.trim(),
+      phone: fields.phone.value.trim(),
+      email: fields.email.value.trim()
+    };
+
+    setBusy(true);
+    sendLead(data).then(function () {
+      setBusy(false);
+      form.reset();
+      clearErrors();
+      showPopup('popup-success');
+    }, function () {
+      // При помилці поля НЕ очищаємо
+      setBusy(false);
+      showPopup('popup-error');
     });
   });
 })();

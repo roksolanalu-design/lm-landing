@@ -481,10 +481,75 @@
 
     <!-- 9. Форма -->
     <section class="section contact" id="contact" aria-labelledby="contact-title">
-      <div class="container">
-        <h2 class="section__title" id="contact-title">Бухгалтерія під&nbsp;контролем. Звіти вчасно.</h2>
+      <div class="container contact__inner">
+        <div class="contact__intro">
+          <h2 class="section__title" id="contact-title">Бухгалтерія під&nbsp;контролем. Звіти вчасно.</h2>
+          <p class="contact__lead">Оберіть послугу&nbsp;— зв’яжемося протягом дня і&nbsp;домовимося про&nbsp;безкоштовний дзвінок-знайомство.</p>
+        </div>
+
+        <!-- novalidate: перевірку й тексти помилок робить js/main.js -->
+        <form class="form" id="contact-form" action="#contact" method="post" novalidate>
+          <div class="form__fields">
+            <!-- Варіанти послуг у цей список додає JS із карток «Послуги | Вартість» -->
+            <div class="field">
+              <label class="visually-hidden" for="contact-topic">Тема звернення</label>
+              <select class="field__control field__control--select" id="contact-topic" name="topic" required>
+                <option value="">Тема звернення</option>
+              </select>
+              <p class="field__error" id="contact-topic-error" hidden></p>
+            </div>
+
+            <div class="field">
+              <label class="visually-hidden" for="contact-name">Ім’я</label>
+              <input class="field__control" id="contact-name" name="name" type="text" placeholder="Ім’я" autocomplete="name" required>
+              <p class="field__error" id="contact-name-error" hidden></p>
+            </div>
+
+            <div class="field">
+              <label class="visually-hidden" for="contact-phone">Номер телефону</label>
+              <input class="field__control" id="contact-phone" name="phone" type="tel" placeholder="Номер телефону" autocomplete="tel" inputmode="tel" required>
+              <p class="field__error" id="contact-phone-error" hidden></p>
+            </div>
+
+            <div class="field">
+              <label class="visually-hidden" for="contact-email">E-mail (необов’язково)</label>
+              <input class="field__control" id="contact-email" name="email" type="email" placeholder="E-mail (необов’язково)" autocomplete="email" inputmode="email">
+              <p class="field__error" id="contact-email-error" hidden></p>
+            </div>
+
+            <!-- Пастка для спам-ботів: прихована від людей і скрінрідерів -->
+            <div class="form__trap" aria-hidden="true">
+              <label for="contact-website">Не заповнюйте це поле</label>
+              <input id="contact-website" name="website" type="text" tabindex="-1" autocomplete="off">
+            </div>
+          </div>
+
+          <div class="form__submit">
+            <p class="form__consent">Натискаючи «Надіслати», ви погоджуєтесь з&nbsp;<a href="privacy.html">Політикою приватності</a>.</p>
+            <button class="btn form__button" type="submit">Надіслати</button>
+          </div>
+
+          <noscript>
+            <p class="form__noscript">Форма працює лише з&nbsp;увімкненим JavaScript. Зателефонуйте нам: <a href="tel:+380672084631">+38&nbsp;067&nbsp;208&nbsp;46&nbsp;31</a>.</p>
+          </noscript>
+        </form>
       </div>
     </section>
+
+    <!-- Попапи форми: успіх і помилка -->
+    <dialog class="popup" id="popup-success" aria-labelledby="popup-success-title">
+      <img class="popup__icon" src="images/icons/icon-done.svg" alt="" width="31" height="31">
+      <h2 class="popup__title" id="popup-success-title">Заявку надіслано!</h2>
+      <p class="popup__text">Ми&nbsp;зв’яжемося з&nbsp;вами протягом дня. <br>Дякуємо, що&nbsp;обрали&nbsp;нас.</p>
+      <button class="popup__button" type="button" data-popup-close autofocus>Закрити</button>
+    </dialog>
+
+    <dialog class="popup" id="popup-error" aria-labelledby="popup-error-title">
+      <img class="popup__icon" src="images/icons/icon-error.svg" alt="" width="28" height="28">
+      <h2 class="popup__title" id="popup-error-title">Не&nbsp;вдалося надіслати</h2>
+      <p class="popup__text">Спробуйте ще раз або зателефонуйте&nbsp;нам: <br><a class="popup__phone" href="tel:+380672084631">+38&nbsp;067&nbsp;208&nbsp;46&nbsp;31</a></p>
+      <button class="popup__button" type="button" data-popup-close autofocus>Спробувати ще&nbsp;раз</button>
+    </dialog>
 
   </main>
 
