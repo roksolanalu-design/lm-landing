@@ -206,7 +206,7 @@ h3 { font: var(--text-h3, var(--text-title)); }
   padding-block: var(--space-8);
 }
 
-/* Лого 24px заввишки, зона натискання — 44px */
+/* Лого 32px заввишки (щоб підпис читався), зона натискання — 44px */
 .site-header__logo {
   display: flex;
   align-items: center;
@@ -216,7 +216,7 @@ h3 { font: var(--text-h3, var(--text-title)); }
 
 .site-header__logo img {
   width: auto;
-  height: var(--space-24);
+  height: var(--space-32);
 }
 
 .site-header__actions {
