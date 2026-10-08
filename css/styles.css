@@ -588,6 +588,102 @@ p {
   }
 }
 
+/* ---------- Патерн-смуга ---------- */
+/* Декоративна смуга: плитка 48px заввишки повторюється по горизонталі */
+.pattern-strip {
+  height: 68px;
+  background: url("../images/pattern-tile.svg") center / auto var(--space-48) repeat-x;
+  opacity: 0.1;
+}
+
+/* У мобільному макеті смуга стоїть в інших місцях, ніж у десктопному */
+.pattern-strip--desktop {
+  display: none;
+}
+
+@media (min-width: 1280px) {
+  .pattern-strip--mobile {
+    display: none;
+  }
+
+  .pattern-strip--desktop {
+    display: block;
+  }
+}
+
+/* ---------- Про нас ---------- */
+/* Мобайл: заголовок → фото → текст. Від 768px: фото зліва, текст справа */
+.about__inner {
+  display: grid;
+  row-gap: var(--space-12);
+}
+
+.about__media {
+  display: block;
+}
+
+.about__media img {
+  width: 100%;
+  aspect-ratio: 358 / 266;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+}
+
+.about__text {
+  padding: var(--space-8);
+}
+
+.about__subtitle {
+  margin-bottom: var(--space-8);
+  font: var(--text-subtitle);
+}
+
+.about__body {
+  font: var(--text-body-s);
+}
+
+@media (min-width: 768px) {
+  .about__inner {
+    grid-template-columns: minmax(0, 486fr) minmax(0, 588fr);
+    grid-template-areas:
+      "media title"
+      "media text";
+    column-gap: 10.5%;
+    row-gap: var(--space-4);
+  }
+
+  .about__title {
+    grid-area: title;
+    align-self: end;
+  }
+
+  .about__media {
+    grid-area: media;
+    align-self: center;
+  }
+
+  .about__media img {
+    aspect-ratio: 486 / 266;
+  }
+
+  .about__text {
+    grid-area: text;
+    align-self: start;
+    padding: 0;
+  }
+
+  .about__subtitle {
+    margin-bottom: var(--space-12);
+  }
+}
+
+@media (min-width: 1024px) {
+  .about__body {
+    font: var(--text-body);
+  }
+}
+
 /* ---------- Десктоп ---------- */
 @media (min-width: 1024px) {
   .grid {

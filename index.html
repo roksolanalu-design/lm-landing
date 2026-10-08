@@ -121,6 +121,9 @@
       </div>
     </section>
 
+    <!-- Патерн-смуга (декоративна): на мобайлі стоїть тут і перед формою -->
+    <div class="pattern-strip pattern-strip--mobile" aria-hidden="true"></div>
+
     <!-- 3. Для кого -->
     <section class="section for-whom" id="for-whom" aria-labelledby="for-whom-title">
       <div class="container">
@@ -147,10 +150,10 @@
       </div>
     </section>
 
-    <!-- 4. Патерн-смуга (декоративна) -->
-    <div class="pattern-strip" aria-hidden="true"></div>
+    <!-- 4. Патерн-смуга (декоративна): на десктопі — після «Для кого» -->
+    <div class="pattern-strip pattern-strip--desktop" aria-hidden="true"></div>
 
-    <!-- 5. Як ми працюємо -->
+    <!-- 5. Як ми працюємо — ЗАГЛУШКА: чекаємо тексти від клієнтки -->
     <section class="section how" id="how" aria-labelledby="how-title">
       <div class="container">
         <h2 class="section__title" id="how-title">Як ми працюємо</h2>
@@ -159,8 +162,22 @@
 
     <!-- 6. Про нас -->
     <section class="section about" id="about" aria-labelledby="about-title">
-      <div class="container">
-        <h2 class="section__title" id="about-title">Про нас</h2>
+      <div class="container about__inner">
+        <h2 class="about__title" id="about-title">Про нас</h2>
+
+        <picture class="about__media">
+          <source type="image/webp" sizes="(min-width: 768px) 486px, 135vw"
+                  srcset="images/about-800.webp 800w, images/about-1200.webp 1200w">
+          <img src="images/about-800.jpg" sizes="(min-width: 768px) 486px, 135vw"
+               srcset="images/about-800.jpg 800w, images/about-1200.jpg 1200w"
+               width="1200" height="670" loading="lazy" decoding="async"
+               alt="Мирослава Луцик — жінка з рудим волоссям у світлому жакеті, усміхається на тлі офісу">
+        </picture>
+
+        <div class="about__text">
+          <p class="about__subtitle">Луцик Мирослава — сертифікований бухгалтер</p>
+          <p class="about__body">З&nbsp;1995 року в&nbsp;бухгалтерії, з&nbsp;2019 року — власна компанія LM. За цей час подано 300+ звітів, пройдено податкові перевірки, відкрито сотні ФОП і&nbsp;ТОВ. Працюємо з&nbsp;командою — кожен клієнт отримує увагу і&nbsp;зворотній зв'язок.</p>
+        </div>
       </div>
     </section>
 
@@ -177,6 +194,8 @@
         <h2 class="section__title" id="faq-title">Питання та відповіді</h2>
       </div>
     </section>
+
+    <div class="pattern-strip pattern-strip--mobile" aria-hidden="true"></div>
 
     <!-- 9. Форма -->
     <section class="section contact" id="contact" aria-labelledby="contact-title">
