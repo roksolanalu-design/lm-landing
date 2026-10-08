@@ -69,11 +69,6 @@ h1 { font: var(--text-h1); }
 h2 { font: var(--text-h2); }
 h3 { font: var(--text-h3, var(--text-title)); }
 
-/* Якорі не ховаються під шапкою (висоту уточнимо разом із Header) */
-[id] {
-  scroll-margin-top: var(--space-80);
-}
-
 /* ---------- Доступність ---------- */
 :focus-visible {
   outline: 2px solid var(--border-focus);
@@ -130,12 +125,227 @@ h3 { font: var(--text-h3, var(--text-title)); }
 }
 
 /* ---------- Секції ---------- */
+/* У макеті відступ є лише зверху секції: 48px (моб.) / 80px (десктоп) */
 .section {
-  padding-block: var(--section-gap);
+  padding-top: var(--section-gap);
 }
 
 .section__title {
-  margin-bottom: var(--space-24);
+  margin-bottom: var(--space-12);
+}
+
+/* ---------- Кнопка (Button/Primary) ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--space-48);
+  padding: var(--space-12) var(--space-24);
+  font: var(--text-button);
+  color: var(--text-inverse);
+  text-decoration: none;
+  white-space: nowrap;
+  background: var(--action-primary);
+  border: 0;
+  border-radius: var(--radius-md);
+  transition: background-color var(--duration-hover);
+}
+
+@media (hover: hover) {
+  .btn:hover {
+    background: var(--action-primary-hover);
+  }
+}
+
+/* ---------- Header ---------- */
+.site-header {
+  position: relative;
+  z-index: 10;
+  background: var(--bg-page);
+}
+
+.site-header__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 60px;
+  padding-block: var(--space-8);
+}
+
+/* Лого 24px заввишки, зона натискання — 44px */
+.site-header__logo {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: var(--space-8);
+}
+
+.site-header__logo img {
+  width: auto;
+  height: var(--space-24);
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+}
+
+.site-header__phone {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: var(--space-4) 1px;
+  font: var(--text-body-s);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-header__cta {
+  display: none;
+}
+
+.burger {
+  position: relative;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+}
+
+/* Хрестик для відкритого меню — дві лінії того ж розміру, що й в іконці */
+.burger::before,
+.burger::after {
+  content: "";
+  position: absolute;
+  width: 28px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: var(--radius-full);
+  opacity: 0;
+}
+
+.burger[aria-expanded="true"] .burger__icon {
+  opacity: 0;
+}
+
+.burger[aria-expanded="true"]::before,
+.burger[aria-expanded="true"]::after {
+  opacity: 1;
+}
+
+.burger[aria-expanded="true"]::before { transform: rotate(45deg); }
+.burger[aria-expanded="true"]::after  { transform: rotate(-45deg); }
+
+/* Без JS меню просто лежить рядком під шапкою */
+.site-nav {
+  order: 3;
+  flex-basis: 100%;
+}
+
+.site-nav__list {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--space-24);
+}
+
+.site-nav__link {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font: var(--text-body);
+  text-decoration: none;
+}
+
+@media (hover: hover) {
+  .site-nav__link,
+  .site-header__phone {
+    transition: color var(--duration-hover);
+  }
+
+  .site-nav__link:hover,
+  .site-header__phone:hover {
+    color: var(--text-accent);
+  }
+}
+
+/* З JS: бургер + панель, що випадає під шапкою */
+@media (max-width: 1279.98px) {
+  .js .burger {
+    display: flex;
+  }
+
+  .js .site-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: none;
+    padding: var(--space-8) var(--page-margin) var(--space-16);
+    background: var(--bg-page);
+    border-block: 1px solid var(--border-subtle);
+  }
+
+  .js .site-nav.is-open {
+    display: block;
+  }
+
+  .js .site-nav__list {
+    flex-direction: column;
+  }
+
+  .js .site-nav__link {
+    min-height: var(--space-48);
+  }
+}
+
+/* Десктопна шапка. Вмикається з 1280px, бо при полях 120px вужче не вміщається */
+@media (min-width: 1280px) {
+  .site-header__inner {
+    flex-wrap: nowrap;
+    min-height: 72px;
+    padding-block: var(--space-12);
+  }
+
+  .site-header__logo {
+    align-self: flex-start;
+    min-height: 0;
+    padding-inline: 0;
+  }
+
+  .site-header__logo img {
+    height: 42px;
+  }
+
+  .site-nav {
+    order: 0;
+    flex-basis: auto;
+    margin-left: auto;
+  }
+
+  .site-nav__list {
+    flex-wrap: nowrap;
+  }
+
+  .site-header__actions {
+    gap: var(--space-24);
+    margin-left: var(--space-24);
+  }
+
+  .site-header__phone {
+    padding-inline: 0;
+    font: var(--text-body);
+    font-weight: 700;
+  }
+
+  .site-header__cta {
+    display: inline-flex;
+    width: 180px;
+  }
 }
 
 /* ---------- Десктоп ---------- */

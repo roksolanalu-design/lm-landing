@@ -56,9 +56,27 @@
 
   <!-- 1. Header -->
   <header class="site-header" id="top">
-    <div class="container">
-      <nav class="site-nav" aria-label="Головна навігація">
+    <div class="container site-header__inner">
+      <a class="site-header__logo" href="#top">
+        <img src="images/logo-horizontal-black.svg" alt="LM Бухгалтерські послуги — на початок сторінки" width="139" height="42">
+      </a>
+
+      <nav class="site-nav" id="site-nav" aria-label="Головна навігація">
+        <ul class="site-nav__list">
+          <li><a class="site-nav__link" href="#for-whom">Для кого</a></li>
+          <li><a class="site-nav__link" href="#how">Як ми працюємо</a></li>
+          <li><a class="site-nav__link" href="#about">Про нас</a></li>
+          <li><a class="site-nav__link" href="#services">Послуги | Вартість</a></li>
+        </ul>
       </nav>
+
+      <div class="site-header__actions">
+        <a class="site-header__phone" href="tel:+380672084631">+38 067 208 46 31</a>
+        <a class="btn site-header__cta" href="tel:+380672084631">Зателефонувати</a>
+        <button class="burger" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Відкрити меню">
+          <img class="burger__icon" src="images/icons/icon-burger.svg" alt="" width="44" height="40">
+        </button>
+      </div>
     </div>
   </header>
 
@@ -67,7 +85,7 @@
     <!-- 2. Hero -->
     <section class="hero" id="hero" aria-labelledby="hero-title">
       <div class="container">
-        <h1 id="hero-title">LM Бухгалтерські послуги</h1>
+        <h1 id="hero-title">Ваш спокій — наша відповідальність</h1>
       </div>
     </section>
 
@@ -112,7 +130,7 @@
     <!-- 9. Форма -->
     <section class="section contact" id="contact" aria-labelledby="contact-title">
       <div class="container">
-        <h2 class="section__title" id="contact-title">Залишити заявку</h2>
+        <h2 class="section__title" id="contact-title">Бухгалтерія під контролем. Звіти вчасно.</h2>
       </div>
     </section>
 
