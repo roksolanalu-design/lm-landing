@@ -99,7 +99,6 @@
   --duration-hero-counter: 1800ms;  /* лічильник у Hero */
   --hero-stagger: 200ms;            /* крок таймлайну: затримки рахуються від нього */
   --duration-pattern: 90s;          /* патерн-смуга: один повний цикл руху */
-  --duration-step: 400ms;           /* номер кроку «загоряється» червоним */
   --reveal-distance: 24px;
 }
 
@@ -131,7 +130,6 @@
     --duration-hero-counter: 0ms;
     --hero-stagger: 0ms;
     --duration-pattern: 0s;
-    --duration-step: 0ms;
     --reveal-distance: 0px;
   }
 }
