@@ -857,7 +857,7 @@ p {
    а не заходить під бейдж */
 .service-card__head {
   display: flex;
-  align-items: flex-start;
+  align-items: baseline;
   justify-content: space-between;
   gap: var(--space-12);
   margin-bottom: var(--space-12);
@@ -874,11 +874,14 @@ p {
   margin-bottom: var(--space-12);
 }
 
-/* Від'ємний нижній відступ: бейдж вищий за рядок заголовка,
-   але не розсуває картку */
+/* Від'ємні відступи: бейдж вищий за рядок заголовка, але не розсуває картку.
+   Базові лінії заголовка й бейджа збігаються (align-items: baseline), а оскільки
+   літери бейджа менші, піднімаємо його на 0.225em — рівно до центру великих літер заголовка */
 .service-card__badge {
+  position: relative;
+  top: -0.225em;
   flex: none;
-  margin-bottom: calc(-1 * var(--space-12));
+  margin-block: calc(-1 * var(--space-4)) calc(-1 * var(--space-12));
   padding: var(--space-4) 10px;
   font: var(--text-caption);
   font-weight: 600;
@@ -1328,6 +1331,13 @@ html:not(.js) .faq__icon {
 .site-footer__logo {
   align-self: flex-start;
   display: block;
+}
+
+/* Горизонтальне лого 24px заввишки з полем 8px навколо — разом 40px, як у макеті */
+.site-footer__logo-h {
+  width: auto;
+  height: var(--space-24);
+  margin: var(--space-8);
 }
 
 .site-footer__logo-v {
