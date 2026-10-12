@@ -42,7 +42,7 @@ function sendLead(data) {
   var nav = document.getElementById('site-nav');
   if (!burger || !nav) return;
 
-  var desktop = window.matchMedia('(min-width: 1280px)');
+  var desktop = window.matchMedia('(min-width: 1024px)');
 
   function setOpen(open) {
     nav.classList.toggle('is-open', open);

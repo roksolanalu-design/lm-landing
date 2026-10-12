@@ -62,9 +62,14 @@ a {
   --header-height: 60px;
 }
 
-@media (min-width: 1280px) {
+/* Єдиний брейкпоінт проєкту — 1024px. Між 1024 і 1440px нічого не перемикається:
+   поля сторінки плавно зменшуються від 120px до 32px, тож контент 1200px
+   тримається якомога довше, а далі звужується разом з екраном */
+@media (min-width: 1024px) {
   :root {
     --header-height: 72px;
+    --page-margin: clamp(var(--space-32), calc((100vw - var(--content-max)) / 2), var(--space-120));
+    --fluid-gap: clamp(var(--space-12), 1.667vw, var(--space-24));
   }
 }
 
@@ -322,7 +327,7 @@ p {
 }
 
 /* З JS: бургер + панель, що випадає під шапкою */
-@media (max-width: 1279.98px) {
+@media (max-width: 1023.98px) {
   .js .burger {
     display: flex;
   }
@@ -354,8 +359,8 @@ p {
   }
 }
 
-/* Десктопна шапка. Вмикається з 1280px, бо при полях 120px вужче не вміщається */
-@media (min-width: 1280px) {
+/* Десктопна шапка. Між 1024 і 1440px відступи в ній плавно стискаються, щоб усе вмістилось */
+@media (min-width: 1024px) {
   .site-header__inner {
     flex-wrap: nowrap;
     padding-block: var(--space-12);
@@ -378,11 +383,12 @@ p {
 
   .site-nav__list {
     flex-wrap: nowrap;
+    column-gap: var(--fluid-gap);
   }
 
   .site-header__actions {
-    gap: var(--space-24);
-    margin-left: var(--space-24);
+    gap: var(--fluid-gap);
+    margin-left: var(--fluid-gap);
   }
 
   .site-header__phone {
@@ -393,7 +399,8 @@ p {
 
   .site-header__cta {
     display: inline-flex;
-    width: 180px;
+    width: clamp(164px, 12.5vw, 180px);
+    padding-inline: var(--space-16);
   }
 }
 
@@ -407,10 +414,12 @@ p {
   display: block;
 }
 
+/* Висота фото росте разом з екраном: 300px на 390, не більше 480px */
 .hero__media img {
   width: 100%;
-  aspect-ratio: 390 / 300;
+  height: clamp(300px, 76.9vw, 480px);
   object-fit: cover;
+  object-position: 75% top;
 }
 
 .hero__text {
@@ -434,8 +443,9 @@ p {
   font: var(--text-body-s);
 }
 
-/* На мобайлі кнопка на всю ширину контенту, 48px заввишки, текст 14px */
+/* На мобайлі кнопка на всю ширину контенту (але не ширша за 358px), 48px заввишки, текст 14px */
 .hero__cta {
+  max-width: 358px;
   font: var(--text-button-s);
 }
 
@@ -462,18 +472,6 @@ p {
 }
 
 /* Планшет: широке фото, кнопка звичайного розміру */
-@media (min-width: 600px) {
-  .hero__media img {
-    aspect-ratio: 1440 / 712;
-  }
-
-  .hero__cta {
-    align-self: flex-start;
-    width: 282px;
-    font: var(--text-button);
-  }
-}
-
 @media (min-width: 1024px) {
   .hero__lead {
     font: var(--text-body-l);
@@ -490,11 +488,13 @@ p {
   }
 }
 
-/* Десктоп: текст поверх фото. З 1280px — вужче текст наїжджає на людину */
-@media (min-width: 1280px) {
+/* Десктоп: текст поверх фото */
+@media (min-width: 1024px) {
+  /* 700px на 1440; на вужчих екранах блок нижчий, тож фото менше
+     і людина на ньому не заходить під текст */
   .hero {
     position: relative;
-    min-height: 700px;
+    min-height: clamp(560px, 48.6vw, 700px);
     background: var(--bg-surface);
   }
 
@@ -511,20 +511,27 @@ p {
 
   .hero__content {
     position: relative;
-    padding-block: var(--space-120);
+    padding-block: clamp(var(--space-64), 8.33vw, var(--space-120));
   }
 
   .hero__text {
-    max-width: 691px;
+    max-width: min(691px, 60vw);
     padding-block: 0;
+  }
+
+  .hero__cta {
+    align-self: flex-start;
+    width: 282px;
+    font: var(--text-button);
   }
 
   .hero__title {
     margin-bottom: var(--space-12);
   }
 
+  /* На вужчих екранах текст звужується, щоб не наїжджати на людину на фото */
   .hero__lead {
-    max-width: 588px;
+    max-width: min(588px, 46vw);
     margin-bottom: var(--space-24);
   }
 
@@ -535,9 +542,11 @@ p {
 }
 
 /* ---------- Для кого ---------- */
-/* Картки: 1 колонка → 2 (від 600px) → 4 (від 1280px) */
+/* Картки: 1–2 колонки (скільки вміщається) → 4 на десктопі */
+/* max(…, 34%) не дає стати трьом карткам у ряд: або одна, або дві */
 .for-whom__cards {
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(260px, 34%), 1fr));
   gap: var(--space-12);
 }
 
@@ -563,12 +572,6 @@ p {
   text-wrap: balance;
 }
 
-@media (min-width: 600px) {
-  .for-whom__cards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
 @media (min-width: 1024px) {
   .for-whom__cards {
     gap: var(--space-24);
@@ -584,7 +587,7 @@ p {
   }
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 1024px) {
   .for-whom__cards {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
@@ -615,7 +618,7 @@ p {
   display: none;
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 1024px) {
   .pattern-strip--mobile {
     display: none;
   }
@@ -662,8 +665,8 @@ p {
   font: var(--text-title);
 }
 
-/* Крапка-розділювач у заголовку: на мобайлі заголовок ламається на два рядки,
-   і крапка там зайва — показуємо її лише коли він стоїть одним рядком */
+/* Крапка-розділювач у заголовку першого кроку: на мобайлі її немає,
+   на десктопі заголовок стоїть одним рядком із крапкою */
 .step__dot {
   display: none;
 }
@@ -677,6 +680,10 @@ p {
   color: var(--text-accent);
 }
 
+.how__content {
+  max-width: 486px;
+}
+
 .how__cta {
   display: flex;
   margin-top: var(--space-12);
@@ -684,16 +691,6 @@ p {
 
 .how__logo {
   display: none;
-}
-
-@media (min-width: 600px) {
-  .how__content {
-    max-width: 486px;
-  }
-
-  .step__dot {
-    display: inline;
-  }
 }
 
 @media (min-width: 1024px) {
@@ -718,11 +715,12 @@ p {
 }
 
 /* Десктоп: кроки зліва, великий блідий логотип справа по центру висоти */
-@media (min-width: 1280px) {
+@media (min-width: 1024px) {
+  /* Проміжок до логотипа: 228px на 1440, плавно до 40px на 1024 */
   .how__inner {
     display: flex;
     align-items: center;
-    gap: 228px;
+    gap: clamp(var(--space-40), calc(var(--space-40) + (100vw - 1024px) * 0.452), 228px);
   }
 
   .how__content {
@@ -732,15 +730,19 @@ p {
 
   .how__logo {
     display: block;
-    flex: none;
-    width: 455px;
+    flex: 0 1 455px;
+    min-width: 0;
     height: auto;
     opacity: 0.065;
+  }
+
+  .step__dot {
+    display: inline;
   }
 }
 
 /* ---------- Про нас ---------- */
-/* Мобайл: заголовок → фото → текст. Від 768px: фото зліва, текст справа */
+/* Мобайл: заголовок → фото → текст. Десктоп: фото зліва, текст справа */
 .about__inner {
   display: grid;
   row-gap: var(--space-12);
@@ -771,7 +773,7 @@ p {
   font: var(--text-body-s);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .about__inner {
     grid-template-columns: minmax(0, 486fr) minmax(0, 588fr);
     grid-template-areas:
@@ -813,10 +815,11 @@ p {
 }
 
 /* ---------- Послуги | Вартість ---------- */
-/* Картки: 1 колонка → 2 (від 768px) → 3 (від 1280px).
+/* Картки: 1–2 колонки (скільки вміщається) → 3 на десктопі.
    Сітка сама вирівнює висоту карток у ряду */
 .services__cards {
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(300px, 34%), 1fr));
   gap: var(--space-16);
 }
 
@@ -926,12 +929,6 @@ p {
   font: var(--text-body-s);
 }
 
-@media (min-width: 768px) {
-  .services__cards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
 @media (min-width: 1024px) {
   .services__cards {
     gap: var(--space-24);
@@ -943,7 +940,7 @@ p {
   }
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 1024px) {
   .services__cards {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -1023,7 +1020,7 @@ html:not(.js) .faq__icon {
 }
 
 /* Десктоп: зліва заголовок із кнопкою, справа акордеон */
-@media (min-width: 1280px) {
+@media (min-width: 1024px) {
   .faq__inner {
     display: flex;
     align-items: flex-start;
@@ -1064,6 +1061,10 @@ html:not(.js) .faq__icon {
   font: var(--text-body-s);
 }
 
+.form {
+  max-width: 589px;
+}
+
 .form__fields {
   display: grid;
   gap: var(--space-8);
@@ -1088,10 +1089,22 @@ html:not(.js) .faq__icon {
   opacity: 1;
 }
 
+@media (hover: hover) {
+  .field__control {
+    transition: border-color var(--duration-hover), box-shadow var(--duration-hover);
+  }
+
+  .field__control:hover {
+    border-color: var(--border-focus);
+  }
+}
+
+/* М'який фокус: темна рамка і світле кільце навколо замість жирного контуру.
+   Прозорий outline лишаємо для режиму високого контрасту Windows */
 .field__control:focus-visible {
   border-color: var(--border-focus);
-  outline-offset: 0;
-  border-radius: var(--radius-md);
+  outline: 2px solid transparent;
+  box-shadow: 0 0 0 3px var(--border-subtle);
 }
 
 /* Селект: своя стрілка замість системної */
@@ -1116,7 +1129,9 @@ html:not(.js) .faq__icon {
 }
 
 /* Помилка: червона рамка + текст під полем (не лише колір) */
-.field__control[aria-invalid="true"] {
+.field__control[aria-invalid="true"],
+.field__control[aria-invalid="true"]:hover,
+.field__control[aria-invalid="true"]:focus-visible {
   border-color: var(--border-error);
 }
 
@@ -1166,11 +1181,7 @@ html:not(.js) .faq__icon {
   cursor: progress;
 }
 
-@media (min-width: 768px) {
-  .form {
-    max-width: 589px;
-  }
-
+@media (min-width: 1024px) {
   /* Згода зліва, кнопка справа */
   .form__submit {
     flex-direction: row;
@@ -1196,15 +1207,18 @@ html:not(.js) .faq__icon {
 }
 
 /* Десктоп: текст зліва, форма справа */
-@media (min-width: 1280px) {
+@media (min-width: 1024px) {
+  /* 486 + 589px на 1440; на вужчих екранах обидві колонки пропорційно стискаються */
   .contact__inner {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
+    gap: var(--space-40);
   }
 
   .contact__intro {
-    width: 486px;
+    flex: 0 1 486px;
+    min-width: 0;
   }
 
   .contact__lead {
@@ -1212,17 +1226,17 @@ html:not(.js) .faq__icon {
   }
 
   .form {
-    flex: none;
-    width: 589px;
+    flex: 0 1 589px;
+    min-width: 0;
   }
 }
 
 /* ---------- Попапи форми ---------- */
 /* Червона картка по центру екрана: іконка, заголовок, текст, біла кнопка */
-/* Десктоп 480×320; на мобайлі — на всю ширину екрана, як у макеті (390×320) */
+/* Десктоп 480×320; на мобайлі — картка з полями 16px з боків */
 .popup {
-  width: min(100%, 480px);
-  max-width: 100%;
+  width: min(100% - 2 * var(--space-16), 480px);
+  max-width: none;
   min-height: 320px;
   padding: var(--space-32) var(--space-16);
   color: var(--text-inverse);
@@ -1324,12 +1338,16 @@ html:not(.js) .faq__icon {
   padding: var(--space-4);
 }
 
-/* На мобайлі кожне посилання — рядок 44px (зона натискання) */
+/* На мобайлі пункти меню й Instagram — рядки 32px, телефон і e-mail — 44px */
 .site-footer__link {
   display: flex;
   align-items: center;
-  min-height: 44px;
+  min-height: var(--space-32);
   text-decoration: none;
+}
+
+.site-footer__contact.site-footer__link--tall {
+  min-height: 44px;
 }
 
 .site-footer__contacts {
@@ -1340,13 +1358,12 @@ html:not(.js) .faq__icon {
   display: flex;
   align-items: center;
   gap: var(--space-8);
-  min-height: 44px;
+  min-height: var(--space-32);
 }
 
-/* Іконки намальовані чорним — на темному тлі робимо їх білими */
-.site-footer__contact img {
+/* Іконки — inline SVG з fill="currentColor": беруть колір тексту */
+.site-footer__icon {
   flex: none;
-  filter: invert(1);
 }
 
 .site-footer__legal p {
@@ -1365,22 +1382,23 @@ html:not(.js) .faq__icon {
 }
 
 /* Десктоп: лого, меню й контакти зліва в ряд, правові рядки справа внизу */
-@media (min-width: 1280px) {
+@media (min-width: 1024px) {
   .site-footer__inner {
     flex-direction: row;
     align-items: flex-end;
     justify-content: space-between;
   }
 
+  /* Проміжки 96 і 120px на 1440, на вужчих екранах плавно менші */
   .site-footer__main {
     flex-direction: row;
     align-items: flex-start;
-    gap: var(--space-120);
+    gap: clamp(var(--space-48), 8.33vw, var(--space-120));
   }
 
   .site-footer__logo {
     align-self: center;
-    margin-right: calc(96px - var(--space-120));
+    margin-right: calc(-1 * clamp(var(--space-8), 1.667vw, var(--space-24)));
   }
 
   .site-footer__logo-h {
@@ -1403,7 +1421,8 @@ html:not(.js) .faq__icon {
   }
 
   .site-footer__link,
-  .site-footer__contact {
+  .site-footer__contact,
+  .site-footer__contact.site-footer__link--tall {
     min-height: 0;
   }
 
