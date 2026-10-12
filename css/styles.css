@@ -653,12 +653,26 @@ p {
 /* ---------- Патерн-смуга ---------- */
 /* Декоративна смуга: плитка 48px заввишки повторюється по горизонталі.
    Відступи однакові з обох боків: зверху — margin смуги,
-   знизу — padding-top наступної секції (48px моб. / 80px десктоп) */
+   знизу — padding-top наступної секції (48px моб. / 80px десктоп).
+
+   Сама смуга — «вікно» з overflow: hidden. Усередині (::before) лежить стрічка
+   з двох однакових відрізків по 16 плиток. Коли стрічка зсувається рівно на один
+   відрізок (-50%), малюнок збігається сам із собою — стику не видно */
 .pattern-strip {
+  --pattern-tile: calc(var(--space-48) * 494 / 130); /* ширина плитки при висоті 48px */
+  --pattern-segment: calc(16 * var(--pattern-tile));
   height: var(--space-48);
   margin-top: var(--section-gap);
-  background: url("../images/pattern-tile.svg") center / auto 100% repeat-x;
+  overflow: hidden;
   opacity: 0.1;
+}
+
+.pattern-strip::before {
+  content: "";
+  display: block;
+  width: calc(2 * var(--pattern-segment));
+  height: 100%;
+  background: url("../images/pattern-tile.svg") left center / auto 100% repeat-x;
 }
 
 /* Смуга статистики над нею вже має 32px знизу — добираємо решту */
@@ -1572,6 +1586,29 @@ html:not(.js) .faq__icon {
   from {
     opacity: 0;
     transform: translateY(var(--reveal-distance));
+  }
+}
+
+/* Патерн-смуга повільно пливе. Рух стоїть на паузі, поки смуга поза екраном:
+   клас is-moving ставить і знімає js/main.js (IntersectionObserver).
+   Перша смуга пливе вліво, друга (--reverse) — вправо */
+@media (prefers-reduced-motion: no-preference) {
+  .js .pattern-strip::before {
+    animation: pattern-drift var(--duration-pattern) linear infinite paused;
+  }
+
+  .js .pattern-strip--reverse::before {
+    animation-direction: reverse;
+  }
+
+  .js .pattern-strip.is-moving::before {
+    animation-play-state: running;
+  }
+}
+
+@keyframes pattern-drift {
+  to {
+    transform: translateX(-50%);
   }
 }
 

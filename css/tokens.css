@@ -98,6 +98,7 @@
   --duration-hero-fade: 700ms;      /* опис, кнопка, статистика: fade-up */
   --duration-hero-counter: 1800ms;  /* лічильник у Hero */
   --hero-stagger: 200ms;            /* крок таймлайну: затримки рахуються від нього */
+  --duration-pattern: 60s;          /* патерн-смуга: один повний цикл руху */
   --reveal-distance: 24px;
 }
 
@@ -128,6 +129,7 @@
     --duration-hero-fade: 0ms;
     --duration-hero-counter: 0ms;
     --hero-stagger: 0ms;
+    --duration-pattern: 0s;
     --reveal-distance: 0px;
   }
 }

@@ -333,6 +333,20 @@ function sendLead(data) {
     });
   }
 
+  // --- Патерн-смуга ---
+  // Смуга пливе лише тоді, коли її видно; поза екраном анімація на паузі
+  var strips = document.querySelectorAll('.pattern-strip');
+  if (strips.length && !reduceMotion && 'IntersectionObserver' in window) {
+    var stripObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        entry.target.classList.toggle('is-moving', entry.isIntersecting);
+      });
+    });
+    strips.forEach(function (strip) {
+      stripObserver.observe(strip);
+    });
+  }
+
   // --- Лічильник у статистиці Hero ---
   // Скрінрідер читає приховану копію з фінальним числом, тут анімується видима.
   // Лічильник — частина таймлайну Hero: стартує разом із появою статистики.
