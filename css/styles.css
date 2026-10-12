@@ -1575,28 +1575,44 @@ html:not(.js) .faq__icon {
   }
 }
 
-/* Hero при завантаженні. Працює на самому CSS, стартує з першим кадром.
-   Порядок: два рядки заголовка виїжджають з-під маски → опис → кнопка → статистика.
-   Останній елемент стартує на 480ms і триває 500ms, тож уся послідовність — до 1 с.
-   Фото видно одразу: воно лише повільно зменшується з 105% до 100% */
+/* Hero при завантаженні — один таймлайн, тривалості й крок у tokens.css.
+   Затримки — частки кроку --hero-stagger (200ms):
+     фото 0 · рядок 1 — 150ms · рядок 2 — 300ms · опис 600ms · кнопка 800ms · статистика 1000ms.
+   Разом зі статистикою стартує лічильник (js/main.js).
+   Фото видно одразу: воно лише повільно зменшується зі 106% до 100% */
 @media (prefers-reduced-motion: no-preference) {
+  .js .hero__media img {
+    animation: hero-photo var(--duration-hero-photo) var(--ease-out-soft) backwards;
+  }
+
   .js .hero__title-inner {
-    animation: hero-line var(--duration-hero) var(--ease-out-soft) backwards;
+    animation: hero-line var(--duration-hero-text) var(--ease-out-soft) backwards;
+    animation-delay: calc(0.75 * var(--hero-stagger));
+  }
+
+  .js .hero__title-line + .hero__title-line .hero__title-inner {
+    animation-delay: calc(1.5 * var(--hero-stagger));
   }
 
   .js .hero__lead,
   .js .hero__cta,
   .js .hero .stats {
-    animation: reveal var(--duration-hero) var(--ease-out-soft) backwards;
+    animation: reveal var(--duration-hero-fade) var(--ease-out-soft) backwards;
   }
 
-  .js .hero__title-line + .hero__title-line .hero__title-inner { animation-delay: var(--stagger-hero); }
-  .js .hero__lead    { animation-delay: calc(2 * var(--stagger-hero)); }
-  .js .hero__cta     { animation-delay: calc(3 * var(--stagger-hero)); }
-  .js .hero .stats   { animation-delay: calc(4 * var(--stagger-hero)); }
+  .js .hero__lead  { animation-delay: calc(3 * var(--hero-stagger)); }
+  .js .hero__cta   { animation-delay: calc(4 * var(--hero-stagger)); }
+  .js .hero .stats { animation-delay: calc(5 * var(--hero-stagger)); }
 
-  .js .hero__media img {
-    animation: hero-photo var(--duration-hero-photo) var(--ease-out-soft) backwards;
+  /* Статистика при завантаженні поза екраном (низький телефон): чекає,
+     поки до неї докрутять, і тоді з'являється без затримки */
+  .js .hero .stats.is-waiting {
+    opacity: 0;
+    animation: none;
+  }
+
+  .js .hero .stats.is-late {
+    animation-delay: 0ms;
   }
 }
 
@@ -1608,7 +1624,7 @@ html:not(.js) .faq__icon {
 
 @keyframes hero-photo {
   from {
-    transform: scale(1.05);
+    transform: scale(1.06);
   }
 }
 

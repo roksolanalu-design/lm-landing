@@ -91,9 +91,13 @@
   --duration-reveal: 600ms;
   --duration-counter: 1600ms;
   --stagger: 90ms;
-  --duration-hero: 500ms;         /* один елемент у послідовності Hero */
-  --stagger-hero: 120ms;          /* крок між елементами Hero */
-  --duration-hero-photo: 1200ms;  /* масштаб фото Hero */
+  /* Hero при завантаженні — один таймлайн (усе з --ease-out-soft):
+     фото 0 → рядки H1 150 і 300 → опис 600 → кнопка 800 → статистика й лічильник 1000 мс */
+  --duration-hero-photo: 2400ms;    /* фото: масштаб 1.06 → 1 */
+  --duration-hero-text: 900ms;      /* рядок заголовка виїжджає з-під маски */
+  --duration-hero-fade: 700ms;      /* опис, кнопка, статистика: fade-up */
+  --duration-hero-counter: 1800ms;  /* лічильник у Hero */
+  --hero-stagger: 200ms;            /* крок таймлайну: затримки рахуються від нього */
   --reveal-distance: 24px;
 }
 
@@ -119,9 +123,11 @@
     --duration-reveal: 0ms;
     --duration-counter: 0ms;
     --stagger: 0ms;
-    --duration-hero: 0ms;
-    --stagger-hero: 0ms;
     --duration-hero-photo: 0ms;
+    --duration-hero-text: 0ms;
+    --duration-hero-fade: 0ms;
+    --duration-hero-counter: 0ms;
+    --hero-stagger: 0ms;
     --reveal-distance: 0px;
   }
 }

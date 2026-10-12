@@ -333,12 +333,13 @@ function sendLead(data) {
     });
   }
 
-  // --- Лічильник у статистиці ---
+  // --- Лічильник у статистиці Hero ---
   // Скрінрідер читає приховану копію з фінальним числом, тут анімується видима.
+  // Лічильник — частина таймлайну Hero: стартує разом із появою статистики.
   var counters = document.querySelectorAll('[data-count]');
   var stats = document.querySelector('.stats');
-  var counterDuration = ms('--duration-counter');
-  if (!counters.length || !stats || reduceMotion || !counterDuration || !('IntersectionObserver' in window)) return;
+  var counterDuration = ms('--duration-hero-counter');
+  if (!counters.length || !stats || reduceMotion || !counterDuration) return;
 
   // Фіксуємо ширину, поки число росте, щоб сусідні цифри не їздили
   counters.forEach(function (counter) {
@@ -347,14 +348,18 @@ function sendLead(data) {
     counter.textContent = '0';
   });
 
+  var started = false;
   function runCounters() {
+    if (started) return;
+    started = true;
     var start = null;
     function frame(now) {
       if (start === null) start = now;
       var progress = Math.min((now - start) / counterDuration, 1);
-      var eased = 1 - Math.pow(1 - progress, 3); // ease-out
+      var eased = 1 - Math.pow(1 - progress, 3); // ease-out: наприкінці сповільнюється
       counters.forEach(function (counter) {
-        counter.textContent = Math.round(Number(counter.dataset.count) * eased);
+        // ceil, а не round: інакше число надовго «зависає» на 299 перед 300
+        counter.textContent = Math.ceil(Number(counter.dataset.count) * eased);
       });
       if (progress < 1) {
         requestAnimationFrame(frame);
@@ -367,19 +372,32 @@ function sendLead(data) {
     requestAnimationFrame(frame);
   }
 
-  var counterObserver = new IntersectionObserver(function (entries) {
-    if (!entries[0].isIntersecting) return;
-    counterObserver.disconnect(); // один раз
-    // Якщо статистика ще з'являється (послідовність Hero при завантаженні),
-    // чекаємо кінця її появи і лише тоді починаємо рахувати
+  // Рахуємо з моменту, коли статистика починає з'являтися (кінець її затримки в CSS)
+  function startWithStats() {
     var appearing = stats.getAnimations ? stats.getAnimations() : [];
-    if (appearing.length) {
-      Promise.all(appearing.map(function (animation) {
-        return animation.finished;
-      })).then(runCounters, runCounters);
-    } else {
+    var pending = appearing.some(function (animation) {
+      return animation.playState !== 'finished' &&
+        (animation.currentTime || 0) < animation.effect.getTiming().delay;
+    });
+    if (pending) stats.addEventListener('animationstart', runCounters, { once: true });
+    else runCounters();
+  }
+
+  var box = stats.getBoundingClientRect();
+  var onScreen = box.top + box.height / 2 < window.innerHeight;
+  if (onScreen || !('IntersectionObserver' in window)) {
+    // Звичайний випадок: статистику видно одразу — працює таймлайн Hero
+    startWithStats();
+  } else {
+    // Статистика нижче першого екрана: вона і лічильник чекають, поки її побачать
+    stats.classList.add('is-waiting');
+    var counterObserver = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting) return;
+      counterObserver.disconnect(); // один раз
+      stats.classList.add('is-late');
+      stats.classList.remove('is-waiting');
       runCounters();
-    }
-  }, { threshold: 0.5 });
-  counterObserver.observe(stats);
+    }, { threshold: 0.5 });
+    counterObserver.observe(stats);
+  }
 })();
