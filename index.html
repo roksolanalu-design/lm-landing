@@ -180,7 +180,11 @@
 
       <div class="container hero__content">
         <div class="hero__text">
-          <h1 class="hero__title" id="hero-title">Ваш спокій&nbsp;— наша <span class="hero__title-accent">відповідальність</span></h1>
+          <!-- Два рядки: кожен у «масці» (overflow: hidden), з-під якої виїжджає текст -->
+          <h1 class="hero__title" id="hero-title">
+            <span class="hero__title-line"><span class="hero__title-inner">Ваш спокій&nbsp;— наша</span></span>
+            <span class="hero__title-line"><span class="hero__title-inner hero__title-accent">відповідальність</span></span>
+          </h1>
           <p class="hero__lead">Ми&nbsp;беремо на&nbsp;себе всю бухгалтерію&nbsp;— від&nbsp;первинної документації до&nbsp;подачі звітності. Ви&nbsp;займаєтесь бізнесом, ми&nbsp;дбаємо про&nbsp;цифри.</p>
           <a class="btn hero__cta" href="#contact">Почати співпрацю</a>
         </div>
@@ -328,7 +332,7 @@
             <p class="service-card__text">Реєстрація, вибір групи, КВЕДи, навчання роботі в&nbsp;Кабінеті платника.</p>
             <div class="service-card__footer">
               <p class="service-card__price">від&nbsp;2&nbsp;000&nbsp;грн</p>
-              <a class="service-card__link" href="#contact" data-service="Відкриття / закриття ФОП">Обрати<span class="visually-hidden"> — Відкриття / закриття ФОП</span> <span class="service-card__arrow" aria-hidden="true">→</span></a>
+              <a class="service-card__link" href="#contact" data-service="Відкриття / закриття ФОП"><span class="service-card__link-text">Обрати</span><span class="visually-hidden"> — Відкриття / закриття ФОП</span> <span class="service-card__arrow" aria-hidden="true">→</span></a>
             </div>
           </article>
           <article class="service-card" data-reveal>
@@ -339,7 +343,7 @@
             <p class="service-card__text">Щомісячна звітність, нагадування про&nbsp;дедлайни, консультації, формування платіжних документів, контроль Електронного кабінету платника податків, контроль лімітів.</p>
             <div class="service-card__footer">
               <p class="service-card__price">від&nbsp;1&nbsp;500&nbsp;грн</p>
-              <a class="service-card__link" href="#contact" data-service="Супровід ФОП">Обрати<span class="visually-hidden"> — Супровід ФОП</span> <span class="service-card__arrow" aria-hidden="true">→</span></a>
+              <a class="service-card__link" href="#contact" data-service="Супровід ФОП"><span class="service-card__link-text">Обрати</span><span class="visually-hidden"> — Супровід ФОП</span> <span class="service-card__arrow" aria-hidden="true">→</span></a>
             </div>
           </article>
           <article class="service-card" data-reveal>
@@ -347,7 +351,7 @@
             <p class="service-card__text">Повне ведення бухгалтерського та&nbsp;податкового обліку, зарплата, ПДВ, ЗЕД, НКРЕКП, звітність.</p>
             <div class="service-card__footer">
               <p class="service-card__price">від&nbsp;5&nbsp;000&nbsp;грн</p>
-              <a class="service-card__link" href="#contact" data-service="Супровід ТОВ">Обрати<span class="visually-hidden"> — Супровід ТОВ</span> <span class="service-card__arrow" aria-hidden="true">→</span></a>
+              <a class="service-card__link" href="#contact" data-service="Супровід ТОВ"><span class="service-card__link-text">Обрати</span><span class="visually-hidden"> — Супровід ТОВ</span> <span class="service-card__arrow" aria-hidden="true">→</span></a>
             </div>
           </article>
           <article class="service-card" data-reveal>
@@ -355,7 +359,7 @@
             <p class="service-card__text">Облік цільових коштів, звіт неприбуткової організації, зарплата, підтримка статусу неприбутковості, робота з&nbsp;АСРГД.</p>
             <div class="service-card__footer">
               <p class="service-card__price">від&nbsp;4&nbsp;000&nbsp;грн</p>
-              <a class="service-card__link" href="#contact" data-service="Супровід неприбуткових організацій та БФ">Обрати<span class="visually-hidden"> — Супровід неприбуткових організацій та&nbsp;БФ</span> <span class="service-card__arrow" aria-hidden="true">→</span></a>
+              <a class="service-card__link" href="#contact" data-service="Супровід неприбуткових організацій та БФ"><span class="service-card__link-text">Обрати</span><span class="visually-hidden"> — Супровід неприбуткових організацій та&nbsp;БФ</span> <span class="service-card__arrow" aria-hidden="true">→</span></a>
             </div>
           </article>
           <article class="service-card" data-reveal>
@@ -363,7 +367,7 @@
             <p class="service-card__text">Декларація ФОП, фінансова звітність, об’єднана звітність ПДФО та&nbsp;ЄСВ чи&nbsp;інша форма. Підготуємо без&nbsp;абонплати.</p>
             <div class="service-card__footer">
               <p class="service-card__price">від&nbsp;800&nbsp;грн</p>
-              <a class="service-card__link" href="#contact" data-service="Подача разових звітів">Обрати<span class="visually-hidden"> — Подача разових звітів</span> <span class="service-card__arrow" aria-hidden="true">→</span></a>
+              <a class="service-card__link" href="#contact" data-service="Подача разових звітів"><span class="service-card__link-text">Обрати</span><span class="visually-hidden"> — Подача разових звітів</span> <span class="service-card__arrow" aria-hidden="true">→</span></a>
             </div>
           </article>
           <article class="service-card" data-reveal>
@@ -371,7 +375,7 @@
             <p class="service-card__text">Розбір вашої ситуації: вибір системи оподаткування, податки, перевірки, робота з&nbsp;ПРРО.</p>
             <div class="service-card__footer">
               <p class="service-card__price">1&nbsp;500&nbsp;грн&nbsp;/&nbsp;година</p>
-              <a class="service-card__link" href="#contact" data-service="Консультація">Обрати<span class="visually-hidden"> — Консультація</span> <span class="service-card__arrow" aria-hidden="true">→</span></a>
+              <a class="service-card__link" href="#contact" data-service="Консультація"><span class="service-card__link-text">Обрати</span><span class="visually-hidden"> — Консультація</span> <span class="service-card__arrow" aria-hidden="true">→</span></a>
             </div>
           </article>
         </div>

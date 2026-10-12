@@ -91,6 +91,9 @@
   --duration-reveal: 600ms;
   --duration-counter: 1600ms;
   --stagger: 90ms;
+  --duration-hero: 500ms;         /* один елемент у послідовності Hero */
+  --stagger-hero: 120ms;          /* крок між елементами Hero */
+  --duration-hero-photo: 1200ms;  /* масштаб фото Hero */
   --reveal-distance: 24px;
 }
 
@@ -116,6 +119,9 @@
     --duration-reveal: 0ms;
     --duration-counter: 0ms;
     --stagger: 0ms;
+    --duration-hero: 0ms;
+    --stagger-hero: 0ms;
+    --duration-hero-photo: 0ms;
     --reveal-distance: 0px;
   }
 }

@@ -407,8 +407,10 @@ p {
   background: var(--bg-page);
 }
 
+/* overflow: hidden — щоб фото, збільшене на старті, не вилазило за свій блок */
 .hero__media {
   display: block;
+  overflow: hidden;
 }
 
 /* Висота фото росте разом з екраном: 300px на 390, не більше 480px */
@@ -429,9 +431,21 @@ p {
   margin-bottom: var(--space-16);
 }
 
-/* Червоне слово завжди з нового рядка, як у макеті */
-.hero__title-accent {
+/* Заголовок із двох рядків. Рядок — це «маска» з overflow: hidden, усередині —
+   текст, який при завантаженні виїжджає знизу. Невеликий запас унизу маски,
+   щоб не зрізались хвостики літер (щ, д, р) */
+.hero__title-line {
   display: block;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+  overflow: hidden;
+}
+
+.hero__title-inner {
+  display: block;
+}
+
+.hero__title-accent {
   color: var(--text-brand);
 }
 
@@ -1561,6 +1575,43 @@ html:not(.js) .faq__icon {
   }
 }
 
+/* Hero при завантаженні. Працює на самому CSS, стартує з першим кадром.
+   Порядок: два рядки заголовка виїжджають з-під маски → опис → кнопка → статистика.
+   Останній елемент стартує на 480ms і триває 500ms, тож уся послідовність — до 1 с.
+   Фото видно одразу: воно лише повільно зменшується з 105% до 100% */
+@media (prefers-reduced-motion: no-preference) {
+  .js .hero__title-inner {
+    animation: hero-line var(--duration-hero) var(--ease-out-soft) backwards;
+  }
+
+  .js .hero__lead,
+  .js .hero__cta,
+  .js .hero .stats {
+    animation: reveal var(--duration-hero) var(--ease-out-soft) backwards;
+  }
+
+  .js .hero__title-line + .hero__title-line .hero__title-inner { animation-delay: var(--stagger-hero); }
+  .js .hero__lead    { animation-delay: calc(2 * var(--stagger-hero)); }
+  .js .hero__cta     { animation-delay: calc(3 * var(--stagger-hero)); }
+  .js .hero .stats   { animation-delay: calc(4 * var(--stagger-hero)); }
+
+  .js .hero__media img {
+    animation: hero-photo var(--duration-hero-photo) var(--ease-out-soft) backwards;
+  }
+}
+
+@keyframes hero-line {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes hero-photo {
+  from {
+    transform: scale(1.05);
+  }
+}
+
 /* Ховери — лише там, де є мишка */
 @media (hover: hover) {
   /* Тінь і рамка лежать у псевдоелементі та проявляються через opacity:
@@ -1605,7 +1656,8 @@ html:not(.js) .faq__icon {
     transform: translateX(var(--space-4));
   }
 
-  .service-card:hover .service-card__link {
+  /* Підкреслюємо лише слово «Обрати», без пробілу перед стрілкою */
+  .service-card:hover .service-card__link-text {
     text-decoration: underline;
     text-underline-position: from-font;
   }

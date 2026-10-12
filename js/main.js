@@ -370,7 +370,16 @@ function sendLead(data) {
   var counterObserver = new IntersectionObserver(function (entries) {
     if (!entries[0].isIntersecting) return;
     counterObserver.disconnect(); // один раз
-    runCounters();
+    // Якщо статистика ще з'являється (послідовність Hero при завантаженні),
+    // чекаємо кінця її появи і лише тоді починаємо рахувати
+    var appearing = stats.getAnimations ? stats.getAnimations() : [];
+    if (appearing.length) {
+      Promise.all(appearing.map(function (animation) {
+        return animation.finished;
+      })).then(runCounters, runCounters);
+    } else {
+      runCounters();
+    }
   }, { threshold: 0.5 });
   counterObserver.observe(stats);
 })();
