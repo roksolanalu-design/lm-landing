@@ -1590,6 +1590,36 @@ html:not(.js) .faq__icon {
   }
 }
 
+/* Номери кроків «загоряються». Звичайний вигляд номера — червоний, як у макеті
+   (так він виглядає без JS і при «Зменшити рух»). З анімацією номер спершу сірий,
+   а червоний шар із білою цифрою лежить зверху (::after) і проявляється через
+   opacity, коли крок доходить до середини екрана — клас is-lit ставить js/main.js */
+@media (prefers-reduced-motion: no-preference) {
+  .js .step__num {
+    position: relative;
+    color: var(--text-secondary);
+    background: var(--bg-surface);
+  }
+
+  .js .step__num::after {
+    content: attr(data-num);
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-inverse);
+    background: var(--action-primary);
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity var(--duration-step) var(--ease-out-soft) var(--step-delay, 0ms);
+  }
+
+  .js .step.is-lit .step__num::after {
+    opacity: 1;
+  }
+}
+
 /* Патерн-смуга повільно пливе. Рух стоїть на паузі, поки смуга поза екраном:
    клас is-moving ставить і знімає js/main.js (IntersectionObserver).
    Перша смуга пливе вліво, друга (--reverse) — вправо */

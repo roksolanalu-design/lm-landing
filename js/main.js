@@ -333,6 +333,34 @@ function sendLead(data) {
     });
   }
 
+  // --- Номери кроків «загоряються» ---
+  // Крок стає червоним, коли його верх перетинає середину екрана, і лишається таким.
+  // Як у шкалі прогресу: разом із кроком загоряються всі попередні.
+  var steps = Array.prototype.slice.call(document.querySelectorAll('.step'));
+  if (steps.length && !reduceMotion && 'IntersectionObserver' in window) {
+    var stepStagger = ms('--stagger');
+    var stepObserver = new IntersectionObserver(function (entries) {
+      var reached = -1;
+      entries.forEach(function (entry) {
+        // Вище середини екрана (або вже прокручений догори) — крок пройдено
+        var passed = entry.isIntersecting || entry.boundingClientRect.top < 0;
+        if (passed) reached = Math.max(reached, steps.indexOf(entry.target));
+      });
+      var order = 0;
+      steps.forEach(function (step, index) {
+        if (index > reached || step.classList.contains('is-lit')) return;
+        // Якщо загоряється кілька одразу — по черзі, а не всі разом
+        step.querySelector('.step__num').style.setProperty('--step-delay', order * stepStagger + 'ms');
+        step.classList.add('is-lit');
+        stepObserver.unobserve(step);
+        order += 1;
+      });
+    }, { rootMargin: '0px 0px -50% 0px' });
+    steps.forEach(function (step) {
+      stepObserver.observe(step);
+    });
+  }
+
   // --- Патерн-смуга ---
   // Смуга пливе лише тоді, коли її видно; поза екраном анімація на паузі
   var strips = document.querySelectorAll('.pattern-strip');
