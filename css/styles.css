@@ -656,8 +656,9 @@ p {
    знизу — padding-top наступної секції (48px моб. / 80px десктоп).
 
    Сама смуга — «вікно» з overflow: hidden. Усередині (::before) лежить стрічка
-   з двох однакових відрізків по 16 плиток. Коли стрічка зсувається рівно на один
-   відрізок (-50%), малюнок збігається сам із собою — стику не видно */
+   з трьох однакових відрізків по 16 плиток. Коли стрічка зсувається рівно на один
+   відрізок, малюнок збігається сам із собою — стику не видно. Третій відрізок —
+   запас, щоб і на дуже широкому моніторі праворуч не з'являлось порожнє місце */
 .pattern-strip {
   --pattern-tile: calc(var(--space-48) * 494 / 130); /* ширина плитки при висоті 48px */
   --pattern-segment: calc(16 * var(--pattern-tile));
@@ -670,7 +671,7 @@ p {
 .pattern-strip::before {
   content: "";
   display: block;
-  width: calc(2 * var(--pattern-segment));
+  width: calc(3 * var(--pattern-segment));
   height: 100%;
   background: url("../images/pattern-tile.svg") left center / auto 100% repeat-x;
 }
@@ -1608,7 +1609,7 @@ html:not(.js) .faq__icon {
 
 @keyframes pattern-drift {
   to {
-    transform: translateX(-50%);
+    transform: translateX(calc(-1 * var(--pattern-segment)));
   }
 }
 
