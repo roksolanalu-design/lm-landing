@@ -316,14 +316,10 @@ p {
 }
 
 @media (hover: hover) {
-  .site-nav__link,
-  .site-header__phone {
-    transition: color var(--duration-hover);
-  }
-
   .site-nav__link:hover,
   .site-header__phone:hover {
-    color: var(--text-accent);
+    text-decoration: underline;
+    text-underline-position: from-font;
   }
 }
 
@@ -588,6 +584,7 @@ p {
 }
 
 .for-whom__card {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -601,7 +598,12 @@ p {
 }
 
 .for-whom__card-title {
+  position: relative;
   font: var(--text-title);
+}
+
+.for-whom__card-text {
+  position: relative;
 }
 
 .for-whom__card-text {
@@ -955,6 +957,10 @@ p {
 .service-card__price {
   font: var(--text-body);
   font-weight: 700;
+}
+
+.service-card__arrow {
+  display: inline-block;
 }
 
 .service-card__link {
@@ -1528,6 +1534,80 @@ html:not(.js) .faq__icon {
   .legal {
     gap: var(--space-40);
     padding-bottom: var(--space-120);
+  }
+}
+
+/* ---------- Анімації ---------- */
+/* Правило для всього блоку: анімуються лише transform і opacity. */
+
+/* Поява секцій. Ховаємо тільки коли працює JS (.js) і людина не просила
+   зменшити рух; без цього контент просто видно одразу.
+   backwards: до старту елемент у початковому стані, а після завершення анімація
+   нічого не лишає — тому ховер карток працює без перешкод */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal]:not(.is-visible) {
+    opacity: 0;
+  }
+
+  .js [data-reveal].is-visible {
+    animation: reveal var(--duration-reveal) var(--ease-out-soft) backwards;
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(var(--reveal-distance));
+  }
+}
+
+/* Ховери — лише там, де є мишка */
+@media (hover: hover) {
+  /* Тінь і рамка лежать у псевдоелементі та проявляються через opacity:
+     так не анімується box-shadow і вміст картки не зсувається */
+  .for-whom__card,
+  .service-card {
+    transition: transform var(--duration-hover);
+  }
+
+  .for-whom__card::before,
+  .service-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 var(--space-12) var(--space-32) color-mix(in srgb, var(--bg-dark) 12%, transparent);
+    opacity: 0;
+    transition: opacity var(--duration-hover);
+    pointer-events: none;
+  }
+
+  /* Card/Service, State=Hover: червона рамка 2px */
+  .service-card::before {
+    border: 2px solid var(--action-primary);
+  }
+
+  .for-whom__card:hover,
+  .service-card:hover {
+    transform: translateY(calc(-1 * var(--space-4)));
+  }
+
+  .for-whom__card:hover::before,
+  .service-card:hover::before {
+    opacity: 1;
+  }
+
+  .service-card__arrow {
+    transition: transform var(--duration-hover);
+  }
+
+  .service-card:hover .service-card__arrow {
+    transform: translateX(var(--space-4));
+  }
+
+  .service-card:hover .service-card__link {
+    text-decoration: underline;
+    text-underline-position: from-font;
   }
 }
 

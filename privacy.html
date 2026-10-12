@@ -8,7 +8,14 @@
   <meta name="description" content="Як LM Бухгалтерські послуги збирає, використовує та захищає персональні дані, які ви залишаєте у формі на сайті.">
   <meta name="theme-color" content="#E30613">
 
-  <script>document.documentElement.classList.add('js');</script>
+  <script>
+    document.documentElement.classList.add('js');
+    // Запобіжник: якщо js/main.js так і не завантажився, за 3 с знімаємо клас .js —
+    // усе, що було сховане для анімацій і акордеона, знову стає видимим
+    setTimeout(function () {
+      if (!window.lmReady) document.documentElement.classList.remove('js');
+    }, 3000);
+  </script>
 
   <link rel="preload" href="fonts/Onest-Variable.woff2" as="font" type="font/woff2" crossorigin>
 

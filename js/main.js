@@ -1,5 +1,8 @@
 // LM Бухгалтерські послуги — скрипти сторінки
 
+// Сигнал для запобіжника в <head>: скрипт завантажився, клас .js знімати не треба
+window.lmReady = true;
+
 // ---------- Відправка заявки ----------
 // ЗАГЛУШКА. Куди надсилати (Telegram / e-mail) — ще не вирішено.
 // Щоб підключити справжню відправку, замініть лише тіло цієї функції.
@@ -291,4 +294,83 @@ function sendLead(data) {
       showPopup('popup-error');
     });
   });
+})();
+
+// ---------- Анімації ----------
+(function () {
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var rootStyle = getComputedStyle(document.documentElement);
+
+  // Читає тривалість із токена: «1600ms» → 1600
+  function ms(token) {
+    var value = rootStyle.getPropertyValue(token).trim();
+    return value.indexOf('ms') > -1 ? parseFloat(value) : parseFloat(value) * 1000;
+  }
+
+  // --- Поява секцій ---
+  // Елементи з data-reveal сховані в CSS (лише під .js і без «Зменшити рух»).
+  // Коли елемент заходить на екран, він отримує клас is-visible — один раз.
+  var revealItems = document.querySelectorAll('[data-reveal]');
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    revealItems.forEach(function (item) {
+      item.classList.add('is-visible');
+    });
+  } else {
+    var stagger = ms('--stagger');
+    var revealObserver = new IntersectionObserver(function (entries) {
+      // Усі, хто з'явився одночасно (картки в одному ряду), ідуть по черзі
+      var order = 0;
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.style.animationDelay = order * stagger + 'ms';
+        entry.target.classList.add('is-visible');
+        revealObserver.unobserve(entry.target);
+        order += 1;
+      });
+    }, { threshold: 0.15 });
+    revealItems.forEach(function (item) {
+      revealObserver.observe(item);
+    });
+  }
+
+  // --- Лічильник у статистиці ---
+  // Скрінрідер читає приховану копію з фінальним числом, тут анімується видима.
+  var counters = document.querySelectorAll('[data-count]');
+  var stats = document.querySelector('.stats');
+  var counterDuration = ms('--duration-counter');
+  if (!counters.length || !stats || reduceMotion || !counterDuration || !('IntersectionObserver' in window)) return;
+
+  // Фіксуємо ширину, поки число росте, щоб сусідні цифри не їздили
+  counters.forEach(function (counter) {
+    var box = counter.closest('.stats__value');
+    box.style.minWidth = box.getBoundingClientRect().width + 'px';
+    counter.textContent = '0';
+  });
+
+  function runCounters() {
+    var start = null;
+    function frame(now) {
+      if (start === null) start = now;
+      var progress = Math.min((now - start) / counterDuration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3); // ease-out
+      counters.forEach(function (counter) {
+        counter.textContent = Math.round(Number(counter.dataset.count) * eased);
+      });
+      if (progress < 1) {
+        requestAnimationFrame(frame);
+      } else {
+        counters.forEach(function (counter) {
+          counter.closest('.stats__value').style.minWidth = '';
+        });
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  var counterObserver = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting) return;
+    counterObserver.disconnect(); // один раз
+    runCounters();
+  }, { threshold: 0.5 });
+  counterObserver.observe(stats);
 })();

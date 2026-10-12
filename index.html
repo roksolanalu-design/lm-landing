@@ -10,7 +10,14 @@
   <meta name="theme-color" content="#E30613">
 
   <!-- Клас .js потрібен, щоб ховати елементи для анімацій лише коли JS працює -->
-  <script>document.documentElement.classList.add('js');</script>
+  <script>
+    document.documentElement.classList.add('js');
+    // Запобіжник: якщо js/main.js так і не завантажився, за 3 с знімаємо клас .js —
+    // усе, що було сховане для анімацій і акордеона, знову стає видимим
+    setTimeout(function () {
+      if (!window.lmReady) document.documentElement.classList.remove('js');
+    }, 3000);
+  </script>
 
   <!-- Шрифт: один варіативний файл на всі накреслення -->
   <link rel="preload" href="fonts/Onest-Variable.woff2" as="font" type="font/woff2" crossorigin>
@@ -180,15 +187,15 @@
 
         <ul class="stats">
           <li class="stats__item">
-            <span class="stats__value">300+</span>
+            <span class="stats__value"><span class="visually-hidden">300+</span><span aria-hidden="true"><span data-count="300">300</span>+</span></span>
             <span class="stats__label">подано звітів</span>
           </li>
           <li class="stats__item">
-            <span class="stats__value">25+</span>
+            <span class="stats__value"><span class="visually-hidden">25+</span><span aria-hidden="true"><span data-count="25">25</span>+</span></span>
             <span class="stats__label">років досвіду</span>
           </li>
           <li class="stats__item">
-            <span class="stats__value">7</span>
+            <span class="stats__value"><span class="visually-hidden">7</span><span aria-hidden="true"><span data-count="7">7</span></span></span>
             <span class="stats__label">років компанії</span>
           </li>
         </ul>
@@ -201,22 +208,22 @@
     <!-- 3. Для кого -->
     <section class="section for-whom" id="for-whom" aria-labelledby="for-whom-title">
       <div class="container">
-        <h2 class="section__title" id="for-whom-title">Для&nbsp;кого і&nbsp;з&nbsp;якими питаннями до&nbsp;нас звертаються</h2>
+        <h2 class="section__title" id="for-whom-title" data-reveal>Для&nbsp;кого і&nbsp;з&nbsp;якими питаннями до&nbsp;нас звертаються</h2>
 
         <ul class="for-whom__cards">
-          <li class="for-whom__card">
+          <li class="for-whom__card" data-reveal>
             <h3 class="for-whom__card-title">ФОП-початківець</h3>
             <p class="for-whom__card-text">Тільки відкрили або плануєте відкрити ФОП. Допоможемо обрати групу, КВЕДи і&nbsp;не&nbsp;помилитись з&nbsp;першого дня.</p>
           </li>
-          <li class="for-whom__card">
+          <li class="for-whom__card" data-reveal>
             <h3 class="for-whom__card-title">ФОП / ТОВ</h3>
             <p class="for-whom__card-text">Звіти подаються в&nbsp;останній день і&nbsp;є&nbsp;сумніви, що&nbsp;все правильно. Перевіримо, виправимо, візьмемо під&nbsp;контроль.</p>
           </li>
-          <li class="for-whom__card">
+          <li class="for-whom__card" data-reveal>
             <h3 class="for-whom__card-title">НГО / Благодійні фонди</h3>
             <p class="for-whom__card-text">Специфічна звітність, гранти, донори. Знаємо особливості некомерційної сфери.</p>
           </li>
-          <li class="for-whom__card">
+          <li class="for-whom__card" data-reveal>
             <h3 class="for-whom__card-title">Податкові перевірки</h3>
             <p class="for-whom__card-text">Все здається під&nbsp;контролем, але страх штрафів і&nbsp;податкової не&nbsp;відпускає. Перевіримо, чи&nbsp;все правильно і&nbsp;будемо поруч.</p>
           </li>
@@ -231,11 +238,11 @@
     <section class="section how" id="how" aria-labelledby="how-title">
       <div class="container how__inner">
         <div class="how__content">
-          <h2 class="section__title" id="how-title">Як&nbsp;ми&nbsp;працюємо</h2>
+          <h2 class="section__title" id="how-title" data-reveal>Як&nbsp;ми&nbsp;працюємо</h2>
 
           <!-- Номер у квадраті декоративний: нумерацію вже дає <ol> -->
           <ol class="steps">
-            <li class="step">
+            <li class="step" data-reveal>
               <span class="step__num" aria-hidden="true">1</span>
               <div class="step__body">
                 <h3 class="step__title">Дзвінок-знайомство <span class="step__dot">·&nbsp;</span>безкоштовно</h3>
@@ -243,7 +250,7 @@
                 <p class="step__text"><strong class="step__label"><span aria-hidden="true">→&nbsp;</span>Ви&nbsp;отримуєте:</strong> чесну відповідь, чи&nbsp;можемо допомогти.</p>
               </div>
             </li>
-            <li class="step">
+            <li class="step" data-reveal>
               <span class="step__num" aria-hidden="true">2</span>
               <div class="step__body">
                 <h3 class="step__title">Аналіз ситуації</h3>
@@ -251,7 +258,7 @@
                 <p class="step__text"><strong class="step__label"><span aria-hidden="true">→&nbsp;</span>Ви&nbsp;отримуєте:</strong> зрозумілу картину&nbsp;— що&nbsp;в&nbsp;порядку, а&nbsp;що&nbsp;потребує уваги.</p>
               </div>
             </li>
-            <li class="step">
+            <li class="step" data-reveal>
               <span class="step__num" aria-hidden="true">3</span>
               <div class="step__body">
                 <h3 class="step__title">Договір</h3>
@@ -259,7 +266,7 @@
                 <p class="step__text"><strong class="step__label"><span aria-hidden="true">→&nbsp;</span>Ви&nbsp;отримуєте:</strong> фіксовану ціну і&nbsp;відповідальність за&nbsp;помилки, прописані в&nbsp;договорі.</p>
               </div>
             </li>
-            <li class="step">
+            <li class="step" data-reveal>
               <span class="step__num" aria-hidden="true">4</span>
               <div class="step__body">
                 <h3 class="step__title">Передача справ</h3>
@@ -267,7 +274,7 @@
                 <p class="step__text"><strong class="step__label"><span aria-hidden="true">→&nbsp;</span>Ви&nbsp;отримуєте:</strong> перехід без&nbsp;зупинки роботи, нічого не&nbsp;загубиться.</p>
               </div>
             </li>
-            <li class="step">
+            <li class="step" data-reveal>
               <span class="step__num" aria-hidden="true">5</span>
               <div class="step__body">
                 <h3 class="step__title">Щомісячний супровід</h3>
@@ -277,7 +284,7 @@
             </li>
           </ol>
 
-          <a class="btn how__cta" href="#contact">Почати співпрацю</a>
+          <a class="btn how__cta" href="#contact" data-reveal>Почати співпрацю</a>
         </div>
 
         <!-- Великий декоративний логотип, лише на десктопі -->
@@ -289,9 +296,9 @@
     <!-- 6. Про нас -->
     <section class="section about" id="about" aria-labelledby="about-title">
       <div class="container about__inner">
-        <h2 class="about__title" id="about-title">Про&nbsp;нас</h2>
+        <h2 class="about__title" id="about-title" data-reveal>Про&nbsp;нас</h2>
 
-        <picture class="about__media">
+        <picture class="about__media" data-reveal>
           <source type="image/webp" sizes="(min-width: 768px) 486px, 135vw"
                   srcset="images/about-800.webp 800w, images/about-1200.webp 1200w">
           <img src="images/about-800.jpg" sizes="(min-width: 768px) 486px, 135vw"
@@ -300,7 +307,7 @@
                alt="Мирослава Луцик — жінка з рудим волоссям у світлому жакеті, усміхається на тлі офісу">
         </picture>
 
-        <div class="about__text">
+        <div class="about__text" data-reveal>
           <p class="about__subtitle">Луцик Мирослава&nbsp;— сертифікований бухгалтер</p>
           <p class="about__body">З&nbsp;1995 року в&nbsp;бухгалтерії, з&nbsp;2019 року&nbsp;— власна компанія LM. За&nbsp;цей&nbsp;час подано 300+ звітів, пройдено податкові перевірки, відкрито сотні ФОП і&nbsp;ТОВ. Працюємо з&nbsp;командою&nbsp;— кожен клієнт отримує увагу і&nbsp;зворотній зв'язок.</p>
         </div>
@@ -310,21 +317,21 @@
     <!-- 7. Послуги | Вартість -->
     <section class="section services" id="services" aria-labelledby="services-title">
       <div class="container">
-        <h2 class="section__title" id="services-title">Послуги | Вартість</h2>
+        <h2 class="section__title" id="services-title" data-reveal>Послуги | Вартість</h2>
 
         <!-- Єдиний список послуг: з data-service цих карток JS збирає
              варіанти поля «Тема звернення» у формі. Назва в data-service
              має точно збігатися із заголовком картки. -->
         <div class="services__cards">
-          <article class="service-card">
+          <article class="service-card" data-reveal>
             <h3 class="service-card__title">Відкриття / закриття ФОП</h3>
             <p class="service-card__text">Реєстрація, вибір групи, КВЕДи, навчання роботі в&nbsp;Кабінеті платника.</p>
             <div class="service-card__footer">
               <p class="service-card__price">від&nbsp;2&nbsp;000&nbsp;грн</p>
-              <a class="service-card__link" href="#contact" data-service="Відкриття / закриття ФОП">Обрати<span class="visually-hidden"> — Відкриття / закриття ФОП</span> <span aria-hidden="true">→</span></a>
+              <a class="service-card__link" href="#contact" data-service="Відкриття / закриття ФОП">Обрати<span class="visually-hidden"> — Відкриття / закриття ФОП</span> <span class="service-card__arrow" aria-hidden="true">→</span></a>
             </div>
           </article>
-          <article class="service-card">
+          <article class="service-card" data-reveal>
             <div class="service-card__head">
               <h3 class="service-card__title">Супровід ФОП</h3>
               <p class="service-card__badge">Популярне</p>
@@ -332,51 +339,51 @@
             <p class="service-card__text">Щомісячна звітність, нагадування про&nbsp;дедлайни, консультації, формування платіжних документів, контроль Електронного кабінету платника податків, контроль лімітів.</p>
             <div class="service-card__footer">
               <p class="service-card__price">від&nbsp;1&nbsp;500&nbsp;грн</p>
-              <a class="service-card__link" href="#contact" data-service="Супровід ФОП">Обрати<span class="visually-hidden"> — Супровід ФОП</span> <span aria-hidden="true">→</span></a>
+              <a class="service-card__link" href="#contact" data-service="Супровід ФОП">Обрати<span class="visually-hidden"> — Супровід ФОП</span> <span class="service-card__arrow" aria-hidden="true">→</span></a>
             </div>
           </article>
-          <article class="service-card">
+          <article class="service-card" data-reveal>
             <h3 class="service-card__title">Супровід ТОВ</h3>
             <p class="service-card__text">Повне ведення бухгалтерського та&nbsp;податкового обліку, зарплата, ПДВ, ЗЕД, НКРЕКП, звітність.</p>
             <div class="service-card__footer">
               <p class="service-card__price">від&nbsp;5&nbsp;000&nbsp;грн</p>
-              <a class="service-card__link" href="#contact" data-service="Супровід ТОВ">Обрати<span class="visually-hidden"> — Супровід ТОВ</span> <span aria-hidden="true">→</span></a>
+              <a class="service-card__link" href="#contact" data-service="Супровід ТОВ">Обрати<span class="visually-hidden"> — Супровід ТОВ</span> <span class="service-card__arrow" aria-hidden="true">→</span></a>
             </div>
           </article>
-          <article class="service-card">
+          <article class="service-card" data-reveal>
             <h3 class="service-card__title">Супровід неприбуткових організацій та&nbsp;БФ</h3>
             <p class="service-card__text">Облік цільових коштів, звіт неприбуткової організації, зарплата, підтримка статусу неприбутковості, робота з&nbsp;АСРГД.</p>
             <div class="service-card__footer">
               <p class="service-card__price">від&nbsp;4&nbsp;000&nbsp;грн</p>
-              <a class="service-card__link" href="#contact" data-service="Супровід неприбуткових організацій та БФ">Обрати<span class="visually-hidden"> — Супровід неприбуткових організацій та&nbsp;БФ</span> <span aria-hidden="true">→</span></a>
+              <a class="service-card__link" href="#contact" data-service="Супровід неприбуткових організацій та БФ">Обрати<span class="visually-hidden"> — Супровід неприбуткових організацій та&nbsp;БФ</span> <span class="service-card__arrow" aria-hidden="true">→</span></a>
             </div>
           </article>
-          <article class="service-card">
+          <article class="service-card" data-reveal>
             <h3 class="service-card__title">Подача разових звітів</h3>
             <p class="service-card__text">Декларація ФОП, фінансова звітність, об’єднана звітність ПДФО та&nbsp;ЄСВ чи&nbsp;інша форма. Підготуємо без&nbsp;абонплати.</p>
             <div class="service-card__footer">
               <p class="service-card__price">від&nbsp;800&nbsp;грн</p>
-              <a class="service-card__link" href="#contact" data-service="Подача разових звітів">Обрати<span class="visually-hidden"> — Подача разових звітів</span> <span aria-hidden="true">→</span></a>
+              <a class="service-card__link" href="#contact" data-service="Подача разових звітів">Обрати<span class="visually-hidden"> — Подача разових звітів</span> <span class="service-card__arrow" aria-hidden="true">→</span></a>
             </div>
           </article>
-          <article class="service-card">
+          <article class="service-card" data-reveal>
             <h3 class="service-card__title">Консультація</h3>
             <p class="service-card__text">Розбір вашої ситуації: вибір системи оподаткування, податки, перевірки, робота з&nbsp;ПРРО.</p>
             <div class="service-card__footer">
               <p class="service-card__price">1&nbsp;500&nbsp;грн&nbsp;/&nbsp;година</p>
-              <a class="service-card__link" href="#contact" data-service="Консультація">Обрати<span class="visually-hidden"> — Консультація</span> <span aria-hidden="true">→</span></a>
+              <a class="service-card__link" href="#contact" data-service="Консультація">Обрати<span class="visually-hidden"> — Консультація</span> <span class="service-card__arrow" aria-hidden="true">→</span></a>
             </div>
           </article>
         </div>
 
-        <p class="services__note">Точна вартість залежить від&nbsp;обсягу операцій і&nbsp;розраховується індивідуально.</p>
+        <p class="services__note" data-reveal>Точна вартість залежить від&nbsp;обсягу операцій і&nbsp;розраховується індивідуально.</p>
       </div>
     </section>
 
     <!-- 8. Питання та відповіді -->
     <section class="section faq" id="faq" aria-labelledby="faq-title">
       <div class="container faq__inner">
-        <div class="faq__intro">
+        <div class="faq__intro" data-reveal>
           <h2 class="section__title" id="faq-title">Питання та&nbsp;відповіді</h2>
           <p class="faq__lead">Не&nbsp;знайшли відповіді? Напишіть&nbsp;нам&nbsp;— зв’яжемося протягом дня.</p>
           <a class="btn btn--compact faq__cta" href="#contact">Залишити заявку</a>
@@ -384,7 +391,7 @@
 
         <!-- Акордеон. Без JS усі відповіді просто відкриті -->
         <div class="faq__list">
-          <div class="faq__item is-open">
+          <div class="faq__item is-open" data-reveal>
             <h3 class="faq__question">
               <button class="faq__toggle" type="button" id="faq-q1" aria-expanded="true" aria-controls="faq-a1">
                 <span>Від&nbsp;чого залежить вартість?</span>
@@ -395,7 +402,7 @@
               <p>Від&nbsp;системи оподаткування, кількості банківських операцій і&nbsp;працівників, наявності ПДВ та&nbsp;ЗЕД. Точну суму фіксуємо в&nbsp;договорі та&nbsp;специфікації; якщо обсяг роботи змінюється, вартість переглядаємо.</p>
             </div>
           </div>
-          <div class="faq__item">
+          <div class="faq__item" data-reveal>
             <h3 class="faq__question">
               <button class="faq__toggle" type="button" id="faq-q2" aria-expanded="false" aria-controls="faq-a2">
                 <span>Які документи потрібні для&nbsp;початку роботи?</span>
@@ -406,7 +413,7 @@
               <p>Для&nbsp;ФОП достатньо паспорта, ІПН та&nbsp;електронного ключа. Для&nbsp;ТОВ і&nbsp;неприбуткових організацій додатково потрібні установчі документи, доступ до&nbsp;Електронного кабінету та&nbsp;клієнт-банку.</p>
             </div>
           </div>
-          <div class="faq__item">
+          <div class="faq__item" data-reveal>
             <h3 class="faq__question">
               <button class="faq__toggle" type="button" id="faq-q3" aria-expanded="false" aria-controls="faq-a3">
                 <span>Чи&nbsp;працюєте ви&nbsp;дистанційно?</span>
@@ -417,7 +424,7 @@
               <p>Так, з&nbsp;клієнтами по&nbsp;всій Україні: документи приймаємо онлайн, звіти подаємо в&nbsp;електронному вигляді.</p>
             </div>
           </div>
-          <div class="faq__item">
+          <div class="faq__item" data-reveal>
             <h3 class="faq__question">
               <button class="faq__toggle" type="button" id="faq-q4" aria-expanded="false" aria-controls="faq-a4">
                 <span>Чи&nbsp;можна перейти до&nbsp;вас від&nbsp;іншого бухгалтера або припинити співпрацю?</span>
@@ -428,7 +435,7 @@
               <p>Так. Перевіримо стан обліку й&nbsp;приймемо справи без&nbsp;зупинки вашої роботи. Договір можна розірвати, попередивши за&nbsp;30&nbsp;днів; усі документи передаємо&nbsp;вам. Інформація про&nbsp;ваш бізнес залишається конфіденційною.</p>
             </div>
           </div>
-          <div class="faq__item">
+          <div class="faq__item" data-reveal>
             <h3 class="faq__question">
               <button class="faq__toggle" type="button" id="faq-q5" aria-expanded="false" aria-controls="faq-a5">
                 <span>Хто відповідає за&nbsp;помилки у&nbsp;звітності?</span>
@@ -439,7 +446,7 @@
               <p>Наша відповідальність закріплена в&nbsp;договорі. Якщо санкцію застосували через нашу помилку в&nbsp;обліку чи&nbsp;звітності, ми&nbsp;оскаржуємо рішення, а&nbsp;якщо воно залишається чинним, відшкодовуємо збитки в&nbsp;межах, визначених договором.</p>
             </div>
           </div>
-          <div class="faq__item">
+          <div class="faq__item" data-reveal>
             <h3 class="faq__question">
               <button class="faq__toggle" type="button" id="faq-q6" aria-expanded="false" aria-controls="faq-a6">
                 <span>Як&nbsp;відбувається оплата?</span>
@@ -450,7 +457,7 @@
               <p>Працюємо за&nbsp;договором. Оплата щомісяця до&nbsp;15-го&nbsp;числа за&nbsp;поточний місяць, після завершення місяця надаємо акт наданих послуг.</p>
             </div>
           </div>
-          <div class="faq__item">
+          <div class="faq__item" data-reveal>
             <h3 class="faq__question">
               <button class="faq__toggle" type="button" id="faq-q7" aria-expanded="false" aria-controls="faq-a7">
                 <span>Коли потрібно передавати документи?</span>
@@ -461,7 +468,7 @@
               <p>До&nbsp;5-го&nbsp;числа місяця, наступного за&nbsp;звітним. Проєкти звітів показуємо&nbsp;вам щонайменше за&nbsp;три дні до&nbsp;строку подання.</p>
             </div>
           </div>
-          <div class="faq__item">
+          <div class="faq__item" data-reveal>
             <h3 class="faq__question">
               <button class="faq__toggle" type="button" id="faq-q8" aria-expanded="false" aria-controls="faq-a8">
                 <span>Скільки часу займає відкриття ФОП?</span>
@@ -482,13 +489,13 @@
     <!-- 9. Форма -->
     <section class="section contact" id="contact" aria-labelledby="contact-title">
       <div class="container contact__inner">
-        <div class="contact__intro">
+        <div class="contact__intro" data-reveal>
           <h2 class="section__title" id="contact-title">Бухгалтерія під&nbsp;контролем. Звіти вчасно.</h2>
           <p class="contact__lead">Оберіть послугу&nbsp;— зв’яжемося протягом дня і&nbsp;домовимося про&nbsp;безкоштовний дзвінок-знайомство.</p>
         </div>
 
         <!-- novalidate: перевірку й тексти помилок робить js/main.js -->
-        <form class="form" id="contact-form" action="#contact" method="post" novalidate>
+        <form class="form" id="contact-form" data-reveal action="#contact" method="post" novalidate>
           <div class="form__fields">
             <!-- Варіанти послуг у цей список додає JS із карток «Послуги | Вартість» -->
             <div class="field">
