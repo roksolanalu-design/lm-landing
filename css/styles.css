@@ -480,7 +480,9 @@ p {
 
   .stats {
     display: flex;
-    gap: var(--space-64);
+    /* 64px, як у макеті, від 1280px; на вужчих екранах плавно до 24px,
+       щоб блок цифр закінчувався лівіше і не заходив на фото */
+    gap: clamp(var(--space-24), calc(var(--space-24) + (100vw - 1024px) * 0.15625), var(--space-64));
     text-align: left;
   }
 
@@ -502,10 +504,11 @@ p {
   .hero__media {
     position: absolute;
     inset: 0;
+    overflow: hidden;
   }
 
   /* Світла вуаль зліва поверх фото: текст і цифри стоять на спокійному тлі.
-     До 60% ширини вона сходить нанівець, тож обличчя й руки не зачеплені.
+     До 56% ширини вона сходить нанівець, тож обличчя й руки не зачеплені.
      Шари знизу вгору: фото → вуаль → текст */
   .hero::before {
     content: "";
@@ -514,18 +517,21 @@ p {
     z-index: 1;
     background: linear-gradient(
       to right,
-      color-mix(in srgb, var(--bg-surface) 90%, transparent) 0%,
-      color-mix(in srgb, var(--bg-surface) 75%, transparent) 35%,
-      color-mix(in srgb, var(--bg-surface) 0%, transparent) 60%
+      color-mix(in srgb, var(--bg-surface) 92%, transparent) 0%,
+      color-mix(in srgb, var(--bg-surface) 85%, transparent) 42%,
+      color-mix(in srgb, var(--bg-surface) 0%, transparent) 56%
     );
     pointer-events: none;
   }
 
-  /* Фото прив'язане до всіх чотирьох країв блоку — доходить до правого краю вікна */
+  /* Праві ~5% самого фото — засвічене вікно, майже біле. На білій сторінці воно
+     виглядало як порожня смужка збоку. Тому фото на 5.8% ширше за блок і цей край
+     обрізається: тепер праворуч видно віконну раму, а не білу пляму */
   .hero__media img {
     position: absolute;
-    inset: 0;
-    width: 100%;
+    inset: 0 auto 0 0;
+    width: 105.8%;
+    max-width: none;
     height: 100%;
     object-position: right top;
   }
