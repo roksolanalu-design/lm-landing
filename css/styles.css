@@ -480,9 +480,9 @@ p {
 
   .stats {
     display: flex;
-    /* 64px, як у макеті, від 1280px; на вужчих екранах плавно до 24px,
+    /* 64px, як у макеті, від 1280px; на вужчих екранах плавно до 32px,
        щоб блок цифр закінчувався лівіше і не заходив на фото */
-    gap: clamp(var(--space-24), calc(var(--space-24) + (100vw - 1024px) * 0.15625), var(--space-64));
+    gap: clamp(var(--space-32), calc(var(--space-32) + (100vw - 1024px) * 0.125), var(--space-64));
     text-align: left;
   }
 
