@@ -1655,10 +1655,11 @@ html:not(.js) .faq__icon {
    Затримки — частки кроку --hero-stagger (200ms):
      фото 0 · рядок 1 — 150ms · рядок 2 — 300ms · опис 600ms · кнопка 800ms · статистика 1000ms.
    Разом зі статистикою стартує лічильник (js/main.js).
-   Фото видно одразу: воно лише повільно зменшується зі 106% до 100% */
+   Фото видно одразу: воно лише повільно зменшується зі 106% до 100% і закінчує
+   трохи пізніше за лічильник, з власною, рівнішою кривою */
 @media (prefers-reduced-motion: no-preference) {
   .js .hero__media img {
-    animation: hero-photo var(--duration-hero-photo) var(--ease-out-soft) backwards;
+    animation: hero-photo var(--duration-hero-photo) var(--ease-hero-photo) backwards;
   }
 
   .js .hero__title-inner {

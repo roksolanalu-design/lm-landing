@@ -91,13 +91,17 @@
   --duration-reveal: 1000ms;
   --duration-counter: 1600ms;
   --stagger: 120ms;
-  /* Hero при завантаженні — один таймлайн (усе з --ease-out-soft):
+  /* Hero при завантаженні — один таймлайн (текст з --ease-out-soft, фото — з власною кривою):
      фото 0 → рядки H1 150 і 300 → опис 600 → кнопка 800 → статистика й лічильник 1000 мс */
-  --duration-hero-photo: 2400ms;    /* фото: масштаб 1.06 → 1 */
   --duration-hero-text: 900ms;      /* рядок заголовка виїжджає з-під маски */
   --duration-hero-fade: 700ms;      /* опис, кнопка, статистика: fade-up */
   --duration-hero-counter: 1800ms;  /* лічильник у Hero */
   --hero-stagger: 200ms;            /* крок таймлайну: затримки рахуються від нього */
+  --hero-photo-tail: 600ms;         /* на скільки фото доїжджає після зупинки лічильника */
+  /* Фото: масштаб 1.06 → 1. Триває до кінця лічильника (старт на 5-му кроці
+     + тривалість) і ще трохи після — підлаштовується само, якщо змінити лічильник */
+  --duration-hero-photo: calc(5 * var(--hero-stagger) + var(--duration-hero-counter) + var(--hero-photo-tail));
+  --ease-hero-photo: cubic-bezier(0.25, 0.1, 0.25, 1); /* рівномірне наближення до самого кінця */
   --duration-pattern: 90s;          /* патерн-смуга: один повний цикл руху */
   --reveal-distance: 64px;
   --hero-reveal-distance: 24px;     /* fade-up у Hero лишається коротким */
@@ -125,11 +129,11 @@
     --duration-reveal: 0ms;
     --duration-counter: 0ms;
     --stagger: 0ms;
-    --duration-hero-photo: 0ms;
     --duration-hero-text: 0ms;
     --duration-hero-fade: 0ms;
     --duration-hero-counter: 0ms;
     --hero-stagger: 0ms;
+    --hero-photo-tail: 0ms;
     --duration-pattern: 0s;
     --reveal-distance: 0px;
     --hero-reveal-distance: 0px;
