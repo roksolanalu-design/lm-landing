@@ -271,30 +271,6 @@ p {
   border: 0;
 }
 
-/* Хрестик для відкритого меню — дві лінії того ж розміру, що й в іконці */
-.burger::before,
-.burger::after {
-  content: "";
-  position: absolute;
-  width: 28px;
-  height: 2px;
-  background: var(--text-primary);
-  border-radius: var(--radius-full);
-  opacity: 0;
-}
-
-.burger[aria-expanded="true"] .burger__icon {
-  opacity: 0;
-}
-
-.burger[aria-expanded="true"]::before,
-.burger[aria-expanded="true"]::after {
-  opacity: 1;
-}
-
-.burger[aria-expanded="true"]::before { transform: rotate(45deg); }
-.burger[aria-expanded="true"]::after  { transform: rotate(-45deg); }
-
 /* Без JS меню просто лежить рядком під шапкою */
 .site-nav {
   order: 3;
@@ -323,37 +299,157 @@ p {
   }
 }
 
-/* З JS: бургер + панель, що випадає під шапкою */
+/* З JS на мобайлі: замість рядка посилань — бургер, що відкриває повноекранне меню */
 @media (max-width: 1023.98px) {
   .js .burger {
     display: flex;
   }
 
   .js .site-nav {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
     display: none;
-    max-height: calc(100vh - var(--header-height));
-    max-height: calc(100dvh - var(--header-height));
-    overflow-y: auto;
-    padding: var(--space-8) var(--page-margin) var(--space-16);
-    background: var(--bg-page);
-    border-block: 1px solid var(--border-subtle);
   }
+}
 
-  .js .site-nav.is-open {
-    display: block;
-  }
+/* ---------- Мобільне меню ---------- */
+/* Червоний екран поверх сторінки: лого і хрестик угорі, посилання й контакти
+   по центру, біла кнопка, великий декоративний патерн унизу */
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0 0 var(--space-48);
+  overflow-x: hidden;
+  overflow-y: auto;
+  color: var(--text-inverse);
+  background: var(--action-primary);
+  border: 0;
+}
 
-  .js .site-nav__list {
-    flex-direction: column;
-  }
+.mobile-menu[open] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-  .js .site-nav__link {
-    min-height: var(--space-48);
-  }
+.mobile-menu::backdrop {
+  background: var(--action-primary);
+}
+
+/* Поки меню відкрите, сторінка під ним не прокручується */
+html.is-menu-open {
+  overflow: hidden;
+}
+
+/* Шапка меню повторює мобільну шапку сайту: 60px, лого 32px */
+.mobile-menu__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--header-height);
+  padding-block: var(--space-8);
+}
+
+.mobile-menu__logo {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.mobile-menu__logo img {
+  width: auto;
+  height: var(--space-32);
+}
+
+.mobile-menu__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-48);
+  height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+}
+
+/* Пункти меню: рядок 24px + проміжок 24px з макета = рядок-посилання 48px */
+.mobile-menu__nav {
+  margin-top: var(--space-40);
+}
+
+.mobile-menu__list {
+  text-align: center;
+}
+
+.mobile-menu__link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--space-48);
+  padding-inline: var(--space-16);
+  font: var(--text-body);
+  text-decoration: none;
+}
+
+.mobile-menu__contacts {
+  margin-top: var(--space-12);
+}
+
+.mobile-menu__contact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  min-height: var(--space-40);
+  font: var(--text-body-s);
+  text-decoration: none;
+}
+
+.mobile-menu__icon {
+  flex: none;
+}
+
+/* Біла кнопка 242×40, як у макеті; зона натискання 48px через ::after */
+.mobile-menu__cta {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 242px;
+  min-height: var(--space-40);
+  margin-top: var(--space-24);
+  padding: var(--space-12) var(--space-32);
+  font: var(--text-button-s);
+  color: var(--text-primary);
+  text-decoration: none;
+  background: var(--bg-page);
+  border-radius: var(--radius-md);
+}
+
+.mobile-menu__cta::after {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--space-4)) 0;
+}
+
+/* Декоративні великі цифри внизу екрана */
+.mobile-menu__pattern {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  pointer-events: none;
+}
+
+/* Фокус на червоному тлі — білий і помітний */
+.mobile-menu :focus-visible {
+  outline: 2px solid var(--text-inverse);
+  outline-offset: 2px;
 }
 
 /* Десктопна шапка. Між 1024 і 1440px відступи в ній плавно стискаються, щоб усе вмістилось */
@@ -1341,13 +1437,6 @@ html:not(.js) .faq__icon {
   width: 28px;
   height: 28px;
   margin-bottom: var(--space-32);
-}
-
-/* Галочка в макеті трохи виступає за свою рамку 28×28 (намальована 31×31) */
-.popup__icon--done {
-  width: 31px;
-  height: 31px;
-  margin-block: -1.5px calc(var(--space-32) - 1.5px);
 }
 
 .popup__title {

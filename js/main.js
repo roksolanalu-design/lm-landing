@@ -39,51 +39,50 @@ function sendLead(data) {
   }).observe(sentinel);
 })();
 
-// ---------- Бургер-меню ----------
+// ---------- Мобільне меню ----------
+// Повноекранний <dialog>. showModal сам тримає Tab усередині і закривається по Esc.
 (function () {
   var burger = document.querySelector('.burger');
-  var nav = document.getElementById('site-nav');
-  if (!burger || !nav) return;
+  var menu = document.getElementById('mobile-menu');
+  if (!burger || !menu || !menu.showModal) return;
 
-  var desktop = window.matchMedia('(min-width: 1024px)');
+  var closeButton = menu.querySelector('.mobile-menu__close');
+  var returnFocus = true; // після кліку на пункт фокус іде до секції, а не на бургер
 
-  function setOpen(open) {
-    nav.classList.toggle('is-open', open);
-    burger.setAttribute('aria-expanded', String(open));
-    burger.setAttribute('aria-label', open ? 'Закрити меню' : 'Відкрити меню');
+  function open() {
+    returnFocus = true;
+    menu.showModal();
+    document.documentElement.classList.add('is-menu-open');
+    burger.setAttribute('aria-expanded', 'true');
   }
 
-  function isOpen() {
-    return burger.getAttribute('aria-expanded') === 'true';
-  }
+  burger.addEventListener('click', open);
 
-  burger.addEventListener('click', function () {
-    var open = !isOpen();
-    setOpen(open);
-    if (open) nav.querySelector('a').focus();
+  closeButton.addEventListener('click', function () {
+    menu.close();
   });
 
-  // Після переходу за пунктом меню панель закривається
-  nav.addEventListener('click', function (event) {
-    if (event.target.closest('a')) setOpen(false);
-  });
-
-  // Esc закриває меню і повертає фокус на кнопку
-  document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape' && isOpen()) {
-      setOpen(false);
-      burger.focus();
+  // Будь-яке посилання в меню (пункт, контакт, кнопка, лого) закриває його,
+  // а перехід до секції робить браузер
+  menu.addEventListener('click', function (event) {
+    if (event.target.closest('a')) {
+      returnFocus = false;
+      // Знімаємо блок прокрутки одразу, ще до переходу браузера до секції
+      document.documentElement.classList.remove('is-menu-open');
+      menu.close();
     }
   });
 
-  // Клік повз меню теж закриває його
-  document.addEventListener('click', function (event) {
-    if (isOpen() && !event.target.closest('.site-header')) setOpen(false);
+  // Хай як закрили (хрестик, Esc, посилання) — прибираємо блок прокрутки
+  menu.addEventListener('close', function () {
+    document.documentElement.classList.remove('is-menu-open');
+    burger.setAttribute('aria-expanded', 'false');
+    if (returnFocus) burger.focus();
   });
 
-  // На десктопі панелі немає — скидаємо стан
-  desktop.addEventListener('change', function (event) {
-    if (event.matches) setOpen(false);
+  // На десктопі меню немає — закриваємо, якщо вікно розширили
+  window.matchMedia('(min-width: 1024px)').addEventListener('change', function (event) {
+    if (event.matches && menu.open) menu.close();
   });
 })();
 
