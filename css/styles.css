@@ -312,13 +312,16 @@ p {
 
 /* ---------- Мобільне меню ---------- */
 /* Червоний екран поверх сторінки: лого і хрестик угорі, посилання й контакти
-   по центру, біла кнопка, великий декоративний патерн унизу */
+   по центру, біла кнопка. Висота — динамічна висота вікна (dvh), щоб меню
+   діставало до самого низу і тоді, коли панель браузера ховається чи з'являється.
+   height: 100% — запасний варіант для браузерів без dvh */
 .mobile-menu {
   position: fixed;
   inset: 0;
   width: 100%;
   max-width: none;
   height: 100%;
+  height: 100dvh;
   max-height: none;
   margin: 0;
   padding: 0 0 var(--space-48);
@@ -433,17 +436,6 @@ html.is-menu-open {
   content: "";
   position: absolute;
   inset: calc(-1 * var(--space-4)) 0;
-}
-
-/* Декоративні великі цифри внизу екрана */
-.mobile-menu__pattern {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  max-width: 480px;
-  height: auto;
-  pointer-events: none;
 }
 
 /* Фокус на червоному тлі — білий і помітний */

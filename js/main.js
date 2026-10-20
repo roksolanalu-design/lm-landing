@@ -40,7 +40,8 @@ function sendLead(data) {
 })();
 
 // ---------- Мобільне меню ----------
-// Повноекранний <dialog>. showModal сам тримає Tab усередині і закривається по Esc.
+// Повноекранний <dialog>. showModal сам тримає Tab усередині і закривається по Esc,
+// а фокус ставить на перший пункт меню (атрибут autofocus у HTML).
 (function () {
   var burger = document.querySelector('.burger');
   var menu = document.getElementById('mobile-menu');
