@@ -1384,7 +1384,12 @@ html:not(.js) .faq__icon {
 }
 
 /* ---------- Footer ---------- */
+/* Рядок футера — спільний для меню й контактів, щоб колонки не розходились:
+   мобайл — 40px без проміжків (зручна зона натискання),
+   десктоп — 21px з проміжком 12px, тобто крок 33px, як у макеті */
 .site-footer {
+  --footer-row-height: 40px;
+  --footer-row-gap: 0px;
   padding-block: var(--space-24);
   font: var(--text-body-s);
   color: var(--text-inverse);
@@ -1419,31 +1424,25 @@ html:not(.js) .faq__icon {
   display: none;
 }
 
-.site-footer__nav {
-  padding: var(--space-4);
-}
-
-/* На мобайлі пункти меню й Instagram — рядки 32px, телефон і e-mail — 44px */
-.site-footer__link {
-  display: flex;
-  align-items: center;
-  min-height: var(--space-32);
-  text-decoration: none;
-}
-
-.site-footer__contact.site-footer__link--tall {
-  min-height: 44px;
+.site-footer__list,
+.site-footer__contacts {
+  display: grid;
+  gap: var(--footer-row-gap);
 }
 
 .site-footer__contacts {
   margin-top: var(--space-12);
 }
 
-.site-footer__contact {
+.site-footer__row {
   display: flex;
   align-items: center;
   gap: var(--space-8);
-  min-height: var(--space-32);
+  height: var(--footer-row-height);
+}
+
+.site-footer__link {
+  text-decoration: none;
 }
 
 /* Іконки — inline SVG з fill="currentColor": беруть колір тексту */
@@ -1466,8 +1465,15 @@ html:not(.js) .faq__icon {
   }
 }
 
-/* Десктоп: лого, меню й контакти зліва в ряд, правові рядки справа внизу */
+/* Десктоп: лого, меню й контакти зліва в ряд, правові рядки справа внизу.
+   Колонки починаються з однієї лінії зверху, а їхні останні рядки стоять
+   на одній лінії з «Політика приватності / ©» */
 @media (min-width: 1024px) {
+  .site-footer {
+    --footer-row-height: 21px;
+    --footer-row-gap: var(--space-12);
+  }
+
   .site-footer__inner {
     flex-direction: row;
     align-items: flex-end;
@@ -1494,21 +1500,8 @@ html:not(.js) .faq__icon {
     display: block;
   }
 
-  .site-footer__list {
-    display: grid;
-    gap: var(--space-12);
-  }
-
   .site-footer__contacts {
-    display: grid;
-    gap: var(--space-8);
     margin-top: 0;
-  }
-
-  .site-footer__link,
-  .site-footer__contact,
-  .site-footer__contact.site-footer__link--tall {
-    min-height: 0;
   }
 
   .site-footer__legal {
