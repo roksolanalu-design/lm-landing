@@ -318,11 +318,18 @@ function sendLead(data) {
   } else {
     var stagger = ms('--stagger');
     var revealObserver = new IntersectionObserver(function (entries) {
-      // Усі, хто з'явився одночасно (картки в одному ряду), ідуть по черзі
+      // Усі, хто з'явився одночасно (картки в одному ряду), ідуть по черзі —
+      // у порядку на екрані: зверху вниз, зліва направо (заголовок раніше за картки)
       var order = 0;
+      entries.sort(function (a, b) {
+        return (a.boundingClientRect.top - b.boundingClientRect.top) ||
+          (a.boundingClientRect.left - b.boundingClientRect.left);
+      });
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
-        entry.target.style.animationDelay = order * stagger + 'ms';
+        // Не більше 4 кроків затримки: після швидкої прокрутки в одну пачку
+        // потрапляє пів сторінки, і останні елементи інакше чекали б секунду
+        entry.target.style.animationDelay = Math.min(order, 4) * stagger + 'ms';
         entry.target.classList.add('is-visible');
         revealObserver.unobserve(entry.target);
         order += 1;

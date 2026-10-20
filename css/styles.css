@@ -816,8 +816,11 @@ p {
   row-gap: var(--space-12);
 }
 
+/* Рамка фото: overflow: hidden — щоб збільшене при появі зображення не вилазило */
 .about__media {
   display: block;
+  overflow: hidden;
+  border-radius: var(--radius-md);
 }
 
 .about__media img {
@@ -1581,12 +1584,47 @@ html:not(.js) .faq__icon {
   .js [data-reveal].is-visible {
     animation: reveal var(--duration-reveal) var(--ease-out-soft) backwards;
   }
+
+  /* Картки й кроки до зсуву знизу ще трохи «доростають»: scale 0.96 → 1 */
+  .js .for-whom__card.is-visible,
+  .js .service-card.is-visible,
+  .js .step.is-visible {
+    animation-name: reveal-card;
+  }
+
+  /* Фото в секціях: рамка з'являється, а саме зображення в ній одночасно
+     зменшується з 110% до 100%. Затримку бере ту саму, що й рамка */
+  .js .about__media.is-visible img {
+    animation: reveal-zoom var(--duration-reveal) var(--ease-out-soft) backwards;
+    animation-delay: inherit;
+  }
 }
 
 @keyframes reveal {
   from {
     opacity: 0;
     transform: translateY(var(--reveal-distance));
+  }
+}
+
+@keyframes reveal-card {
+  from {
+    opacity: 0;
+    transform: translateY(var(--reveal-distance)) scale(0.96);
+  }
+}
+
+@keyframes reveal-zoom {
+  from {
+    transform: scale(1.1);
+  }
+}
+
+/* Fade-up у Hero — той самий рух, але з коротшою відстанню */
+@keyframes hero-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(var(--hero-reveal-distance));
   }
 }
 
@@ -1635,7 +1673,7 @@ html:not(.js) .faq__icon {
   .js .hero__lead,
   .js .hero__cta,
   .js .hero .stats {
-    animation: reveal var(--duration-hero-fade) var(--ease-out-soft) backwards;
+    animation: hero-reveal var(--duration-hero-fade) var(--ease-out-soft) backwards;
   }
 
   .js .hero__lead  { animation-delay: calc(3 * var(--hero-stagger)); }
