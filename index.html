@@ -1,12 +1,23 @@
 <!DOCTYPE html>
+<!--
+  ЗАГЛУШКИ — замінити після публікації сайту.
+  Адресу сайту всюди позначено як https://ADRESA-SAYTU.example/ — знайдіть і замініть її пошуком:
+    index.html   — <link rel="canonical">, og:url, og:image (абсолютне посилання), JSON-LD "url" і "image"
+    privacy.html — og:image (абсолютне посилання)
+    robots.txt   — рядок Sitemap
+    sitemap.xml  — <loc>
+  Інше:
+    privacy.html — дата редакції політики ([дата], червоним)
+    js/main.js   — LEAD_CONFIG: ключ Web3Forms і адреса Cloudflare Worker для Telegram
+-->
 <html lang="uk">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- ЧЕРНЕТКА: title і description — уточнити фінальні тексти -->
-  <title>LM Бухгалтерські послуги — бухгалтерський супровід у Львові</title>
-  <meta name="description" content="Бухгалтерський супровід для ФОП і компаній у Львові: облік, звітність, податки, консультації. Залиште заявку — зателефонуємо й обговоримо співпрацю.">
+  <title>Бухгалтерські послуги у Львові — супровід ФОП і ТОВ | LM</title>
+  <meta name="description" content="Ведення бухгалтерії для ФОП, ТОВ і благодійних фондів у Львові та онлайн по всій Україні. 25+ років досвіду, фіксована ціна в договорі. Залиште заявку.">
+  <link rel="canonical" href="https://ADRESA-SAYTU.example/">
   <meta name="theme-color" content="#E30613">
 
   <!-- Клас .js потрібен, щоб ховати елементи для анімацій лише коли JS працює -->
@@ -25,21 +36,24 @@
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/styles.css">
 
-  <!-- Favicon (червоний) -->
+  <!-- Favicon (червоний): ico — для старих браузерів і закладок, svg — для сучасних,
+       180×180 — іконка на головному екрані iPhone -->
+  <link rel="icon" href="images/favicon/favicon.ico" sizes="16x16 32x32 48x48">
   <link rel="icon" href="images/favicon/favicon-red.svg" type="image/svg+xml">
   <link rel="icon" href="images/favicon/favicon-red-32.png" type="image/png" sizes="32x32">
-  <link rel="apple-touch-icon" href="images/favicon/favicon-red-180.png">
+  <link rel="apple-touch-icon" href="images/favicon/favicon-red-180.png" sizes="180x180">
 
-  <!-- Open Graph -->
-  <!-- TODO: коли буде відома адреса сайту — додати og:url і зробити og:image абсолютним посиланням -->
+  <!-- Open Graph і Twitter Card: як сторінка виглядає, коли нею діляться -->
   <meta property="og:type" content="website">
   <meta property="og:locale" content="uk_UA">
   <meta property="og:site_name" content="LM Бухгалтерські послуги">
-  <meta property="og:title" content="LM Бухгалтерські послуги — бухгалтерський супровід у Львові">
-  <meta property="og:description" content="Бухгалтерський супровід для ФОП і компаній у Львові: облік, звітність, податки, консультації.">
-  <meta property="og:image" content="images/og-image.jpg">
+  <meta property="og:url" content="https://ADRESA-SAYTU.example/">
+  <meta property="og:title" content="Бухгалтерські послуги у Львові — супровід ФОП і ТОВ | LM">
+  <meta property="og:description" content="Ведення бухгалтерії для ФОП, ТОВ і благодійних фондів у Львові та онлайн по всій Україні. 25+ років досвіду, фіксована ціна в договорі.">
+  <meta property="og:image" content="https://ADRESA-SAYTU.example/images/og-image.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="LM Бухгалтерські послуги — бухгалтерський супровід у Львові">
   <meta name="twitter:card" content="summary_large_image">
 
   <!-- Структуровані дані: компанія -->
@@ -48,12 +62,18 @@
     "@context": "https://schema.org",
     "@type": "AccountingService",
     "name": "LM Бухгалтерські послуги",
+    "url": "https://ADRESA-SAYTU.example/",
+    "image": "https://ADRESA-SAYTU.example/images/og-image.jpg",
     "telephone": "+380672084631",
-    "image": "images/og-image.jpg",
+    "email": "mml.buh@gmail.com",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Львів",
       "addressCountry": "UA"
+    },
+    "areaServed": {
+      "@type": "Country",
+      "name": "Україна"
     }
   }
   </script>

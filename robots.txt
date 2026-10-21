@@ -1,0 +1,7 @@
+# Дозволяємо індексувати весь сайт.
+# privacy.html закрита від пошуку окремо — тегом <meta name="robots" content="noindex">.
+# TODO: замінити ADRESA-SAYTU.example на справжню адресу сайту
+User-agent: *
+Allow: /
+
+Sitemap: https://ADRESA-SAYTU.example/sitemap.xml
