@@ -4,21 +4,89 @@
 window.lmReady = true;
 
 // ---------- Відправка заявки ----------
-// ЗАГЛУШКА. Куди надсилати (Telegram / e-mail) — ще не вирішено.
-// Щоб підключити справжню відправку, замініть лише тіло цієї функції.
-// Вона отримує об'єкт { topic, name, phone, email } і має повернути Promise:
-// resolve — заявку прийнято, reject — сталася помилка.
-// УВАГА: не вставляйте сюди секретні ключі (наприклад, токен Telegram-бота) —
-// код сайту бачать усі. Запит має йти на власний сервер або сервіс форм.
+// Заявка йде одночасно двома каналами:
+//   1) e-mail — через сервіс форм Web3Forms;
+//   2) Telegram — через наш Cloudflare Worker, який пересилає її боту.
+// Успіх — якщо дійшла хоча б одним каналом; помилка — лише якщо впали обидва.
 //
-// Для перевірки попапа помилки введіть у поле «Ім'я» слово test-error.
+// Налаштування (підключимо окремим кроком):
+//   web3formsKey — access key Web3Forms. Він публічний за задумом сервісу,
+//     тому може лежати в коді сайту.
+//   telegramEndpoint — адреса нашого Cloudflare Worker.
+// УВАГА: токен Telegram-бота НІКОЛИ не кладемо сюди — код сайту бачать усі.
+// Токен зберігається лише в налаштуваннях (secrets) Cloudflare Worker.
+var LEAD_CONFIG = {
+  web3formsKey: '',
+  telegramEndpoint: '',
+  timeout: 10000 // скільки чекати відповіді кожного каналу, мс
+};
+
+// POST із JSON і обмеженням часу: якщо канал «завис», не чекаємо вічно
+function postJSON(url, body) {
+  var controller = 'AbortController' in window ? new AbortController() : null;
+  var timer = controller && setTimeout(function () { controller.abort(); }, LEAD_CONFIG.timeout);
+  return fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify(body),
+    signal: controller ? controller.signal : undefined
+  }).finally(function () {
+    clearTimeout(timer);
+  });
+}
+
+// Канал 1: e-mail через Web3Forms
+function sendToEmail(data) {
+  return postJSON('https://api.web3forms.com/submit', {
+    access_key: LEAD_CONFIG.web3formsKey,
+    subject: 'Нова заявка з сайту: ' + (data.topic || 'без теми'),
+    from_name: 'Сайт LM Бухгалтерські послуги',
+    'Тема звернення': data.topic,
+    "Ім'я": data.name,
+    'Телефон': data.phone,
+    'E-mail': data.email || '—'
+  }).then(function (response) {
+    return response.json().then(function (result) {
+      if (!response.ok || !result.success) throw new Error('Web3Forms: ' + (result.message || response.status));
+    });
+  });
+}
+
+// Канал 2: Telegram через Cloudflare Worker
+function sendToTelegram(data) {
+  return postJSON(LEAD_CONFIG.telegramEndpoint, data).then(function (response) {
+    if (!response.ok) throw new Error('Telegram Worker: ' + response.status);
+  });
+}
+
+// Отримує { topic, name, phone, email }, повертає Promise:
+// resolve — заявку прийнято, reject — не дійшла жодним каналом.
 function sendLead(data) {
-  return new Promise(function (resolve, reject) {
-    console.info('sendLead (заглушка):', data);
-    setTimeout(function () {
-      if (data.name === 'test-error') reject(new Error('Тестова помилка'));
-      else resolve();
-    }, 1000);
+  var channels = [];
+  if (LEAD_CONFIG.web3formsKey) channels.push(sendToEmail(data));
+  if (LEAD_CONFIG.telegramEndpoint) channels.push(sendToTelegram(data));
+
+  // Поки ключів немає — тестовий режим, як і раніше:
+  // ім'я test-error показує попап помилки, будь-яке інше — попап успіху
+  if (!channels.length) {
+    console.info('sendLead: канали ще не налаштовані, тестовий режим', data);
+    return new Promise(function (resolve, reject) {
+      setTimeout(function () {
+        if (data.name === 'test-error') reject(new Error('Тестова помилка'));
+        else resolve();
+      }, 1000);
+    });
+  }
+
+  // Обидва канали йдуть паралельно; чекаємо, доки завершаться всі
+  return Promise.allSettled(channels).then(function (results) {
+    var delivered = results.some(function (result) {
+      return result.status === 'fulfilled';
+    });
+    results.forEach(function (result) {
+      if (result.status === 'rejected') console.warn('sendLead: канал не спрацював —', result.reason);
+    });
+    if (!delivered) throw new Error('Заявка не дійшла жодним каналом');
   });
 }
 
