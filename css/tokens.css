@@ -109,6 +109,15 @@
   --hero-reveal-distance: 24px;     /* fade-up у Hero лишається коротким */
 }
 
+/* Планшет, лише для Hero (768–1023px): розміри плавно між мобайлом і десктопом */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  :root {
+    --text-h1:        900 clamp(36px, 4.7vw, 44px)/1.2 var(--font-brand);   /* 28 → 48 */
+    --text-stat:      900 clamp(36px, 4.4vw, 44px)/1 var(--font-brand);     /* 32 → 48 */
+    --text-hero-lead: 400 clamp(16px, 1.9vw, 18px)/1.5 var(--font-brand);   /* 14 → 20 */
+  }
+}
+
 /* Десктоп */
 @media (min-width: 1024px) {
   :root {
