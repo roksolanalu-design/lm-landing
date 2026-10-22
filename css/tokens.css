@@ -61,7 +61,9 @@
   --space-48: 48px; --space-64: 64px; --space-80: 80px; --space-120: 120px;
 
   --section-gap: var(--space-48);    /* мобайл */
-  --page-margin: var(--space-16);
+  /* Поля сторінки до 1024px: 16px на телефонах, плавно до 32px (від 800px) —
+     і без стрибка переходять у десктопні 32 → 120px (styles.css, @media 1024) */
+  --page-margin: clamp(var(--space-16), 4vw, var(--space-32));
   --content-max: 1200px;
 
   /* ---------- Радіуси ---------- */
