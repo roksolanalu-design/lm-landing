@@ -784,6 +784,59 @@ html.is-menu-open {
   }
 }
 
+/* ---------- Наші гарантії ---------- */
+.guarantees .section__title {
+  margin-bottom: var(--space-24);
+}
+
+/* 1–2 колонки (скільки вміщається) → 4 на десктопі; картки в ряду однакової висоти */
+.guarantees__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(260px, 34%), 1fr));
+  gap: var(--space-12);
+}
+
+.guarantee-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-16);
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+}
+
+/* Червона риска над заголовком — декоративна */
+.guarantee-card::before {
+  content: "";
+  width: var(--space-32);
+  height: 3px;
+  background: var(--action-primary);
+}
+
+.guarantee-card__title {
+  font: var(--text-title);
+}
+
+.guarantee-card__text {
+  font: var(--text-body-s);
+}
+
+@media (min-width: 1024px) {
+  .guarantees .section__title {
+    margin-bottom: var(--space-40);
+  }
+
+  .guarantees__cards {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-24);
+  }
+
+  .guarantee-card {
+    gap: var(--space-12);
+    padding: var(--space-24);
+  }
+}
+
 /* ---------- Як ми працюємо ---------- */
 .steps {
   display: grid;
@@ -1662,6 +1715,7 @@ html:not(.js) .faq__icon {
   /* Картки й кроки до зсуву знизу ще трохи «доростають»: scale 0.96 → 1 */
   .js .for-whom__card.is-visible,
   .js .service-card.is-visible,
+  .js .guarantee-card.is-visible,
   .js .step.is-visible {
     animation-name: reveal-card;
   }
