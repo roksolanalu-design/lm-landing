@@ -1019,16 +1019,31 @@ html.is-lightbox-open {
   /* Як у макеті: 5 рівних колонок без проміжку, а в кроків 1–4 текст
      має поле 32px справа. Лінія йде від кружечка до кінця колонки,
      тобто впритул до наступного кружечка */
+  /* Рядки спільні для всіх кроків (subgrid): маркер, заголовок, опис,
+     «Ви отримуєте». Висота рядка — за найвищим кроком, тож усі заголовки,
+     описи й «Ви отримуєте» стоять на одних лініях */
   .steps {
     --step-dot: var(--space-40);
     --step-line-gap: 0px;
     grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-rows: auto auto auto auto;
   }
 
   .step {
+    grid-row: span 4;
     grid-template-columns: none;
-    align-content: start;
-    row-gap: var(--space-20);
+    grid-template-rows: subgrid;
+    row-gap: var(--space-12);
+  }
+
+  .step > *,
+  .step__body > * {
+    align-self: start;
+  }
+
+  /* Від маркера до заголовка 20px: 12px дає row-gap, ще 8px — тут */
+  .step__title {
+    margin-top: var(--space-8);
   }
 
   /* Горизонтальна лінія по центру кружечка */
@@ -1042,13 +1057,15 @@ html.is-lightbox-open {
     transform-origin: left;
   }
 
+  /* Обгортка тексту «розчиняється»: заголовок і абзаци стають
+     клітинками сітки кроку й лягають у спільні рядки */
   .step__body {
-    gap: var(--space-12);
-    padding: 0 var(--space-32) 0 0;
+    display: contents;
   }
 
-  .step:last-child .step__body {
-    padding-right: 0;
+  /* У кроків 1–4 текст має поле 32px справа */
+  .step:not(:last-child) .step__body > * {
+    padding-right: var(--space-32);
   }
 
   /* Кнопка під шкалою, по правому краю контейнера; поля 76px, як у макеті (≈282px).
