@@ -472,6 +472,10 @@ html.is-lightbox-open {
     column-gap: var(--fluid-gap);
   }
 
+  .site-nav__link {
+    white-space: nowrap;
+  }
+
   .site-header__actions {
     gap: var(--fluid-gap);
     margin-left: var(--fluid-gap);
@@ -487,6 +491,14 @@ html.is-lightbox-open {
     display: inline-flex;
     width: clamp(164px, 12.5vw, 180px);
     padding-inline: var(--space-16);
+  }
+}
+
+/* 1024–1279px: п'ять пунктів меню, телефон і кнопка в один рядок не вміщаються —
+   телефон ховаємо (він лишається у футері) */
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  .site-header__phone {
+    display: none;
   }
 }
 
