@@ -27,6 +27,7 @@
   --color-neutral-200: #E6E3DE;
   --color-neutral-100: #F7F5F2;
   --color-neutral-0:   #FFFFFF;
+  --color-white-a12:   rgb(255 255 255 / 0.12);
 
   /* ---------- Semantic: колір ---------- */
   --text-primary:       var(--color-neutral-900);
@@ -40,6 +41,7 @@
   --bg-surface:         var(--color-neutral-100);
   --bg-dark:            var(--color-neutral-900);
   --bg-accent-subtle:   var(--color-red-50);    /* фон бейджа */
+  --bg-control-on-dark: var(--color-white-a12); /* круглі кнопки перегляду сертифікатів */
 
   --action-primary:       var(--color-red-500);
   --action-primary-hover: var(--color-red-700);

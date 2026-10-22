@@ -342,8 +342,9 @@ p {
   background: var(--action-primary);
 }
 
-/* Поки меню відкрите, сторінка під ним не прокручується */
-html.is-menu-open {
+/* Поки меню чи перегляд сертифіката відкриті, сторінка під ними не прокручується */
+html.is-menu-open,
+html.is-lightbox-open {
   overflow: hidden;
 }
 
@@ -1023,6 +1024,294 @@ html.is-menu-open {
 @media (min-width: 1024px) {
   .about__body {
     font: var(--text-body);
+  }
+}
+
+/* ---------- Сертифікати (у «Про нас») ---------- */
+/* Мобайл: картки по 200px, горизонтальна прокрутка з прилипанням.
+   Стрічка виходить на всю ширину екрана, а перша й остання картки
+   вирівняні по полях сторінки */
+.certs {
+  margin-top: var(--space-24); /* 32px від тексту: ще 8px дає padding .about__text */
+}
+
+.certs__header {
+  margin-bottom: var(--space-16);
+}
+
+.certs__title {
+  margin-bottom: var(--space-8);
+}
+
+.certs__text {
+  font: var(--text-body-s);
+}
+
+.certs__gallery {
+  display: flex;
+  gap: var(--space-12);
+  margin-inline: calc(-1 * var(--page-margin));
+  padding: 0 var(--page-margin) var(--space-4); /* знизу місце для рамки фокуса */
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--page-margin);
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.certs__gallery::-webkit-scrollbar {
+  display: none;
+}
+
+.cert {
+  display: flex;
+  flex: 0 0 200px;
+  flex-direction: column;
+  gap: var(--space-8);
+  scroll-snap-align: start;
+}
+
+.cert__thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 144px;
+  padding: var(--space-8);
+  background: var(--bg-surface);
+  border: 0;
+  border-radius: var(--radius-md);
+  cursor: zoom-in;
+}
+
+/* Рамка фокуса всередині картки — інакше її обрізає прокрутка стрічки */
+.cert__thumb:focus-visible {
+  outline-offset: -2px;
+}
+
+.cert__thumb picture {
+  display: contents;
+}
+
+.cert__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.cert__title {
+  font: var(--text-body-s);
+  text-wrap: balance;
+}
+
+.cert__meta {
+  font: var(--text-caption);
+  color: var(--text-secondary);
+}
+
+@media (hover: hover) {
+  .cert__thumb img {
+    transition: transform var(--duration-hover) ease-out;
+  }
+
+  .cert__thumb:hover img {
+    transform: scale(1.04);
+  }
+}
+
+/* Десктоп: 7 карток в один ряд, без прокрутки */
+@media (min-width: 1024px) {
+  .certs {
+    margin-top: var(--space-48);
+  }
+
+  .certs__header {
+    margin-bottom: var(--space-24);
+  }
+
+  .certs__gallery {
+    gap: var(--space-16);
+    margin-inline: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .cert {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .cert__thumb {
+    height: 112px;
+  }
+}
+
+/* ---------- Перегляд сертифіката ---------- */
+/* Повноекранний <dialog> на темному тлі.
+   Мобайл: хрестик угорі праворуч, зображення по центру, під ним підпис,
+   нижче — стрілки з лічильником між ними.
+   Десктоп: стрілки по боках зображення, підпис ліворуч, лічильник праворуч */
+.lightbox {
+  width: 100%;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: var(--space-16);
+  color: var(--text-inverse);
+  background: var(--bg-dark);
+  border: 0;
+}
+
+.lightbox[open] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox::backdrop {
+  background: var(--bg-dark);
+}
+
+.lightbox__button {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-48);
+  height: var(--space-48);
+  padding: 0;
+  color: inherit;
+  background: var(--bg-control-on-dark);
+  border: 0;
+  border-radius: var(--radius-full);
+}
+
+.lightbox :focus-visible {
+  outline-color: var(--text-inverse);
+}
+
+.lightbox__close {
+  position: absolute;
+  top: var(--space-16);
+  right: var(--space-16);
+  z-index: 1;
+}
+
+.lightbox__body {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "stage   stage   stage"
+    "caption caption caption"
+    "prev    counter next";
+  align-items: center;
+  width: 100%;
+}
+
+/* Зображення зберігає свої пропорції й вписується в доступне місце */
+.lightbox__stage {
+  display: flex;
+  grid-area: stage;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.lightbox__stage picture {
+  display: contents;
+}
+
+.lightbox__image {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(100dvh - 300px); /* лишаємо місце для хрестика, підпису й стрілок */
+  border-radius: var(--radius-md);
+  transition: opacity var(--duration-hover) ease-out;
+}
+
+/* Поки нове велике зображення вантажиться — старе притушене */
+.lightbox__image.is-loading {
+  opacity: 0.4;
+}
+
+.lightbox__caption {
+  grid-area: caption;
+  margin-top: var(--space-16);
+  font: var(--text-body-s);
+}
+
+.lightbox__prev    { grid-area: prev; }
+.lightbox__next    { grid-area: next; }
+.lightbox__counter { grid-area: counter; }
+
+.lightbox__prev,
+.lightbox__next,
+.lightbox__counter {
+  margin-top: var(--space-48);
+}
+
+.lightbox__counter {
+  font: var(--text-body);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* Десктоп: сцена фіксованого розміру (960×684 у макеті), щоб стрілки й підпис
+   не стрибали, коли сертифікати різних пропорцій.
+   Стрілки — по боках сцени, підпис і лічильник — рядком під нею */
+@media (min-width: 1024px) {
+  .lightbox {
+    padding: var(--space-40);
+  }
+
+  .lightbox__close {
+    top: var(--space-40);
+    right: var(--space-40);
+  }
+
+  .lightbox__body {
+    grid-template-columns:
+      var(--space-48)
+      min(960px, 100vw - 2 * (var(--space-40) + var(--space-48) + var(--space-32)))
+      var(--space-48);
+    grid-template-rows: min(684px, 100dvh - 2 * var(--space-64) - var(--space-48)) auto;
+    grid-template-areas:
+      "prev stage next"
+      ".    meta  .";
+    column-gap: var(--space-32);
+    justify-content: center;
+  }
+
+  .lightbox__stage {
+    height: 100%;
+  }
+
+  .lightbox__image {
+    max-height: 100%;
+  }
+
+  .lightbox__prev,
+  .lightbox__next {
+    margin-top: 0;
+  }
+
+  .lightbox__caption,
+  .lightbox__counter {
+    grid-area: meta;
+    align-self: start;
+    margin-top: var(--space-24);
+    font: var(--text-body);
+  }
+
+  /* Підпис не заходить під лічильник */
+  .lightbox__caption {
+    padding-right: var(--space-64);
+  }
+
+  .lightbox__counter {
+    justify-self: end;
   }
 }
 

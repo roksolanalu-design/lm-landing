@@ -167,6 +167,89 @@ function sendLead(data) {
   });
 })();
 
+// ---------- Перегляд сертифікатів ----------
+// Мініатюри — кнопки з data-атрибутами (велике зображення, назва, організатор, рік).
+// Велике зображення підвантажується лише при відкритті й гортанні.
+// Закриття: хрестик, Esc (робить сам <dialog>) або клік по темному тлу.
+(function () {
+  var viewer = document.getElementById('cert-viewer');
+  var thumbs = Array.prototype.slice.call(document.querySelectorAll('.cert__thumb'));
+  if (!viewer || !viewer.showModal || !thumbs.length) return;
+
+  var image = viewer.querySelector('.lightbox__image');
+  var source = viewer.querySelector('.lightbox__stage source');
+  var caption = viewer.querySelector('.lightbox__caption');
+  var current = viewer.querySelector('.lightbox__current');
+  var index = 0;
+
+  viewer.querySelector('.lightbox__total').textContent = thumbs.length;
+
+  function show(i) {
+    index = (i + thumbs.length) % thumbs.length; // з останнього — на перший і навпаки
+    var data = thumbs[index].dataset;
+
+    // Той самий файл повторно не вантажиться і load не прийде — тоді не притушуємо
+    if (source.getAttribute('srcset') !== data.full) image.classList.add('is-loading');
+    source.srcset = data.full;
+    image.src = data.fallback;
+    image.width = data.width;
+    image.height = data.height;
+    image.alt = 'Сертифікат «' + data.title + '», ' + data.org + ', ' + data.year;
+    caption.textContent = data.title + ' · ' + data.org + ', ' + data.year;
+    current.textContent = index + 1;
+  }
+
+  ['load', 'error'].forEach(function (type) {
+    image.addEventListener(type, function () {
+      image.classList.remove('is-loading');
+    });
+  });
+
+  thumbs.forEach(function (thumb, i) {
+    thumb.addEventListener('click', function () {
+      show(i);
+      viewer.showModal();
+      document.documentElement.classList.add('is-lightbox-open');
+    });
+  });
+
+  viewer.querySelector('.lightbox__prev').addEventListener('click', function () { show(index - 1); });
+  viewer.querySelector('.lightbox__next').addEventListener('click', function () { show(index + 1); });
+  viewer.querySelector('.lightbox__close').addEventListener('click', function () { viewer.close(); });
+
+  // Клік повз зображення, кнопки й підписи — закриває
+  viewer.addEventListener('click', function (event) {
+    if (!event.target.closest('img, button, p')) viewer.close();
+  });
+
+  viewer.addEventListener('keydown', function (event) {
+    if (event.key === 'ArrowLeft') show(index - 1);
+    if (event.key === 'ArrowRight') show(index + 1);
+  });
+
+  // Свайп на сенсорному екрані: горизонтальний рух від 50px гортає
+  var startX = null;
+  var startY = null;
+  viewer.addEventListener('touchstart', function (event) {
+    startX = event.touches[0].clientX;
+    startY = event.touches[0].clientY;
+  }, { passive: true });
+  viewer.addEventListener('touchend', function (event) {
+    if (startX === null) return;
+    var dx = event.changedTouches[0].clientX - startX;
+    var dy = event.changedTouches[0].clientY - startY;
+    startX = null;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) show(index + (dx < 0 ? 1 : -1));
+  });
+
+  // Хай як закрили — повертаємо прокрутку й фокус на мініатюру сертифіката,
+  // який був відкритий останнім
+  viewer.addEventListener('close', function () {
+    document.documentElement.classList.remove('is-lightbox-open');
+    thumbs[index].focus();
+  });
+})();
+
 // ---------- Послуги → форма ----------
 // Список послуг один: це картки в HTML (атрибут data-service).
 // Звідси ж беруться варіанти поля «Тема звернення», тому вони не можуть розійтися.
