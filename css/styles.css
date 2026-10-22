@@ -1716,17 +1716,22 @@ html:not(.js) .faq__icon {
 
 /* Десктоп: текст зліва, форма справа */
 @media (min-width: 1024px) {
-  /* 486 + 589px на 1440; на вужчих екранах обидві колонки пропорційно стискаються */
+  /* 486 + 589px на 1440; на вужчих екранах обидві колонки пропорційно стискаються,
+     а проміжок між ними — не менше 40px.
+     Ліва колонка: опис, під ним месенджери; форма справа на всю висоту */
   .contact__inner {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: var(--space-40);
+    display: grid;
+    grid-template-columns: minmax(0, 486fr) minmax(0, 589fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "intro      form"
+      "messengers form";
+    column-gap: max(var(--space-40), 100% - 1075px);
+    align-items: start;
   }
 
   .contact__intro {
-    flex: 0 1 486px;
-    min-width: 0;
+    grid-area: intro;
   }
 
   .contact__lead {
@@ -1734,8 +1739,68 @@ html:not(.js) .faq__icon {
   }
 
   .form {
-    flex: 0 1 589px;
-    min-width: 0;
+    grid-area: form;
+    max-width: none;
+  }
+
+  .messengers {
+    grid-area: messengers;
+    margin-top: var(--space-32);
+  }
+}
+
+/* Месенджери: підпис і дві кнопки-контури.
+   Мобайл — кнопки ділять ширину порівну; десктоп — за шириною вмісту */
+.messengers {
+  margin-top: var(--space-24);
+}
+
+.messengers__label {
+  margin-bottom: var(--space-12);
+  font: var(--text-body-s);
+}
+
+.messengers__buttons {
+  display: flex;
+  gap: var(--space-12);
+}
+
+.messengers__button {
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  min-height: 47px;
+  padding: var(--space-12) var(--space-16);
+  font: var(--text-body-s);
+  font-weight: 700;
+  color: var(--text-primary);
+  text-decoration: none;
+  background: var(--bg-page);
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-md);
+  transition: border-color var(--duration-hover);
+}
+
+.messengers__icon {
+  flex: none;
+}
+
+@media (hover: hover) {
+  .messengers__button:hover {
+    border-color: var(--text-primary);
+  }
+}
+
+@media (min-width: 1024px) {
+  .messengers__buttons {
+    flex-wrap: wrap;
+  }
+
+  .messengers__button {
+    flex: none;
+    padding-inline: var(--space-20);
   }
 }
 
