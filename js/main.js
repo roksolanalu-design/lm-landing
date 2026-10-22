@@ -484,9 +484,13 @@ function sendLead(data) {
       });
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
-        // Не більше 4 кроків затримки: після швидкої прокрутки в одну пачку
-        // потрапляє пів сторінки, і останні елементи інакше чекали б секунду
-        entry.target.style.animationDelay = Math.min(order, 4) * stagger + 'ms';
+        // Не більше 5 кроків затримки (заголовок + 5 кроків «Як ми працюємо» в ряд):
+        // після швидкої прокрутки в одну пачку потрапляє пів сторінки,
+        // і останні елементи інакше чекали б секунду.
+        // --reveal-delay — та сама затримка для вкладених анімацій (лінія шкали)
+        var delay = Math.min(order, 5) * stagger + 'ms';
+        entry.target.style.animationDelay = delay;
+        entry.target.style.setProperty('--reveal-delay', delay);
         entry.target.classList.add('is-visible');
         revealObserver.unobserve(entry.target);
         order += 1;

@@ -928,50 +928,73 @@ html.is-lightbox-open {
 }
 
 /* ---------- Як ми працюємо ---------- */
+/* Шкала кроків. Маркер — кружечок із номером і лінія до наступного кружечка (::after).
+   Мобайл і планшет: вертикальна шкала, маркер зліва, текст справа.
+   Десктоп: 5 кроків в один ряд, маркер над текстом, лінія горизонтальна */
 .steps {
+  --step-dot: var(--space-32);   /* діаметр кружечка */
+  --step-line-gap: var(--space-4); /* проміжок між кружечком і лінією */
   display: grid;
-  gap: var(--space-8);
 }
 
-/* На мобайлі номер вирівняний по верху тексту */
 .step {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-16);
-  padding-block: var(--space-12);
+  display: grid;
+  grid-template-columns: var(--step-dot) minmax(0, 1fr);
+  column-gap: var(--space-16);
+}
+
+.step__marker {
+  position: relative;
 }
 
 .step__num {
-  flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 55px;
-  height: var(--space-48);
-  font: var(--text-step-number);
+  width: var(--step-dot);
+  height: var(--step-dot);
+  font: var(--text-title);
   color: var(--text-inverse);
   background: var(--action-primary);
-  border-radius: var(--radius-md);
+  border-radius: 50%;
 }
 
+/* Вертикальна лінія: від кружечка (з проміжком) до низу кроку, тобто до наступного кружечка */
+.step__marker::after {
+  content: "";
+  position: absolute;
+  top: calc(var(--step-dot) + var(--step-line-gap));
+  bottom: 0;
+  left: calc(50% - 1px);
+  width: 2px;
+  background: var(--decor-gray);
+  transform-origin: top;
+}
+
+.step:last-child .step__marker::after {
+  content: none;
+}
+
+/* padding-top 4px — заголовок оптично по центру кружечка */
 .step__body {
   display: grid;
+  align-content: start;
   gap: 6px;
-  min-width: 0;
+  padding-block: var(--space-4) 28px;
+}
+
+.step:last-child .step__body {
+  padding-bottom: 0;
 }
 
 .step__title {
   font: var(--text-title);
-}
-
-/* Крапка-розділювач у заголовку першого кроку: на мобайлі її немає,
-   на десктопі заголовок стоїть одним рядком із крапкою */
-.step__dot {
-  display: none;
+  text-wrap: balance;
 }
 
 .step__text {
   font: var(--text-body-s);
+  text-wrap: pretty;
 }
 
 .step__label {
@@ -979,64 +1002,49 @@ html.is-lightbox-open {
   color: var(--text-accent);
 }
 
-.how__content {
-  max-width: 486px;
-}
-
 .how__cta {
   display: flex;
   margin-top: var(--space-12);
 }
 
-.how__logo {
-  display: none;
-}
-
 @media (min-width: 1024px) {
+  .how .section__title {
+    margin-bottom: var(--space-48);
+  }
+
   .steps {
-    gap: var(--space-24);
+    --step-dot: var(--space-40);
+    --step-gap: var(--space-32);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    column-gap: var(--step-gap);
   }
 
-  /* На десктопі номер стоїть по центру висоти тексту кроку */
   .step {
-    align-items: center;
-    gap: var(--space-24);
+    grid-template-columns: none;
+    align-content: start;
+    row-gap: var(--space-20);
   }
 
-  .step__num {
-    width: 78px;
-    height: 72px;
+  /* Горизонтальна лінія по центру кружечка: тягнеться через gap до наступного */
+  .step__marker::after {
+    top: calc(50% - 1px);
+    bottom: auto;
+    left: calc(var(--step-dot) + var(--step-line-gap));
+    right: calc(var(--step-line-gap) - var(--step-gap));
+    width: auto;
+    height: 2px;
+    transform-origin: left;
   }
 
+  .step__body {
+    gap: var(--space-12);
+    padding: 0;
+  }
+
+  /* Кнопка під шкалою, по правому краю контейнера, ширина за вмістом */
   .how__cta {
-    margin-block: calc(var(--space-40) + var(--space-12)) var(--space-12);
-  }
-}
-
-/* Десктоп: кроки зліва, великий блідий логотип справа по центру висоти */
-@media (min-width: 1024px) {
-  /* Проміжок до логотипа: 228px на 1440, плавно до 40px на 1024 */
-  .how__inner {
-    display: flex;
-    align-items: center;
-    gap: clamp(var(--space-40), calc(var(--space-40) + (100vw - 1024px) * 0.452), 228px);
-  }
-
-  .how__content {
-    flex: none;
-    width: 486px;
-  }
-
-  .how__logo {
-    display: block;
-    flex: 0 1 455px;
-    min-width: 0;
-    height: auto;
-    opacity: 0.065;
-  }
-
-  .step__dot {
-    display: inline;
+    width: fit-content;
+    margin: var(--space-48) 0 0 auto;
   }
 }
 
@@ -2169,6 +2177,39 @@ html:not(.js) .faq__icon {
   .js .about__media.is-visible img {
     animation: reveal-zoom var(--duration-reveal) var(--ease-out-soft) backwards;
     animation-delay: inherit;
+  }
+
+  /* Лінія шкали «домальовується» від свого кружечка до наступного,
+     коли крок уже з'явився. --reveal-delay — затримка кроку (ставить js/main.js) */
+  .js .step:not(.is-visible) .step__marker::after {
+    transform: scaleY(0);
+  }
+
+  .js .step.is-visible .step__marker::after {
+    animation: step-line-y var(--duration-reveal) var(--ease-out-soft) backwards;
+    animation-delay: calc(var(--reveal-delay, 0ms) + var(--duration-reveal) / 2);
+  }
+
+  @media (min-width: 1024px) {
+    .js .step:not(.is-visible) .step__marker::after {
+      transform: scaleX(0);
+    }
+
+    .js .step.is-visible .step__marker::after {
+      animation-name: step-line-x;
+    }
+  }
+}
+
+@keyframes step-line-y {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes step-line-x {
+  from {
+    transform: scaleX(0);
   }
 }
 
