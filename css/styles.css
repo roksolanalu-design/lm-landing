@@ -1110,14 +1110,16 @@ html.is-lightbox-open {
   object-fit: contain;
 }
 
+/* Назва курсу — не більше двох рядків; повна назва є в підписі перегляду */
 .cert__title {
+  display: -webkit-box;
+  overflow: hidden;
   font: var(--text-body-s);
-  text-wrap: balance;
-}
-
-.cert__meta {
-  font: var(--text-caption);
   color: var(--text-secondary);
+  text-wrap: balance;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 @media (hover: hover) {
