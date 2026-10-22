@@ -168,7 +168,9 @@ function sendLead(data) {
 })();
 
 // ---------- Перегляд сертифікатів ----------
-// Мініатюри — кнопки з data-атрибутами (велике зображення, назва, організатор, рік).
+// Мініатюри — посилання на велике зображення (href) з data-атрибутами
+// (JPG-фолбек, розміри, назва, організатор, рік). Без JS посилання просто відкриває
+// картинку; з JS перехоплюємо клік і показуємо перегляд.
 // Велике зображення підвантажується лише при відкритті й гортанні.
 // Закриття: хрестик, Esc (робить сам <dialog>) або клік по темному тлу.
 (function () {
@@ -187,10 +189,11 @@ function sendLead(data) {
   function show(i) {
     index = (i + thumbs.length) % thumbs.length; // з останнього — на перший і навпаки
     var data = thumbs[index].dataset;
+    var full = thumbs[index].getAttribute('href');
 
     // Той самий файл повторно не вантажиться і load не прийде — тоді не притушуємо
-    if (source.getAttribute('srcset') !== data.full) image.classList.add('is-loading');
-    source.srcset = data.full;
+    if (source.getAttribute('srcset') !== full) image.classList.add('is-loading');
+    source.srcset = full;
     image.src = data.fallback;
     image.width = data.width;
     image.height = data.height;
@@ -206,7 +209,10 @@ function sendLead(data) {
   });
 
   thumbs.forEach(function (thumb, i) {
-    thumb.addEventListener('click', function () {
+    thumb.addEventListener('click', function (event) {
+      // Cmd/Ctrl/Shift-клік лишаємо браузеру: картинка відкриється в новій вкладці
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
       show(i);
       viewer.showModal();
       document.documentElement.classList.add('is-lightbox-open');

@@ -1091,7 +1091,6 @@ html.is-lightbox-open {
   height: 144px;
   padding: var(--space-8);
   background: var(--bg-surface);
-  border: 0;
   border-radius: var(--radius-md);
   cursor: zoom-in;
 }
