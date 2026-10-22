@@ -1002,9 +1002,13 @@ html.is-lightbox-open {
   color: var(--text-accent);
 }
 
+.how .section__title {
+  margin-bottom: var(--space-24);
+}
+
 .how__cta {
   display: flex;
-  margin-top: var(--space-12);
+  margin-top: var(--space-32);
 }
 
 @media (min-width: 1024px) {
@@ -1012,11 +1016,13 @@ html.is-lightbox-open {
     margin-bottom: var(--space-48);
   }
 
+  /* Як у макеті: 5 рівних колонок без проміжку, а в кроків 1–4 текст
+     має поле 32px справа. Лінія йде від кружечка до кінця колонки,
+     тобто впритул до наступного кружечка */
   .steps {
     --step-dot: var(--space-40);
-    --step-gap: var(--space-32);
+    --step-line-gap: 0px;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    column-gap: var(--step-gap);
   }
 
   .step {
@@ -1025,12 +1031,12 @@ html.is-lightbox-open {
     row-gap: var(--space-20);
   }
 
-  /* Горизонтальна лінія по центру кружечка: тягнеться через gap до наступного */
+  /* Горизонтальна лінія по центру кружечка */
   .step__marker::after {
     top: calc(50% - 1px);
     bottom: auto;
-    left: calc(var(--step-dot) + var(--step-line-gap));
-    right: calc(var(--step-line-gap) - var(--step-gap));
+    left: var(--step-dot);
+    right: 0;
     width: auto;
     height: 2px;
     transform-origin: left;
@@ -1038,13 +1044,19 @@ html.is-lightbox-open {
 
   .step__body {
     gap: var(--space-12);
-    padding: 0;
+    padding: 0 var(--space-32) 0 0;
   }
 
-  /* Кнопка під шкалою, по правому краю контейнера, ширина за вмістом */
+  .step:last-child .step__body {
+    padding-right: 0;
+  }
+
+  /* Кнопка під шкалою, по правому краю контейнера; поля 76px, як у макеті (≈282px).
+     +12px зверху й знизу — «повітря» компонента CTA у Figma */
   .how__cta {
     width: fit-content;
-    margin: var(--space-48) 0 0 auto;
+    margin: calc(var(--space-48) + var(--space-12)) 0 var(--space-12) auto;
+    padding-inline: 76px;
   }
 }
 
