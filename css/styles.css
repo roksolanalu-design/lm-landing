@@ -1006,29 +1006,9 @@ html.is-lightbox-open {
   margin-bottom: var(--space-24);
 }
 
-/* До 1024px кнопка «липне» до низу екрана, поки видно секцію, і їде разом
-   зі скролом від кроку 1 до кроку 5; наприкінці секції стає на своє місце.
-   Батьківський .container не має overflow — інакше sticky не працює */
-.how__cta-wrap {
-  position: sticky;
-  bottom: calc(var(--space-16) + env(safe-area-inset-bottom, 0px));
-  z-index: 2;
-  margin-top: var(--space-32);
-}
-
-/* Підкладка: 32px м'якого градієнта над кнопкою, далі суцільний фон —
-   під кнопкою й у проміжку до краю екрана, щоб текст кроків не «бився» з нею */
-.how__cta-wrap::before {
-  content: "";
-  position: absolute;
-  inset: calc(-1 * var(--space-32)) 0 calc(-1 * var(--space-16) - env(safe-area-inset-bottom, 0px));
-  z-index: -1;
-  background: linear-gradient(to bottom, transparent, var(--bg-page) var(--space-32));
-  pointer-events: none;
-}
-
 .how__cta {
   display: flex;
+  margin-top: var(--space-32);
 }
 
 @media (min-width: 1024px) {
@@ -1086,16 +1066,6 @@ html.is-lightbox-open {
   /* У кроків 1–4 текст має поле 32px справа */
   .step:not(:last-child) .step__body > * {
     padding-right: var(--space-32);
-  }
-
-  /* На десктопі кнопка звичайна, не липка */
-  .how__cta-wrap {
-    position: static;
-    margin-top: 0;
-  }
-
-  .how__cta-wrap::before {
-    content: none;
   }
 
   /* Кнопка під шкалою, по правому краю контейнера; поля 76px, як у макеті (≈282px).
