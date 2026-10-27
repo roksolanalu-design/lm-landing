@@ -586,23 +586,29 @@ function sendLead(data) {
 
 // ---------- Sticky CTA (mobile) ----------
 // Липка панель «Залишити заявку» внизу екрана, лише <1024px.
-// Видно: кнопка Hero повністю сховалась під шапку І верх форми ще не з'явився.
+// Кнопки з атрибутом data-sticky-cta-yield «забирають» панель: поки хоч одна з них
+// в екрані, панелі немає (щоб не було двох червоних кнопок разом).
+// Видно, коли: перша така кнопка (Hero) уже пішла вгору під шапку,
+// жодна з них не в екрані І верх форми ще не з'явився.
 // На формі й футері — схована. Схована панель — inert (не фокусується, не читається).
 // Меню, попапи й лайтбокс ховають її самі через CSS (html:has(dialog[open])).
 // Без розмітки [data-sticky-cta] функція тихо завершується — фіча вимкнена.
 function initStickyCta() {
   var panel = document.querySelector('[data-sticky-cta]');
-  var heroCta = document.querySelector('.hero__cta');
+  var yields = Array.prototype.slice.call(document.querySelectorAll('[data-sticky-cta-yield]'));
   var form = document.getElementById('contact');
-  if (!panel || !heroCta || !form || !('IntersectionObserver' in window)) return;
+  if (!panel || !yields.length || !form || !('IntersectionObserver' in window)) return;
 
   var mobile = window.matchMedia('(max-width: 1023.98px)');
-  var heroGone = false;   // кнопка Hero повністю над низом шапки
+  var YIELD_BUFFER = 0.3; // запас знизу для кнопок — частка висоти екрана
+  // Де кожна кнопка відносно екрана: 'in' — в екрані, 'above' — вище, 'below' — нижче
+  var places = yields.map(function () { return 'below'; });
   var formAhead = false;  // верх форми ще нижче за екран
   var observers = [];
 
   function update() {
-    var show = mobile.matches && heroGone && formAhead;
+    var yieldInView = places.indexOf('in') !== -1;
+    var show = mobile.matches && places[0] === 'above' && !yieldInView && formAhead;
     panel.classList.toggle('is-visible', show);
     panel.inert = !show;
   }
@@ -628,10 +634,10 @@ function initStickyCta() {
     });
   }
 
-  function watch(target, rootMargin, onEntry) {
+  function watch(targets, rootMargin, onEntry) {
     var reported = false;
     var observer = new IntersectionObserver(function (entries) {
-      onEntry(entries[entries.length - 1]);
+      entries.forEach(onEntry);
       update();
       if (!reported) {
         reported = true;
@@ -639,17 +645,25 @@ function initStickyCta() {
         enableMotion();
       }
     }, { rootMargin: rootMargin });
-    observer.observe(target);
+    targets.forEach(function (target) { observer.observe(target); });
     observers.push(observer);
   }
 
   function start() {
-    // Верх «екрана» для кнопки Hero — низ липкої шапки
+    // Межі «екрана» для кнопок — із запасом, щоб панель починала ховатись,
+    // ще поки кнопка за краєм, і встигала зникнути за 250 мс анімації:
+    // - знизу (прокрутка вниз, кнопка заїжджає під панель) — ~30% висоти екрана;
+    // - зверху (за шапкою) — лише висота панелі: більший запас «з'їдає» проміжок
+    //   між кнопкою «Як ми працюємо» і формою, де панель має повернутись (на планшетах його майже нема)
     var header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 0;
-    watch(heroCta, -header + 'px 0px 0px 0px', function (entry) {
-      heroGone = !entry.isIntersecting && entry.boundingClientRect.bottom <= entry.rootBounds.top;
+    var above = panel.offsetHeight;
+    var below = Math.max(panel.offsetHeight, Math.round(window.innerHeight * YIELD_BUFFER));
+    watch(yields, (above - header) + 'px 0px ' + below + 'px 0px', function (entry) {
+      var i = yields.indexOf(entry.target);
+      if (entry.isIntersecting) places[i] = 'in';
+      else places[i] = entry.boundingClientRect.bottom <= entry.rootBounds.top ? 'above' : 'below';
     });
-    watch(form, '0px', function (entry) {
+    watch([form], '0px', function (entry) {
       formAhead = !entry.isIntersecting && entry.boundingClientRect.top >= entry.rootBounds.bottom;
     });
   }
@@ -657,7 +671,8 @@ function initStickyCta() {
   function stop() {
     observers.forEach(function (observer) { observer.disconnect(); });
     observers = [];
-    heroGone = formAhead = false;
+    places = yields.map(function () { return 'below'; });
+    formAhead = false;
     update();
   }
 
