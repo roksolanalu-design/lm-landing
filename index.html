@@ -852,6 +852,13 @@
     </div>
   </footer>
 
+  <!-- Sticky CTA (mobile): липка панель із кнопкою внизу екрана, лише <1024px.
+       Видалення цього блоку повністю вимикає фічу (CSS і JS без нього нічого не роблять).
+       Показ і сховування — js/main.js, initStickyCta(); схована панель — inert -->
+  <div class="sticky-cta" data-sticky-cta inert>
+    <a class="btn sticky-cta__button" href="#contact">Залишити заявку</a>
+  </div>
+
   <script src="js/main.js" defer></script>
 </body>
 </html>

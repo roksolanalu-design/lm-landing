@@ -66,6 +66,9 @@
   --page-margin: clamp(var(--space-16), 4vw, var(--space-32));
   --content-max: 1200px;
 
+  /* ---------- Тіні ---------- */
+  --shadow-sticky: 0 -4px 16px color-mix(in srgb, var(--color-neutral-900) 8%, transparent); /* Sticky CTA (mobile): тінь угору */
+
   /* ---------- Радіуси ---------- */
   --radius-sm: 6px;
   --radius-md: 8px;

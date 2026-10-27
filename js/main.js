@@ -583,3 +583,92 @@ function sendLead(data) {
     counterObserver.observe(stats);
   }
 })();
+
+// ---------- Sticky CTA (mobile) ----------
+// Липка панель «Залишити заявку» внизу екрана, лише <1024px.
+// Видно: кнопка Hero повністю сховалась під шапку І верх форми ще не з'явився.
+// На формі й футері — схована. Схована панель — inert (не фокусується, не читається).
+// Меню, попапи й лайтбокс ховають її самі через CSS (html:has(dialog[open])).
+// Без розмітки [data-sticky-cta] функція тихо завершується — фіча вимкнена.
+function initStickyCta() {
+  var panel = document.querySelector('[data-sticky-cta]');
+  var heroCta = document.querySelector('.hero__cta');
+  var form = document.getElementById('contact');
+  if (!panel || !heroCta || !form || !('IntersectionObserver' in window)) return;
+
+  var mobile = window.matchMedia('(max-width: 1023.98px)');
+  var heroGone = false;   // кнопка Hero повністю над низом шапки
+  var formAhead = false;  // верх форми ще нижче за екран
+  var observers = [];
+
+  function update() {
+    var show = mobile.matches && heroGone && formAhead;
+    panel.classList.toggle('is-visible', show);
+    panel.inert = !show;
+  }
+
+  // Перший стан ставимо без анімації: після перезавантаження посередині сторінки
+  // панель одразу на місці. Анімацію вмикаємо, коли сторінка завантажилась
+  // (браузер уже відновив скрол) і обидва спостерігачі звітували хоча б раз
+  var loaded = document.readyState === 'complete';
+  var firstReports = 0;
+  panel.classList.add('is-instant');
+
+  function enableMotion() {
+    if (!loaded || firstReports < 2) return;
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { panel.classList.remove('is-instant'); });
+    });
+  }
+
+  if (!loaded) {
+    window.addEventListener('load', function () {
+      loaded = true;
+      enableMotion();
+    });
+  }
+
+  function watch(target, rootMargin, onEntry) {
+    var reported = false;
+    var observer = new IntersectionObserver(function (entries) {
+      onEntry(entries[entries.length - 1]);
+      update();
+      if (!reported) {
+        reported = true;
+        firstReports += 1;
+        enableMotion();
+      }
+    }, { rootMargin: rootMargin });
+    observer.observe(target);
+    observers.push(observer);
+  }
+
+  function start() {
+    // Верх «екрана» для кнопки Hero — низ липкої шапки
+    var header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 0;
+    watch(heroCta, -header + 'px 0px 0px 0px', function (entry) {
+      heroGone = !entry.isIntersecting && entry.boundingClientRect.bottom <= entry.rootBounds.top;
+    });
+    watch(form, '0px', function (entry) {
+      formAhead = !entry.isIntersecting && entry.boundingClientRect.top >= entry.rootBounds.bottom;
+    });
+  }
+
+  function stop() {
+    observers.forEach(function (observer) { observer.disconnect(); });
+    observers = [];
+    heroGone = formAhead = false;
+    update();
+  }
+
+  // Поворот екрана або зміна ширини: на ≥1024 панель вимикається повністю
+  mobile.addEventListener('change', function () {
+    stop();
+    if (mobile.matches) start();
+  });
+
+  if (mobile.matches) start();
+  else update();
+}
+
+initStickyCta();

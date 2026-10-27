@@ -2414,6 +2414,67 @@ html:not(.js) .faq__icon {
   }
 }
 
+/* ---------- Sticky CTA (mobile) ---------- */
+/* Липка панель із кнопкою «Залишити заявку» внизу екрана, лише <1024px.
+   Видима між моментом, коли кнопка Hero сховалась під шапку, і появою форми
+   (керує js/main.js, initStickyCta). Увесь блок спирається на розмітку
+   [data-sticky-cta]: без неї ці правила ні на що не діють */
+.sticky-cta {
+  --sticky-cta-height: calc(var(--space-12) * 2 + var(--space-48)); /* 72px */
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20; /* вище за контент і шапку; меню, попапи й лайтбокс — у верхньому шарі браузера */
+  padding: var(--space-12) var(--space-16) calc(var(--space-12) + env(safe-area-inset-bottom, 0px));
+  background: var(--bg-page);
+  box-shadow: var(--shadow-sticky);
+  opacity: 0;
+  transform: translateY(100%);
+  transition:
+    transform 250ms ease-out,
+    opacity 250ms ease-out;
+}
+
+.sticky-cta.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Перший стан після завантаження — без виїзду */
+.sticky-cta.is-instant {
+  transition: none;
+}
+
+/* Поки відкрите меню, попап чи лайтбокс (будь-який <dialog>) — панелі не видно */
+html:has(dialog[open]) .sticky-cta {
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+.sticky-cta__button {
+  width: 100%;
+}
+
+/* Фокус і переходи за якорями не ховаються під панель (WCAG 2.4.11) */
+@media (max-width: 1023.98px) {
+  html:has([data-sticky-cta]) {
+    scroll-padding-bottom: calc(var(--space-12) * 2 + var(--space-48) + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (min-width: 1024px) {
+  .sticky-cta {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sticky-cta {
+    transition: none;
+  }
+}
+
 /* ---------- Менше руху ---------- */
 @media (prefers-reduced-motion: reduce) {
   html {
