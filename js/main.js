@@ -585,11 +585,9 @@ function sendLead(data) {
 })();
 
 // ---------- Sticky CTA (mobile) ----------
-// Липка панель із кнопкою внизу екрана, лише <1024px.
+// Липка панель «Залишити заявку» внизу екрана, лише <1024px.
 // Видно, коли кнопка з data-sticky-cta-yield (Hero) уже пішла вгору під шапку
 // І верх форми ще не з'явився. На формі й футері — схована.
-// Напис: «Залишити заявку», а коли секція з data-sticky-cta-switch («Як ми працюємо»)
-// закінчилась над верхом панелі — текст з data-label-after («Почати співпрацю»).
 // Схована панель — inert (не фокусується, не читається).
 // Меню, попапи й лайтбокс ховають її самі через CSS (html:has(dialog[open])).
 // Без розмітки [data-sticky-cta] функція тихо завершується — фіча вимкнена.
@@ -600,49 +598,19 @@ function initStickyCta() {
   if (!panel || !yields.length || !form || !('IntersectionObserver' in window)) return;
 
   var mobile = window.matchMedia('(max-width: 1023.98px)');
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   var FAR = '100000px';   // «нескінченний» запас в один бік (див. start)
   var heroGone = false;   // кнопка Hero вже вище шапки
   var formAhead = false;  // верх форми ще нижче за екран
   var observers = [];
 
-  // Напис кнопки
-  var button = panel.querySelector('.sticky-cta__button');
-  var label = panel.querySelector('.sticky-cta__label');
-  var switchSection = document.querySelector('[data-sticky-cta-switch]');
-  var labels = { before: label.textContent, after: button.getAttribute('data-label-after') };
-  var passed = false;     // секцію-перемикач дочитано (її низ над панеллю)
-  var shown = 'before';   // який напис зараз на кнопці
-  var fadeTimer = null;
-
   function update() {
     var show = mobile.matches && heroGone && formAhead;
     panel.classList.toggle('is-visible', show);
     panel.inert = !show;
-    setLabel(passed && labels.after ? 'after' : 'before');
-  }
-
-  // Зміна напису: гасне 150 мс → новий текст → з'являється 150 мс.
-  // Без анімації — на старті (is-instant) і з «Зменшити рух»
-  function setLabel(next) {
-    if (next === shown) return;
-    shown = next;
-    if (panel.classList.contains('is-instant') || reduceMotion.matches) {
-      clearTimeout(fadeTimer);
-      label.classList.remove('is-fading');
-      label.textContent = labels[next];
-      return;
-    }
-    label.classList.add('is-fading');
-    clearTimeout(fadeTimer);
-    fadeTimer = setTimeout(function () {
-      label.textContent = labels[shown]; // останній бажаний, якщо за цей час прокрутили назад
-      label.classList.remove('is-fading');
-    }, 150);
   }
 
   // Перший стан ставимо без анімації: після перезавантаження посередині сторінки
-  // панель і напис одразу правильні. Анімацію вмикаємо, коли сторінка завантажилась
+  // панель одразу на місці. Анімацію вмикаємо, коли сторінка завантажилась
   // (браузер уже відновив скрол) і всі спостерігачі звітували хоча б раз
   var loaded = document.readyState === 'complete';
   var firstReports = 0;
@@ -677,14 +645,6 @@ function initStickyCta() {
     observers.push(observer);
   }
 
-  // Мітка нульової висоти в самому кінці секції-перемикача: її положення = низ секції
-  var switchMark = null;
-  if (switchSection) {
-    switchMark = document.createElement('div');
-    switchMark.setAttribute('aria-hidden', 'true');
-    switchSection.appendChild(switchMark);
-  }
-
   function start() {
     // Кожне питання — окремий спостерігач, у якого «екран» продовжено до нескінченності
     // в протилежний бік. Тоді він перемикається рівно на своїй межі, навіть якщо
@@ -698,18 +658,12 @@ function initStickyCta() {
     watch([form], FAR + ' 0px 0px 0px', function (entry) {
       formAhead = !entry.isIntersecting;
     });
-    // Перемикач напису: низ секції піднявся вище верху панелі
-    if (switchMark) {
-      watch([switchMark], FAR + ' 0px ' + -panel.offsetHeight + 'px 0px', function (entry) {
-        passed = entry.isIntersecting;
-      });
-    }
   }
 
   function stop() {
     observers.forEach(function (observer) { observer.disconnect(); });
     observers = [];
-    heroGone = formAhead = passed = false;
+    heroGone = formAhead = false;
     update();
   }
 

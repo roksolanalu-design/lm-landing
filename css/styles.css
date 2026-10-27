@@ -2415,9 +2415,9 @@ html:not(.js) .faq__icon {
 }
 
 /* ---------- Sticky CTA (mobile) ---------- */
-/* Липка панель із кнопкою внизу екрана, лише <1024px.
-   Видима між моментом, коли кнопка Hero сховалась під шапку, і появою форми;
-   після секції «Як ми працюємо» напис змінюється (керує js/main.js, initStickyCta).
+/* Липка панель із кнопкою «Залишити заявку» внизу екрана, лише <1024px.
+   Видима між моментом, коли кнопка Hero сховалась під шапку, і появою форми
+   (керує js/main.js, initStickyCta).
    Увесь блок спирається на розмітку [data-sticky-cta]: без неї ці правила ні на що не діють */
 .sticky-cta {
   --sticky-cta-height: calc(var(--space-12) * 2 + var(--space-48)); /* 72px */
@@ -2456,15 +2456,6 @@ html:has(dialog[open]) .sticky-cta {
   width: 100%;
 }
 
-/* Зміна напису: текст гасне, змінюється, з'являється. Розмір кнопки не змінюється */
-.sticky-cta__label {
-  transition: opacity 150ms ease-out;
-}
-
-.sticky-cta__label.is-fading {
-  opacity: 0;
-}
-
 /* Поки є панель, секційна кнопка «Почати співпрацю» на мобайлі не потрібна:
    її роль бере панель. Без розмітки панелі кнопка повертається сама */
 @media (max-width: 1023.98px) {
@@ -2487,8 +2478,7 @@ html:has(dialog[open]) .sticky-cta {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sticky-cta,
-  .sticky-cta__label {
+  .sticky-cta {
     transition: none;
   }
 }
