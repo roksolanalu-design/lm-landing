@@ -585,12 +585,11 @@ function sendLead(data) {
 })();
 
 // ---------- Sticky CTA (mobile) ----------
-// Липка панель «Залишити заявку» внизу екрана, лише <1024px.
-// Панель живе між кнопками з атрибутом data-sticky-cta-yield (зараз — Hero
-// і «Почати співпрацю» в «Як ми працюємо»), щоб не було двох червоних кнопок разом.
-// Видно, коли: перша така кнопка (Hero) уже пішла вгору під шапку,
-// а всі наступні ще нижче екрана (із запасом) І верх форми ще не з'явився (страховка).
-// Щойно наступна кнопка в екрані або вже вище — панелі немає: FAQ, форма, футер.
+// Липка панель із кнопкою внизу екрана, лише <1024px.
+// Видно, коли кнопка з data-sticky-cta-yield (Hero) уже пішла вгору під шапку
+// І верх форми ще не з'явився. На формі й футері — схована.
+// Напис: «Залишити заявку», а коли секція з data-sticky-cta-switch («Як ми працюємо»)
+// закінчилась над верхом панелі — текст з data-label-after («Почати співпрацю»).
 // Схована панель — inert (не фокусується, не читається).
 // Меню, попапи й лайтбокс ховають її самі через CSS (html:has(dialog[open])).
 // Без розмітки [data-sticky-cta] функція тихо завершується — фіча вимкнена.
@@ -601,22 +600,49 @@ function initStickyCta() {
   if (!panel || !yields.length || !form || !('IntersectionObserver' in window)) return;
 
   var mobile = window.matchMedia('(max-width: 1023.98px)');
-  var YIELD_BUFFER = '30%'; // запас знизу для кнопок — частка висоти екрана
-  var FAR = '100000px';     // «нескінченний» запас в один бік (див. start)
-  var above = yields.map(function () { return false; }); // кнопка вже вище шапки
-  var below = yields.map(function () { return true; });  // кнопка ще нижче екрана (із запасом)
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var FAR = '100000px';   // «нескінченний» запас в один бік (див. start)
+  var heroGone = false;   // кнопка Hero вже вище шапки
   var formAhead = false;  // верх форми ще нижче за екран
   var observers = [];
 
+  // Напис кнопки
+  var button = panel.querySelector('.sticky-cta__button');
+  var label = panel.querySelector('.sticky-cta__label');
+  var switchSection = document.querySelector('[data-sticky-cta-switch]');
+  var labels = { before: label.textContent, after: button.getAttribute('data-label-after') };
+  var passed = false;     // секцію-перемикач дочитано (її низ над панеллю)
+  var shown = 'before';   // який напис зараз на кнопці
+  var fadeTimer = null;
+
   function update() {
-    var restBelow = below.slice(1).every(Boolean);
-    var show = mobile.matches && above[0] && restBelow && formAhead;
+    var show = mobile.matches && heroGone && formAhead;
     panel.classList.toggle('is-visible', show);
     panel.inert = !show;
+    setLabel(passed && labels.after ? 'after' : 'before');
+  }
+
+  // Зміна напису: гасне 150 мс → новий текст → з'являється 150 мс.
+  // Без анімації — на старті (is-instant) і з «Зменшити рух»
+  function setLabel(next) {
+    if (next === shown) return;
+    shown = next;
+    if (panel.classList.contains('is-instant') || reduceMotion.matches) {
+      clearTimeout(fadeTimer);
+      label.classList.remove('is-fading');
+      label.textContent = labels[next];
+      return;
+    }
+    label.classList.add('is-fading');
+    clearTimeout(fadeTimer);
+    fadeTimer = setTimeout(function () {
+      label.textContent = labels[shown]; // останній бажаний, якщо за цей час прокрутили назад
+      label.classList.remove('is-fading');
+    }, 150);
   }
 
   // Перший стан ставимо без анімації: після перезавантаження посередині сторінки
-  // панель одразу на місці. Анімацію вмикаємо, коли сторінка завантажилась
+  // панель і напис одразу правильні. Анімацію вмикаємо, коли сторінка завантажилась
   // (браузер уже відновив скрол) і всі спостерігачі звітували хоча б раз
   var loaded = document.readyState === 'complete';
   var firstReports = 0;
@@ -651,36 +677,39 @@ function initStickyCta() {
     observers.push(observer);
   }
 
+  // Мітка нульової висоти в самому кінці секції-перемикача: її положення = низ секції
+  var switchMark = null;
+  if (switchSection) {
+    switchMark = document.createElement('div');
+    switchMark.setAttribute('aria-hidden', 'true');
+    switchSection.appendChild(switchMark);
+  }
+
   function start() {
-    // Межі «екрана» для кнопок: зверху — низ липкої шапки (панель з'являється,
-    // щойно кнопка Hero сховалась під шапку); знизу — із запасом 30% висоти екрана,
-    // щоб панель почала ховатись, ще поки наступна кнопка під краєм, і встигла
-    // зникнути за 250 мс анімації до того, як кнопка доїде до неї.
-    // Запас у відсотках: браузер сам перераховує його при зміні висоти екрана
-    // (поворот, рядок адреси на телефоні)
-    //
-    // Кожне питання («нижче?», «вище?») — окремий спостерігач, у якого «екран»
-    // продовжено до нескінченності в протилежний бік. Тоді він перемикається рівно
-    // на своїй межі, навіть якщо сторінка перестрибнула через екран
-    // (якір без плавної прокрутки): звичайний спостерігач такого стрибка не помітив би
+    // Кожне питання — окремий спостерігач, у якого «екран» продовжено до нескінченності
+    // в протилежний бік. Тоді він перемикається рівно на своїй межі, навіть якщо
+    // сторінка перестрибнула через екран (якір без плавної прокрутки)
     var header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 0;
-    watch(yields, FAR + ' 0px ' + YIELD_BUFFER + ' 0px', function (entry) {
-      below[yields.indexOf(entry.target)] = !entry.isIntersecting;
+    // Hero: «пішла» — коли її низ вище низу липкої шапки
+    watch([yields[0]], -header + 'px 0px ' + FAR + ' 0px', function (entry) {
+      heroGone = !entry.isIntersecting;
     });
-    watch(yields, -header + 'px 0px ' + FAR + ' 0px', function (entry) {
-      above[yields.indexOf(entry.target)] = !entry.isIntersecting;
-    });
+    // Форма: «попереду» — поки її верх нижче екрана
     watch([form], FAR + ' 0px 0px 0px', function (entry) {
       formAhead = !entry.isIntersecting;
     });
+    // Перемикач напису: низ секції піднявся вище верху панелі
+    if (switchMark) {
+      watch([switchMark], FAR + ' 0px ' + -panel.offsetHeight + 'px 0px', function (entry) {
+        passed = entry.isIntersecting;
+      });
+    }
   }
 
   function stop() {
     observers.forEach(function (observer) { observer.disconnect(); });
     observers = [];
-    above = yields.map(function () { return false; });
-    below = yields.map(function () { return true; });
-    formAhead = false;
+    heroGone = formAhead = passed = false;
     update();
   }
 

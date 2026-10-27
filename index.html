@@ -514,7 +514,7 @@
     </section>
 
     <!-- 8. Як ми працюємо -->
-    <section class="section how" id="how" aria-labelledby="how-title">
+    <section class="section how" id="how" aria-labelledby="how-title" data-sticky-cta-switch>
       <div class="container how__inner">
         <h2 class="section__title" id="how-title" data-reveal>Як&nbsp;ми&nbsp;працюємо</h2>
 
@@ -563,7 +563,7 @@
           </li>
         </ol>
 
-        <a class="btn how__cta" href="#contact" data-reveal data-sticky-cta-yield>Почати співпрацю</a>
+        <a class="btn how__cta" href="#contact" data-reveal>Почати співпрацю</a>
       </div>
     </section>
 
@@ -855,9 +855,10 @@
   <!-- Sticky CTA (mobile): липка панель із кнопкою внизу екрана, лише <1024px.
        Видалення цього блоку повністю вимикає фічу (CSS і JS без нього нічого не роблять).
        Показ і сховування — js/main.js, initStickyCta(); схована панель — inert.
-       Кнопки з data-sticky-cta-yield (Hero, «Як ми працюємо») ховають панель, поки вони в екрані -->
+       Видна від кнопки Hero (data-sticky-cta-yield) до форми. Коли секція з data-sticky-cta-switch
+       («Як ми працюємо») закінчилась над панеллю, напис змінюється на data-label-after -->
   <div class="sticky-cta" data-sticky-cta inert>
-    <a class="btn sticky-cta__button" href="#contact">Залишити заявку</a>
+    <a class="btn sticky-cta__button" href="#contact" data-label-after="Почати співпрацю"><span class="sticky-cta__label">Залишити заявку</span></a>
   </div>
 
   <script src="js/main.js" defer></script>
