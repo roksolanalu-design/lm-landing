@@ -586,11 +586,12 @@ function sendLead(data) {
 
 // ---------- Sticky CTA (mobile) ----------
 // Липка панель «Залишити заявку» внизу екрана, лише <1024px.
-// Кнопки з атрибутом data-sticky-cta-yield «забирають» панель: поки хоч одна з них
-// в екрані, панелі немає (щоб не було двох червоних кнопок разом).
+// Панель живе між кнопками з атрибутом data-sticky-cta-yield (зараз — Hero
+// і «Почати співпрацю» в «Як ми працюємо»), щоб не було двох червоних кнопок разом.
 // Видно, коли: перша така кнопка (Hero) уже пішла вгору під шапку,
-// жодна з них не в екрані І верх форми ще не з'явився.
-// На формі й футері — схована. Схована панель — inert (не фокусується, не читається).
+// а всі наступні ще нижче екрана (із запасом) І верх форми ще не з'явився (страховка).
+// Щойно наступна кнопка в екрані або вже вище — панелі немає: FAQ, форма, футер.
+// Схована панель — inert (не фокусується, не читається).
 // Меню, попапи й лайтбокс ховають її самі через CSS (html:has(dialog[open])).
 // Без розмітки [data-sticky-cta] функція тихо завершується — фіча вимкнена.
 function initStickyCta() {
@@ -600,28 +601,29 @@ function initStickyCta() {
   if (!panel || !yields.length || !form || !('IntersectionObserver' in window)) return;
 
   var mobile = window.matchMedia('(max-width: 1023.98px)');
-  var YIELD_BUFFER = 0.3; // запас знизу для кнопок — частка висоти екрана
-  // Де кожна кнопка відносно екрана: 'in' — в екрані, 'above' — вище, 'below' — нижче
-  var places = yields.map(function () { return 'below'; });
+  var YIELD_BUFFER = '30%'; // запас знизу для кнопок — частка висоти екрана
+  var FAR = '100000px';     // «нескінченний» запас в один бік (див. start)
+  var above = yields.map(function () { return false; }); // кнопка вже вище шапки
+  var below = yields.map(function () { return true; });  // кнопка ще нижче екрана (із запасом)
   var formAhead = false;  // верх форми ще нижче за екран
   var observers = [];
 
   function update() {
-    var yieldInView = places.indexOf('in') !== -1;
-    var show = mobile.matches && places[0] === 'above' && !yieldInView && formAhead;
+    var restBelow = below.slice(1).every(Boolean);
+    var show = mobile.matches && above[0] && restBelow && formAhead;
     panel.classList.toggle('is-visible', show);
     panel.inert = !show;
   }
 
   // Перший стан ставимо без анімації: після перезавантаження посередині сторінки
   // панель одразу на місці. Анімацію вмикаємо, коли сторінка завантажилась
-  // (браузер уже відновив скрол) і обидва спостерігачі звітували хоча б раз
+  // (браузер уже відновив скрол) і всі спостерігачі звітували хоча б раз
   var loaded = document.readyState === 'complete';
   var firstReports = 0;
   panel.classList.add('is-instant');
 
   function enableMotion() {
-    if (!loaded || firstReports < 2) return;
+    if (!loaded || firstReports < observers.length) return;
     requestAnimationFrame(function () {
       requestAnimationFrame(function () { panel.classList.remove('is-instant'); });
     });
@@ -650,28 +652,34 @@ function initStickyCta() {
   }
 
   function start() {
-    // Межі «екрана» для кнопок — із запасом, щоб панель починала ховатись,
-    // ще поки кнопка за краєм, і встигала зникнути за 250 мс анімації:
-    // - знизу (прокрутка вниз, кнопка заїжджає під панель) — ~30% висоти екрана;
-    // - зверху (за шапкою) — лише висота панелі: більший запас «з'їдає» проміжок
-    //   між кнопкою «Як ми працюємо» і формою, де панель має повернутись (на планшетах його майже нема)
+    // Межі «екрана» для кнопок: зверху — низ липкої шапки (панель з'являється,
+    // щойно кнопка Hero сховалась під шапку); знизу — із запасом 30% висоти екрана,
+    // щоб панель почала ховатись, ще поки наступна кнопка під краєм, і встигла
+    // зникнути за 250 мс анімації до того, як кнопка доїде до неї.
+    // Запас у відсотках: браузер сам перераховує його при зміні висоти екрана
+    // (поворот, рядок адреси на телефоні)
+    //
+    // Кожне питання («нижче?», «вище?») — окремий спостерігач, у якого «екран»
+    // продовжено до нескінченності в протилежний бік. Тоді він перемикається рівно
+    // на своїй межі, навіть якщо сторінка перестрибнула через екран
+    // (якір без плавної прокрутки): звичайний спостерігач такого стрибка не помітив би
     var header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 0;
-    var above = panel.offsetHeight;
-    var below = Math.max(panel.offsetHeight, Math.round(window.innerHeight * YIELD_BUFFER));
-    watch(yields, (above - header) + 'px 0px ' + below + 'px 0px', function (entry) {
-      var i = yields.indexOf(entry.target);
-      if (entry.isIntersecting) places[i] = 'in';
-      else places[i] = entry.boundingClientRect.bottom <= entry.rootBounds.top ? 'above' : 'below';
+    watch(yields, FAR + ' 0px ' + YIELD_BUFFER + ' 0px', function (entry) {
+      below[yields.indexOf(entry.target)] = !entry.isIntersecting;
     });
-    watch([form], '0px', function (entry) {
-      formAhead = !entry.isIntersecting && entry.boundingClientRect.top >= entry.rootBounds.bottom;
+    watch(yields, -header + 'px 0px ' + FAR + ' 0px', function (entry) {
+      above[yields.indexOf(entry.target)] = !entry.isIntersecting;
+    });
+    watch([form], FAR + ' 0px 0px 0px', function (entry) {
+      formAhead = !entry.isIntersecting;
     });
   }
 
   function stop() {
     observers.forEach(function (observer) { observer.disconnect(); });
     observers = [];
-    places = yields.map(function () { return 'below'; });
+    above = yields.map(function () { return false; });
+    below = yields.map(function () { return true; });
     formAhead = false;
     update();
   }
