@@ -3,28 +3,38 @@
 // Сигнал для запобіжника в <head>: скрипт завантажився, клас .js знімати не треба
 window.lmReady = true;
 
-// ---------- Відправка заявки ----------
-// Заявка йде одночасно двома каналами:
-//   1) e-mail — через сервіс форм Web3Forms;
-//   2) Telegram — через наш Cloudflare Worker, який пересилає її боту.
-// Успіх — якщо дійшла хоча б одним каналом; помилка — лише якщо впали обидва.
-//
-// Налаштування (підключимо окремим кроком):
-//   web3formsKey — access key Web3Forms. Він публічний за задумом сервісу,
-//     тому може лежати в коді сайту.
-//   telegramEndpoint — адреса нашого Cloudflare Worker.
+// ---------- Налаштування форми заявки ----------
+// WEB3FORMS_KEY — access key Web3Forms. Він публічний за задумом сервісу,
+//   тому лежить у коді сайту. Лист іде на пошту, прив'язану до ключа.
+// TELEGRAM_WORKER_URL — адреса нашого Cloudflare Worker для Telegram.
+//   Порожній рядок → канал вимкнений і не викликається.
 // УВАГА: токен Telegram-бота НІКОЛИ не кладемо сюди — код сайту бачать усі.
 // Токен зберігається лише в налаштуваннях (secrets) Cloudflare Worker.
-var LEAD_CONFIG = {
-  web3formsKey: '',
-  telegramEndpoint: '',
-  timeout: 10000 // скільки чекати відповіді кожного каналу, мс
+var CONFIG = {
+  WEB3FORMS_KEY: 'a664bf43-7ca9-4755-ad96-ab21aacb2e26',
+  TELEGRAM_WORKER_URL: '',
+  TIMEOUT: 10000 // скільки чекати відповіді кожного каналу, мс
 };
+
+// Коли відкрили сторінку — для захисту від ботів, що надсилають форму миттєво
+var PAGE_OPENED_AT = Date.now();
+
+// ---------- Відправка заявки ----------
+// Заявка йде паралельно в усі увімкнені канали:
+//   1) e-mail — через сервіс форм Web3Forms;
+//   2) Telegram — через наш Cloudflare Worker, який пересилає її боту.
+// Успіх — якщо дійшла хоча б одним каналом; помилка — лише якщо впали всі.
+
+var WEB3FORMS_PLACEHOLDER = 'ВСТАВТЕ_КЛЮЧ_WEB3FORMS';
+
+function isLocalhost() {
+  return location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+}
 
 // POST із JSON і обмеженням часу: якщо канал «завис», не чекаємо вічно
 function postJSON(url, body) {
   var controller = 'AbortController' in window ? new AbortController() : null;
-  var timer = controller && setTimeout(function () { controller.abort(); }, LEAD_CONFIG.timeout);
+  var timer = controller && setTimeout(function () { controller.abort(); }, CONFIG.TIMEOUT);
   return fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -35,50 +45,78 @@ function postJSON(url, body) {
   });
 }
 
+// Дата й час відправки за Києвом, напр. «02.11.2026, 14:05»
+function kyivDateTime() {
+  return new Date().toLocaleString('uk-UA', {
+    timeZone: 'Europe/Kyiv',
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+}
+
 // Канал 1: e-mail через Web3Forms
 function sendToEmail(data) {
-  return postJSON('https://api.web3forms.com/submit', {
-    access_key: LEAD_CONFIG.web3formsKey,
-    subject: 'Нова заявка з сайту: ' + (data.topic || 'без теми'),
+  var body = {
+    access_key: CONFIG.WEB3FORMS_KEY,
+    subject: 'Нова заявка з сайту LM — ' + data.topic,
     from_name: 'Сайт LM Бухгалтерські послуги',
+    botcheck: data.botcheck,
     'Тема звернення': data.topic,
-    "Ім'я": data.name,
-    'Телефон': data.phone,
-    'E-mail': data.email || '—'
-  }).then(function (response) {
+    'Ім’я': data.name,
+    'Телефон': data.phone
+  };
+  // E-mail — лише якщо вказали; тоді ж він стає адресою для відповіді (Reply-To)
+  if (data.email) {
+    body['E-mail'] = data.email;
+    body.replyto = data.email;
+  }
+  body['Сторінка'] = data.page;
+  body['Джерело'] = data.source;
+  body['Дата й час (Київ)'] = data.sentAt;
+
+  return postJSON('https://api.web3forms.com/submit', body).then(function (response) {
     return response.json().then(function (result) {
       if (!response.ok || !result.success) throw new Error('Web3Forms: ' + (result.message || response.status));
+      console.info('Web3Forms:', result.message || 'OK');
     });
   });
 }
 
 // Канал 2: Telegram через Cloudflare Worker
 function sendToTelegram(data) {
-  return postJSON(LEAD_CONFIG.telegramEndpoint, data).then(function (response) {
+  return postJSON(CONFIG.TELEGRAM_WORKER_URL, data).then(function (response) {
     if (!response.ok) throw new Error('Telegram Worker: ' + response.status);
   });
 }
 
-// Отримує { topic, name, phone, email }, повертає Promise:
+// Отримує { topic, name, phone, email, botcheck, page, source, sentAt }, повертає Promise:
 // resolve — заявку прийнято, reject — не дійшла жодним каналом.
 function sendLead(data) {
-  var channels = [];
-  if (LEAD_CONFIG.web3formsKey) channels.push(sendToEmail(data));
-  if (LEAD_CONFIG.telegramEndpoint) channels.push(sendToTelegram(data));
+  var emailOn = Boolean(CONFIG.WEB3FORMS_KEY) && CONFIG.WEB3FORMS_KEY !== WEB3FORMS_PLACEHOLDER;
+  var telegramOn = Boolean(CONFIG.TELEGRAM_WORKER_URL);
 
-  // Поки ключів немає — тестовий режим, як і раніше:
-  // ім'я test-error показує попап помилки, будь-яке інше — попап успіху
+  var channels = [];
+  if (emailOn) channels.push(sendToEmail(data));
+  if (telegramOn) channels.push(sendToTelegram(data));
+
   if (!channels.length) {
-    console.info('sendLead: канали ще не налаштовані, тестовий режим', data);
-    return new Promise(function (resolve, reject) {
-      setTimeout(function () {
-        if (data.name === 'test-error') reject(new Error('Тестова помилка'));
-        else resolve();
-      }, 1000);
-    });
+    // Тестовий режим — ЛИШЕ на localhost: ім'я test-error показує попап помилки,
+    // будь-яке інше — попап успіху
+    if (isLocalhost()) {
+      console.info('sendLead: канали не налаштовані, тестовий режим (localhost)', data);
+      return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+          if (data.name === 'test-error') reject(new Error('Тестова помилка'));
+          else resolve();
+        }, 1000);
+      });
+    }
+    // На живому сайті заявка не має «зникнути» мовчки — показуємо помилку
+    console.error('sendLead: жоден канал не налаштований (CONFIG.WEB3FORMS_KEY і CONFIG.TELEGRAM_WORKER_URL) — заявку не надіслано');
+    return Promise.reject(new Error('Канали не налаштовані'));
   }
 
-  // Обидва канали йдуть паралельно; чекаємо, доки завершаться всі
+  // Канали йдуть паралельно; чекаємо, доки завершаться всі
   return Promise.allSettled(channels).then(function (results) {
     var delivered = results.some(function (result) {
       return result.status === 'fulfilled';
@@ -426,9 +464,13 @@ function sendLead(data) {
       return;
     }
 
-    // Пастка заповнена — це бот: тихо нічого не надсилаємо
-    if (form.elements.hp_field.value) {
+    // Схоже на бота — пастка заповнена або форму надіслали менш ніж за 3 с
+    // після відкриття сторінки. Тихо показуємо «успіх», нічого не надсилаючи
+    var botcheck = form.elements.botcheck.value;
+    if (botcheck || Date.now() - PAGE_OPENED_AT < 3000) {
       form.reset();
+      clearErrors();
+      showPopup('popup-success');
       return;
     }
 
@@ -436,7 +478,11 @@ function sendLead(data) {
       topic: fields.topic.value,
       name: fields.name.value.trim(),
       phone: fields.phone.value.trim(),
-      email: fields.email.value.trim()
+      email: fields.email.value.trim(),
+      botcheck: botcheck,
+      page: location.href,
+      source: document.referrer || 'прямий перехід',
+      sentAt: kyivDateTime()
     };
 
     setBusy(true);

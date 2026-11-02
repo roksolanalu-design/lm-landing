@@ -9,7 +9,7 @@
     llms.txt     — посилання на сайт і форму заявки
   Інше:
     privacy.html — дата редакції політики ([дата], червоним)
-    js/main.js   — LEAD_CONFIG: ключ Web3Forms і адреса Cloudflare Worker для Telegram
+    js/main.js   — CONFIG.TELEGRAM_WORKER_URL: адреса Cloudflare Worker для Telegram (поки порожня — канал вимкнений)
 -->
 <html lang="uk">
 <head>
@@ -34,8 +34,8 @@
   <!-- Шрифт: один варіативний файл на всі накреслення -->
   <link rel="preload" href="fonts/Onest-Variable.woff2" as="font" type="font/woff2" crossorigin>
 
-  <link rel="stylesheet" href="css/tokens.css?v=2026-10-27-1">
-  <link rel="stylesheet" href="css/styles.css?v=2026-10-27-1">
+  <link rel="stylesheet" href="css/tokens.css?v=2026-11-02-1">
+  <link rel="stylesheet" href="css/styles.css?v=2026-11-02-1">
 
   <!-- Favicon (червоний): ico — для старих браузерів і закладок, svg — для сучасних,
        180×180 — іконка на головному екрані iPhone -->
@@ -815,8 +815,8 @@
 
             <!-- Пастка для спам-ботів: прихована від людей і скрінрідерів -->
             <div class="form__trap" aria-hidden="true">
-              <label for="hp_field">Не заповнюйте це поле</label>
-              <input id="hp_field" name="hp_field" type="text" tabindex="-1" autocomplete="off">
+              <label for="botcheck">Не заповнюйте це поле</label>
+              <input id="botcheck" name="botcheck" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
             </div>
           </div>
 
@@ -962,6 +962,6 @@
     <a class="btn sticky-cta__button" href="#contact">Залишити заявку</a>
   </div>
 
-  <script src="js/main.js?v=2026-10-27-1" defer></script>
+  <script src="js/main.js?v=2026-11-02-1" defer></script>
 </body>
 </html>
