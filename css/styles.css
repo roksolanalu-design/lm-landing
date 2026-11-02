@@ -2200,11 +2200,6 @@ html:not(.js) .faq__icon {
   text-underline-position: from-font;
 }
 
-/* Місця, які ще треба заповнити перед публікацією */
-.legal__todo {
-  color: var(--text-accent);
-}
-
 @media (min-width: 1024px) {
   .legal {
     gap: var(--space-40);
