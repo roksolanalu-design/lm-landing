@@ -1976,6 +1976,11 @@ html:not(.js) .faq__icon {
   font: var(--text-body-s);
 }
 
+/* Попап успіху: перший рядок має вміститися в один рядок на всю ширину картки */
+.popup__text--wide {
+  max-width: none;
+}
+
 .popup__phone {
   font-weight: 700;
   color: inherit;
