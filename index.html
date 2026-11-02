@@ -34,8 +34,8 @@
   <!-- Шрифт: один варіативний файл на всі накреслення -->
   <link rel="preload" href="fonts/Onest-Variable.woff2" as="font" type="font/woff2" crossorigin>
 
-  <link rel="stylesheet" href="css/tokens.css?v=2026-11-02-2">
-  <link rel="stylesheet" href="css/styles.css?v=2026-11-02-2">
+  <link rel="stylesheet" href="css/tokens.css?v=2026-11-02-3">
+  <link rel="stylesheet" href="css/styles.css?v=2026-11-02-3">
 
   <!-- Favicon (червоний): ico — для старих браузерів і закладок, svg — для сучасних,
        180×180 — іконка на головному екрані iPhone -->
@@ -793,6 +793,8 @@
                 <option value="">Тема звернення</option>
               </select>
               <p class="field__error" id="contact-topic-error" hidden></p>
+              <!-- Оголошення для скрінрідера після «Обрати» на картці послуги -->
+              <p class="visually-hidden" id="contact-topic-status" aria-live="polite"></p>
             </div>
 
             <div class="field">
@@ -962,6 +964,6 @@
     <a class="btn sticky-cta__button" href="#contact">Залишити заявку</a>
   </div>
 
-  <script src="js/main.js?v=2026-11-02-2" defer></script>
+  <script src="js/main.js?v=2026-11-02-3" defer></script>
 </body>
 </html>

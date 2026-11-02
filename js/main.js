@@ -314,8 +314,32 @@ function sendLead(data) {
     });
   }
 
-  // «Обрати →»: підставляємо послугу і ставимо курсор у поле «Ім'я».
-  // Сам перехід до форми робить браузер за посиланням #contact.
+  // «Обрати →»: підставляємо послугу, коротко підсвічуємо поле «Тема звернення»
+  // й оголошуємо вибір скрінрідеру. Сам перехід до форми робить браузер за посиланням #contact.
+  // Фокус:
+  //   - з мишею (pointer: fine) — у поле «Ім'я», щоб одразу друкувати;
+  //   - на сенсорних пристроях (pointer: coarse) — на заголовок форми: фокус у полі
+  //     відкрив би клавіатуру, і браузер прокрутив би сторінку до кінця форми.
+  var touch = window.matchMedia('(pointer: coarse)');
+  var status = document.getElementById('contact-topic-status');
+  var title = document.getElementById('contact-title');
+  var highlightTimer = null;
+
+  function highlightTopic(topic) {
+    topic.classList.remove('is-picked');
+    void topic.offsetWidth; // перезапуск анімації, якщо «Обрати» натиснули знову
+    topic.classList.add('is-picked');
+    clearTimeout(highlightTimer);
+    highlightTimer = setTimeout(function () { topic.classList.remove('is-picked'); }, 1500);
+  }
+
+  function announce(text) {
+    if (!status) return;
+    status.textContent = '';
+    // Нове значення в наступному кадрі — щоб той самий текст оголосився й повторно
+    setTimeout(function () { status.textContent = text; }, 50);
+  }
+
   links.forEach(function (link) {
     link.addEventListener('click', function () {
       var topic = document.getElementById(TOPIC_ID);
@@ -323,16 +347,23 @@ function sendLead(data) {
       if (topic) {
         topic.value = link.dataset.service;
         topic.dispatchEvent(new Event('change', { bubbles: true }));
+        highlightTopic(topic);
+        announce('Обрано тему: ' + link.dataset.service);
       }
-      // setTimeout — щоб фокус поставився після переходу за якорем.
-      // Позначка каже формі: фокус поставив скрипт, а не людина,
-      // тож вихід із порожнього поля ще не привід показувати помилку.
-      if (name) {
-        setTimeout(function () {
+      // setTimeout — щоб фокус поставився після переходу за якорем;
+      // preventScroll — щоб фокус не зсунув прокрутку, яку зробив перехід
+      setTimeout(function () {
+        if (touch.matches) {
+          if (!title) return;
+          title.setAttribute('tabindex', '-1');
+          title.focus({ preventScroll: true });
+        } else if (name) {
+          // Позначка каже формі: фокус поставив скрипт, а не людина,
+          // тож вихід із порожнього поля ще не привід показувати помилку
           name.dataset.autoFocused = 'true';
           name.focus({ preventScroll: true });
-        }, 0);
-      }
+        }
+      }, 0);
     });
   });
 })();

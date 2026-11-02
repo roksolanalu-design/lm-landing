@@ -1931,6 +1931,36 @@ html:not(.js) .faq__icon {
   }
 }
 
+/* «Обрати» на картці послуги: поле «Тема звернення» коротко підсвічується (1,5 с),
+   щоб було видно, що послугу вже підставлено. Клас ставить і знімає js/main.js.
+   Без анімації («Зменшити рух») контур просто тримається 1,5 с */
+.field__control.is-picked {
+  box-shadow: 0 0 0 3px var(--action-primary);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .field__control.is-picked {
+    animation: field-picked 1500ms ease-out forwards;
+  }
+}
+
+@keyframes field-picked {
+  0%,
+  40% {
+    box-shadow: 0 0 0 3px var(--action-primary);
+  }
+
+  100% {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--action-primary) 0%, transparent);
+  }
+}
+
+/* Заголовок форми отримує фокус програмно (на сенсорних пристроях після «Обрати»):
+   рамку не показуємо — це не елемент для натискання */
+#contact-title:focus {
+  outline: none;
+}
+
 /* ---------- Попапи форми ---------- */
 /* Червона картка по центру екрана: іконка, заголовок, текст, біла кнопка */
 /* Десктоп 480×320; на мобайлі — картка з полями 16px з боків */
