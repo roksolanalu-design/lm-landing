@@ -2006,9 +2006,20 @@ html:not(.js) .faq__icon {
   font: var(--text-body-s);
 }
 
-/* Попап успіху: перший рядок має вміститися в один рядок на всю ширину картки */
+/* Попап успіху: текст на всю ширину картки (мінус її поля), без balance/pretty —
+   Safari з text-wrap: pretty стискав абзац і ламав першу фразу на 2 рядки */
 .popup__text--wide {
+  align-self: stretch;
   max-width: none;
+  text-wrap: wrap;
+}
+
+/* Перша фраза — завжди одним рядком, коли картка достатньо широка;
+   на вужчих екранах переноситься як звичайно */
+@media (min-width: 400px) {
+  .popup__line {
+    white-space: nowrap;
+  }
 }
 
 .popup__phone {
