@@ -10,10 +10,16 @@ window.lmReady = true;
 //   Порожній рядок → канал вимкнений і не викликається.
 // УВАГА: токен Telegram-бота НІКОЛИ не кладемо сюди — код сайту бачать усі.
 // Токен зберігається лише в налаштуваннях (secrets) Cloudflare Worker.
+// GA4_ID, CLARITY_ID — публічні ідентифікатори аналітики (видно в коді будь-якого сайту).
+//   Вантажаться лише після згоди в банері cookies і лише на ANALYTICS_HOSTS.
 var CONFIG = {
   WEB3FORMS_KEY: 'a664bf43-7ca9-4755-ad96-ab21aacb2e26',
   TELEGRAM_WORKER_URL: 'https://lm-leads.mml-buh.workers.dev',
-  TIMEOUT: 10000 // скільки чекати відповіді кожного каналу, мс
+  TIMEOUT: 10000, // скільки чекати відповіді кожного каналу, мс
+  GA4_ID: 'G-TYV8PYYLR6',
+  CLARITY_ID: 'z7vgy4jr6l',
+  ANALYTICS_HOSTS: ['lm-buh.com.ua', 'www.lm-buh.com.ua'], // localhost, github.io тощо — без аналітики
+  CONSENT_MONTHS: 12 // скільки пам'ятаємо вибір у банері, потім питаємо знову
 };
 
 // Коли відкрили сторінку — для захисту від ботів, що надсилають форму миттєво
@@ -128,6 +134,212 @@ function sendLead(data) {
   });
 }
 
+// ---------- Згода на cookies і аналітика ----------
+// Банер [data-cookie-banner] питає згоди при першому візиті. Вибір — у localStorage
+// (ключ lm-consent: { choice: 'granted' | 'denied', date }) на CONFIG.CONSENT_MONTHS.
+// До «Дозволити» скриптів GA4 і Clarity на сторінці НЕМАЄ — жодних запитів до
+// googletagmanager.com чи clarity.ms. «Відхилити» → не вантажаться ніколи.
+// «Налаштування cookies» ([data-cookie-settings]) відкриває банер знову; якщо людина
+// раніше дозволила, а тепер відхилила — стираємо cookies аналітики й перезавантажуємо сторінку.
+
+var CONSENT_KEY = 'lm-consent';
+var analyticsOn = false;
+
+function readConsent() {
+  try {
+    var saved = JSON.parse(localStorage.getItem(CONSENT_KEY));
+    if (!saved || (saved.choice !== 'granted' && saved.choice !== 'denied')) return null;
+    var until = new Date(saved.date);
+    until.setMonth(until.getMonth() + CONFIG.CONSENT_MONTHS);
+    if (isNaN(until.getTime()) || until < new Date()) return null; // строк минув — питаємо знову
+    return saved.choice;
+  } catch (error) {
+    return null; // localStorage недоступний — банер просто з'явиться знову
+  }
+}
+
+function saveConsent(choice) {
+  try {
+    localStorage.setItem(CONSENT_KEY, JSON.stringify({ choice: choice, date: new Date().toISOString() }));
+  } catch (error) { /* без пам'яті вибору — працює лише до кінця сторінки */ }
+}
+
+function addScript(src) {
+  var script = document.createElement('script');
+  script.async = true;
+  script.src = src;
+  document.head.appendChild(script);
+}
+
+// Вмикає GA4 і Clarity. Викликається ЛИШЕ після згоди
+function loadAnalytics() {
+  if (analyticsOn || CONFIG.ANALYTICS_HOSTS.indexOf(location.hostname) === -1) return;
+  analyticsOn = true;
+
+  // GA4, Consent Mode v2: аналітика дозволена, реклами в нас немає — усе рекламне заборонено.
+  // Порядок важливий: consent default → js → config, потім сам gtag.js
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('consent', 'default', {
+    analytics_storage: 'granted',
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied'
+  });
+  window.gtag('js', new Date());
+  window.gtag('config', CONFIG.GA4_ID);
+  addScript('https://www.googletagmanager.com/gtag/js?id=' + CONFIG.GA4_ID);
+
+  // Clarity: черга команд до завантаження скрипта (як в офіційному коді Clarity),
+  // згода — через Consent API v2 (consentv2)
+  window.clarity = window.clarity || function () {
+    (window.clarity.q = window.clarity.q || []).push(arguments);
+  };
+  addScript('https://www.clarity.ms/tag/' + CONFIG.CLARITY_ID);
+  window.clarity('consentv2', { ad_Storage: 'denied', analytics_Storage: 'granted' });
+}
+
+// Стирає cookies GA4 (_ga, _ga_*) і Clarity (_clck, _clsk). GA ставить їх на домен
+// з крапкою (.lm-buh.com.ua), тож пробуємо всі варіанти домену
+function eraseAnalyticsCookies() {
+  var host = location.hostname;
+  var base = host.replace(/^www\./, '');
+  var domains = ['', host, '.' + host, base, '.' + base];
+  document.cookie.split(';').forEach(function (pair) {
+    var name = pair.split('=')[0].trim();
+    if (!/^_ga($|_)/.test(name) && name !== '_clck' && name !== '_clsk') return;
+    domains.forEach(function (domain) {
+      document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/' + (domain ? '; domain=' + domain : '');
+    });
+  });
+}
+
+// Подія аналітики. Без згоди нічого не робить.
+// clarityTags — якщо передано (хоч {}), подія йде і в Clarity: теги (clarity set)
+// і custom event — щоб записи сесій можна було фільтрувати.
+// ЖОДНИХ персональних даних у параметрах: без імен, телефонів, e-mail, тексту полів.
+function track(name, params, clarityTags) {
+  if (!analyticsOn) return;
+  window.gtag('event', name, params || {});
+  if (clarityTags) {
+    Object.keys(clarityTags).forEach(function (key) {
+      window.clarity('set', key, String(clarityTags[key]));
+    });
+    window.clarity('event', name);
+  }
+}
+
+function cookieBannerOpen() {
+  return Boolean(document.querySelector('[data-cookie-banner]:not([hidden])'));
+}
+
+function initConsent() {
+  var choice = readConsent();
+  if (choice === 'granted') loadAnalytics();
+
+  var banner = document.querySelector('[data-cookie-banner]');
+  if (!banner) return;
+  var returnFocusTo = null; // кнопка «Налаштування cookies», з якої відкрили банер
+
+  // Висота банера з відступом — для scroll-padding-bottom (див. styles.css)
+  function updateSpace() {
+    var bottom = parseFloat(getComputedStyle(banner).bottom) || 0;
+    document.documentElement.style.setProperty('--cookie-banner-space', (banner.offsetHeight + bottom) + 'px');
+  }
+  if ('ResizeObserver' in window) new ResizeObserver(updateSpace).observe(banner);
+
+  function setOpen(open) {
+    banner.hidden = !open;
+    if (open) updateSpace();
+    document.dispatchEvent(new CustomEvent('lm:cookie-banner')); // Sticky CTA перераховує видимість
+  }
+
+  function decide(next) {
+    var previous = readConsent();
+    var hadFocus = banner.contains(document.activeElement);
+    saveConsent(next);
+    setOpen(false);
+
+    if (next === 'granted') {
+      loadAnalytics();
+    } else if (previous === 'granted') {
+      // Раніше дозволили, тепер відмовились: Clarity сам стирає свої cookies (consentv2 denied),
+      // решту стираємо самі й перезавантажуємо — щоб скрипти аналітики зникли зі сторінки
+      if (window.clarity) window.clarity('consentv2', { ad_Storage: 'denied', analytics_Storage: 'denied' });
+      eraseAnalyticsCookies();
+      location.reload();
+      return;
+    }
+
+    // Фокус не губиться: назад на «Налаштування cookies» або на лого в шапці —
+    // наступний елемент після банера в порядку Tab
+    if (!hadFocus) return;
+    var target = returnFocusTo || document.querySelector('.site-header a[href]');
+    returnFocusTo = null;
+    if (target) target.focus({ preventScroll: true });
+  }
+
+  banner.addEventListener('click', function (event) {
+    var button = event.target.closest('[data-consent]');
+    if (button) decide(button.dataset.consent);
+  });
+  // Esc банер не закриває навмисно: вибір має бути явним
+
+  document.querySelectorAll('[data-cookie-settings]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      returnFocusTo = button;
+      setOpen(true);
+      banner.focus({ preventScroll: true });
+    });
+  });
+
+  if (!choice) setOpen(true);
+}
+
+initConsent();
+
+// ---------- Події: CTA і контакти ----------
+// Один спільний слухач кліків по посиланнях.
+//   cta_click     — кнопки з data-cta="header | hero | steps | faq | sticky_cta | menu";
+//   contact_click — телефон, e-mail, Telegram, Viber, Instagram; місце — за тим, де посилання.
+(function () {
+  var METHODS = [
+    [/^tel:/, 'phone'],
+    [/^mailto:/, 'email'],
+    [/^https:\/\/t\.me\//, 'telegram'],
+    [/^viber:/, 'viber'],
+    [/instagram\.com/, 'instagram']
+  ];
+  var PLACES = [
+    ['.mobile-menu', 'menu'],
+    ['.site-header', 'header'],
+    ['.popup', 'popup'],
+    ['#contact', 'form'],
+    ['.site-footer', 'footer'],
+    ['.legal', 'privacy']
+  ];
+
+  document.addEventListener('click', function (event) {
+    var link = event.target.closest('a[href]');
+    if (!link) return;
+
+    if (link.dataset.cta) {
+      track('cta_click', { location: link.dataset.cta });
+      return;
+    }
+
+    var href = link.getAttribute('href');
+    var method = null;
+    METHODS.forEach(function (pair) { if (!method && pair[0].test(href)) method = pair[1]; });
+    if (!method) return;
+    var place = 'other';
+    for (var i = 0; i < PLACES.length; i++) {
+      if (link.closest(PLACES[i][0])) { place = PLACES[i][1]; break; }
+    }
+    track('contact_click', { method: method, location: place }, { contact_method: method, contact_location: place });
+  });
+})();
+
 // ---------- Липка шапка: лінія після початку скролу ----------
 // Замість слухача scroll стежимо за міткою вгорі сторінки:
 // браузер сам повідомляє, коли вона виходить з екрана.
@@ -201,6 +413,8 @@ function sendLead(data) {
       var open = button.getAttribute('aria-expanded') !== 'true';
       button.setAttribute('aria-expanded', String(open));
       button.closest('.faq__item').classList.toggle('is-open', open);
+      // GA4 приймає параметр до 100 символів
+      if (open) track('faq_open', { question: button.textContent.trim().replace(/\s+/g, ' ').slice(0, 100) });
     });
   });
 })();
@@ -253,6 +467,7 @@ function sendLead(data) {
       event.preventDefault();
       show(i);
       viewer.showModal();
+      track('certificate_view', { certificate: thumb.dataset.title });
       document.documentElement.classList.add('is-lightbox-open');
     });
   });
@@ -342,6 +557,7 @@ function sendLead(data) {
 
   links.forEach(function (link) {
     link.addEventListener('click', function () {
+      track('select_service', { service: link.dataset.service }, { service: link.dataset.service });
       var topic = document.getElementById(TOPIC_ID);
       var name = document.getElementById(NAME_ID);
       if (topic) {
@@ -518,11 +734,15 @@ function sendLead(data) {
 
     setBusy(true);
     sendLead(data).then(function () {
+      // Лише після справжньої успішної відправки (не для «тихого успіху» ботам вище).
+      // Тема звернення — назва послуги, не персональні дані
+      track('generate_lead', { service: data.topic }, { service: data.topic });
       setBusy(false);
       form.reset();
       clearErrors();
       showPopup('popup-success');
     }, function () {
+      track('form_error');
       // При помилці поля НЕ очищаємо
       setBusy(false);
       showPopup('popup-error');
@@ -667,6 +887,8 @@ function sendLead(data) {
 // І верх форми ще не з'явився. На формі й футері — схована.
 // Схована панель — inert (не фокусується, не читається).
 // Меню, попапи й лайтбокс ховають її самі через CSS (html:has(dialog[open])).
+// Банер cookies — так само CSS, плюс update() робить панель inert, щоб її не можна було
+// досягти Tab, поки її не видно (банер не modal і решту сторінки не блокує).
 // Без розмітки [data-sticky-cta] функція тихо завершується — фіча вимкнена.
 function initStickyCta() {
   var panel = document.querySelector('[data-sticky-cta]');
@@ -681,7 +903,7 @@ function initStickyCta() {
   var observers = [];
 
   function update() {
-    var show = mobile.matches && heroGone && formAhead;
+    var show = mobile.matches && heroGone && formAhead && !cookieBannerOpen();
     panel.classList.toggle('is-visible', show);
     panel.inert = !show;
   }
@@ -743,6 +965,9 @@ function initStickyCta() {
     heroGone = formAhead = false;
     update();
   }
+
+  // Банер cookies відкрили чи закрили — панель ховається на час банера
+  document.addEventListener('lm:cookie-banner', update);
 
   // Поворот екрана або зміна ширини: на ≥1024 панель вимикається повністю
   mobile.addEventListener('change', function () {

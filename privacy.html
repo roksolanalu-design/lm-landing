@@ -21,8 +21,8 @@
 
   <link rel="preload" href="fonts/Onest-Variable.woff2" as="font" type="font/woff2" crossorigin>
 
-  <link rel="stylesheet" href="css/tokens.css?v=2026-11-03-2">
-  <link rel="stylesheet" href="css/styles.css?v=2026-11-03-2">
+  <link rel="stylesheet" href="css/tokens.css?v=2026-11-03-3">
+  <link rel="stylesheet" href="css/styles.css?v=2026-11-03-3">
 
   <link rel="icon" href="images/favicon/favicon.ico" sizes="16x16 32x32 48x48">
   <link rel="icon" href="images/favicon/favicon-red.svg" type="image/svg+xml">
@@ -37,6 +37,18 @@
 </head>
 <body>
   <a class="skip-link" href="#main">Перейти до&nbsp;основного вмісту</a>
+
+  <!-- Банер згоди на cookies (не modal, не блокує сторінку). Показує js/main.js, поки людина
+       не обрала; вибір живе 12 місяців. Без JS лишається схованим — аналітики тоді теж немає.
+       Стоїть одразу після skip-link, щоб у порядку Tab іти першим -->
+  <div class="cookie-banner" data-cookie-banner role="region" aria-label="Згода на cookies" tabindex="-1" hidden>
+    <h2 class="cookie-banner__title">Ми&nbsp;використовуємо cookies</h2>
+    <p class="cookie-banner__text">Аналітичні cookies допомагають зрозуміти, як&nbsp;ви&nbsp;користуєтеся сайтом, і&nbsp;зробити його зручнішим. Дані знеособлені. Детальніше&nbsp;— у&nbsp;<a class="cookie-banner__link" href="privacy.html">Політиці приватності</a>.</p>
+    <div class="cookie-banner__actions">
+      <button class="btn btn--outline cookie-banner__button" type="button" data-consent="denied">Відхилити</button>
+      <button class="btn cookie-banner__button" type="button" data-consent="granted">Дозволити</button>
+    </div>
+  </div>
 
   <!-- Header: той самий, що на головній; пункти меню ведуть на головну -->
   <header class="site-header">
@@ -57,7 +69,7 @@
 
       <div class="site-header__actions">
         <a class="site-header__phone" href="tel:+380672084631">+38 067 208 46 31</a>
-        <a class="btn site-header__cta" href="index.html#contact">Залишити заявку</a>
+        <a class="btn site-header__cta" href="index.html#contact" data-cta="header">Залишити заявку</a>
         <button class="burger" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-haspopup="dialog" aria-label="Відкрити меню">
           <img class="burger__icon" src="images/icons/icon-burger.svg" alt="" width="44" height="40">
         </button>
@@ -114,7 +126,7 @@
       </li>
     </ul>
 
-    <a class="mobile-menu__cta" href="index.html#contact">Залишити заявку</a>
+    <a class="mobile-menu__cta" href="index.html#contact" data-cta="menu">Залишити заявку</a>
   </dialog>
 
   <main id="main">
@@ -258,11 +270,12 @@
 
       <div class="site-footer__legal">
         <a class="site-footer__link site-footer__row" href="privacy.html" aria-current="page">Політика приватності</a>
+        <button class="site-footer__link site-footer__row site-footer__button" type="button" data-cookie-settings>Налаштування cookies</button>
         <p>© 2026 LM Бухгалтерські послуги</p>
       </div>
     </div>
   </footer>
 
-  <script src="js/main.js?v=2026-11-03-2" defer></script>
+  <script src="js/main.js?v=2026-11-03-3" defer></script>
 </body>
 </html>

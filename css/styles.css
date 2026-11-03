@@ -194,6 +194,22 @@ p {
   }
 }
 
+/* Другорядна кнопка: прозора з рамкою (банер cookies — «Відхилити»).
+   Рамка — внутрішньою тінню, щоб розмір збігався з основною кнопкою */
+.btn--outline {
+  color: var(--text-primary);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--text-primary);
+  transition: box-shadow var(--duration-hover);
+}
+
+@media (hover: hover) {
+  .btn--outline:hover {
+    background: transparent;
+    box-shadow: inset 0 0 0 2px var(--text-primary);
+  }
+}
+
 /* ---------- Header ---------- */
 .site-header {
   position: sticky;
@@ -2106,6 +2122,21 @@ html:not(.js) .faq__icon {
   text-decoration: none;
 }
 
+/* «Налаштування cookies» — це дія, а не перехід, тому <button>; виглядає як посилання */
+.site-footer__button {
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+/* Без JS кнопка нічого не відкриє — ховаємо */
+html:not(.js) [data-cookie-settings] {
+  display: none;
+}
+
 /* Іконки — inline SVG з fill="currentColor": беруть колір тексту */
 .site-footer__icon {
   flex: none;
@@ -2487,8 +2518,9 @@ html:not(.js) .faq__icon {
   transition: none;
 }
 
-/* Поки відкрите меню, попап чи лайтбокс (будь-який <dialog>) — панелі не видно */
-html:has(dialog[open]) .sticky-cta {
+/* Поки відкрите меню, попап чи лайтбокс (будь-який <dialog>) або банер cookies — панелі не видно */
+html:has(dialog[open]) .sticky-cta,
+html:has([data-cookie-banner]:not([hidden])) .sticky-cta {
   opacity: 0;
   transform: translateY(100%);
 }
@@ -2521,6 +2553,100 @@ html:has(dialog[open]) .sticky-cta {
 @media (prefers-reduced-motion: reduce) {
   .sticky-cta {
     transition: none;
+  }
+}
+
+/* ---------- Cookie banner ---------- */
+/* Банер згоди на cookies (керує js/main.js, initConsent). Не modal: сторінкою можна
+   користуватись і з ним. position: fixed — розмітку не зсуває (CLS = 0).
+   До 767px — на всю ширину з полями 16px; від 768px — картка 440px справа знизу,
+   відступ 24px (виняток із правила «лише 1024px», як у Hero) */
+.cookie-banner {
+  position: fixed;
+  right: var(--space-16);
+  bottom: calc(var(--space-16) + env(safe-area-inset-bottom, 0px));
+  left: var(--space-16);
+  z-index: 30; /* вище за Sticky CTA (20); skip-link (100) і <dialog> — ще вище */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding: var(--space-16);
+  color: var(--text-primary);
+  background: var(--bg-page);
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-banner);
+  animation: cookie-banner-in 250ms ease-out;
+}
+
+.cookie-banner[hidden] {
+  display: none;
+}
+
+/* Фокус ставимо на банер, коли його відкрили з «Налаштування cookies» */
+.cookie-banner:focus {
+  outline: none;
+}
+
+.cookie-banner:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.cookie-banner__title {
+  font: var(--text-title);
+}
+
+.cookie-banner__text {
+  font: var(--text-body-s);
+  color: var(--text-secondary);
+}
+
+.cookie-banner__link {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-underline-position: from-font;
+}
+
+/* Дві кнопки однакової ширини — відмовитись так само легко, як погодитись */
+.cookie-banner__actions {
+  display: flex;
+  gap: var(--space-12);
+  padding-top: var(--space-4);
+}
+
+.cookie-banner__button {
+  flex: 1 1 0;
+  min-width: 0;
+  padding-inline: var(--space-16);
+}
+
+@keyframes cookie-banner-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-16));
+  }
+}
+
+/* Банер не закриває елемент у фокусі й місце, куди веде якір (WCAG 2.4.11):
+   висоту банера з відступом рахує JS (--cookie-banner-space) */
+html:has([data-cookie-banner]:not([hidden])) {
+  scroll-padding-bottom: var(--cookie-banner-space, 0px);
+}
+
+@media (min-width: 768px) {
+  .cookie-banner {
+    right: var(--space-24);
+    bottom: calc(var(--space-24) + env(safe-area-inset-bottom, 0px));
+    left: auto;
+    width: 440px;
+    padding: var(--space-24);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cookie-banner {
+    animation: none;
   }
 }
 

@@ -9,6 +9,7 @@
 - Усі 12 секцій зверстані, анімації зроблені, privacy.html готова (дата редакції — 2 листопада 2026 року; при суттєвих змінах політики оновлювати). Сайт на GitHub Pages із **власним доменом https://lm-buh.com.ua/** (без www; www → редирект робить GitHub Pages; домен задає файл `CNAME` у корені — не видаляти). Перевіряй зміни й на живому сайті; cache-busting (`?v=`) там актуальний.
 - Форма працює: заявки йдуть на пошту через **Web3Forms** (увімкнено, перевірено тестовою заявкою з localhost). Канал **Telegram** увімкнено: Worker «lm-leads» розгорнутий (`https://lm-leads.mml-buh.workers.dev`), адреса в `CONFIG.TELEGRAM_WORKER_URL`; перевірено тестовою заявкою з localhost 03.11.2026 — дійшла обома каналами (пошта й Telegram).
 - Sticky CTA (mobile) — готова, див. окремий розділ.
+- Банер згоди на cookies + аналітика GA4 і Microsoft Clarity (лише після згоди) + події конверсій — готові, див. «Банер cookies і аналітика».
 - SEO/GEO: meta, OG, JSON-LD (AccountingService + FAQPage), robots.txt, sitemap.xml, llms.txt — зроблено, з адресою `https://lm-buh.com.ua/`.
 - Де стоїть абсолютна адреса сайту і що ще не зроблено — у коментарі на самому початку index.html.
 
@@ -46,6 +47,7 @@
 - Mobile-first. Брейкпоінт десктопа — 1024px. Контент max 1200px. Поля сторінки (`--page-margin`) плавні: до 1024 — `clamp(16px, 4vw, 32px)`, від 1024 — від 32 до 120px (на 1440).
 - Брейкпоінт лише 1024px. Ширина фрейму в Figma (1440/390) — не брейкпоінт.
 - Виняток: Hero має додатковий брейкпоінт 768px (768–1023: текст поверх фото, статистика смугою під фото, шрифти через `clamp()`).
+- Виняток: банер cookies має брейкпоінт 768px — від 768 десктопна картка 440px справа знизу (відступ 24px), до 767 — на всю ширину з полями 16px.
 - Шрифт — Onest. Light тільки від 16px. Текст ≤14px — Regular.
 - Дрібний червоний текст (<18px) — `--text-accent` (#D60511), великий — `--text-brand` (#E30613).
 
@@ -128,14 +130,39 @@
 - llms.txt — до 30 рядків, лише факти з сайту.
 
 ## Sticky CTA (mobile)
-- Липка панель «Залишити заявку» внизу екрана, лише <1024px, тільки на index.html. Видна безперервно від кнопки Hero до форми: з моменту, коли кнопка Hero (атрибут `data-sticky-cta-yield`) сховалась під шапку, і доки верх форми `#contact` не з'явився в екрані. На формі й футері панелі немає; також ховається, поки відкритий будь-який `<dialog>`.
+- Липка панель «Залишити заявку» внизу екрана, лише <1024px, тільки на index.html. Видна безперервно від кнопки Hero до форми: з моменту, коли кнопка Hero (атрибут `data-sticky-cta-yield`) сховалась під шапку, і доки верх форми `#contact` не з'явився в екрані. На формі й футері панелі немає; також ховається, поки відкритий будь-який `<dialog>` або банер cookies (те саме CSS-правило `html:has(…) .sticky-cta`; для банера `update()` ще й робить панель `inert`, бо банер не modal).
 - Напис завжди «Залишити заявку».
 - Поки панель є, секційна кнопка «Почати співпрацю» в «Як ми працюємо» на <1024 схована (правило в блоці Sticky CTA); на десктопі вона на місці.
 - Вмикається й вимикається **одним HTML-блоком** `[data-sticky-cta]` у кінці index.html: видалили блок — фіча повністю вимкнена.
 - CSS (styles.css) і JS (main.js) — в окремих блоках із коментарем «Sticky CTA (mobile)»; токен тіні `--shadow-sticky` у tokens.css. `initStickyCta()` викликається в одному місці й тихо завершується, якщо розмітки немає.
 
+## Банер cookies і аналітика
+- **Банер** `[data-cookie-banner]` — у index.html і privacy.html одразу після skip-link (перший у порядку Tab). `role="region"`, `aria-label="Згода на cookies"`, заголовок h2, кнопки «Відхилити» (`.btn--outline`) і «Дозволити» (`.btn`) однакової ширини. Не modal, `position: fixed` (CLS = 0), Esc не закриває. Поява знизу 250ms, з «Зменшити рух» — без анімації. Тінь — токен `--shadow-banner`.
+- Розміри з Figma (компоненти «Cookie banner/ Desktop» і «/ Mobile», екрани «Viewport/ Cookie banner…»): поля 24px (десктоп) / 16px (мобайл), проміжки 12px, радіус `--radius-lg`, кнопки 48px. Розташування — див. виняток 768px у «Правилах дизайну».
+- **Вибір** — localStorage, ключ `lm-consent`: `{ choice: 'granted' | 'denied', date }`, живе `CONFIG.CONSENT_MONTHS` (12) місяців, потім банер знову. Без JS банер схований, кнопка «Налаштування cookies» теж.
+- «Налаштування cookies» — `<button data-cookie-settings>` у футері обох сторінок: відкриває банер і ставить фокус на нього. Раніше дозволили, тепер відхилили → `clarity('consentv2', denied)`, стираємо `_ga*`, `_clck`, `_clsk` (на всіх варіантах домену) і перезавантажуємо.
+- Фокус після вибору: назад на «Налаштування cookies» або (перший візит) на лого в шапці. Поки банер відкритий — `scroll-padding-bottom` = висота банера (`--cookie-banner-space`, рахує JS), щоб він не закривав фокус (WCAG 2.4.11).
+- **Аналітика вантажиться лише після «Дозволити» і лише на `CONFIG.ANALYTICS_HOSTS`** (lm-buh.com.ua, www.lm-buh.com.ua). До згоди в HTML немає жодного `<script>` Google/Microsoft — скрипти додає `loadAnalytics()` у main.js. На localhost банер є, аналітики немає.
+  - GA4 `CONFIG.GA4_ID` = G-TYV8PYYLR6, Consent Mode v2: `consent default` (analytics_storage granted; ad_storage, ad_user_data, ad_personalization denied) → `js` → `config` → gtag.js.
+  - Clarity `CONFIG.CLARITY_ID` = z7vgy4jr6l, згода через Consent API v2: `clarity('consentv2', { ad_Storage: 'denied', analytics_Storage: 'granted' })` (старий `clarity('consent')` Microsoft знімає з підтримки). Masking у Clarity — Balanced.
+  - Налаштування в кабінетах: GA4 — зберігання даних 14 місяців.
+- **Події** — лише через `track(name, params, clarityTags)` (без згоди нічого не робить). **Жодних персональних даних**: без імен, телефонів, e-mail, тексту полів.
+
+| Подія | Коли | Параметри | Clarity |
+|---|---|---|---|
+| `generate_lead` | лише після успішної відправки форми (не «тихий успіх» для ботів) | `service` = тема звернення | event + тег `service` |
+| `form_error` | відправка не вдалася (попап помилки) | — | — |
+| `select_service` | «Обрати» в картці послуги | `service` | event + тег `service` |
+| `cta_click` | посилання з `data-cta` | `location`: header / hero / steps / faq / sticky_cta / menu | — |
+| `contact_click` | tel:, mailto:, t.me, viber:, instagram.com | `method`: phone / email / telegram / viber / instagram; `location`: header / menu / form / popup / footer / privacy | event + теги `contact_method`, `contact_location` |
+| `faq_open` | розкриття питання FAQ (не закриття) | `question` (до 100 символів) | — |
+| `certificate_view` | відкриття сертифіката в перегляді | `certificate` = назва | — |
+
+- Нова CTA-кнопка до форми → додай їй `data-cta="<місце>"`. Новий контакт → підхопиться сам, якщо href одного з типів вище.
+- Перевірка без засмічення статистики: у Playwright підміняти `https://lm-buh.com.ua/` локальними файлами, а запити до googletagmanager.com / clarity.ms / web3forms / workers.dev перехоплювати.
+
 ## Робочий процес
-- **Cache-busting:** локальні CSS і JS підключаються з параметром версії: `css/tokens.css?v=2026-11-03-2`, `css/styles.css?v=…`, `js/main.js?v=…`. При **кожній** зміні будь-якого CSS або JS оновлюй цей параметр у **всіх** HTML-файлах (index.html, privacy.html) — одне й те саме значення для всіх файлів. Формат: `РРРР-ММ-ДД-N` (дата зміни + порядковий номер за день). Інакше браузери відвідувачів візьмуть старий файл із кешу.
+- **Cache-busting:** локальні CSS і JS підключаються з параметром версії: `css/tokens.css?v=2026-11-03-3`, `css/styles.css?v=…`, `js/main.js?v=…`. При **кожній** зміні будь-якого CSS або JS оновлюй цей параметр у **всіх** HTML-файлах (index.html, privacy.html) — одне й те саме значення для всіх файлів. Формат: `РРРР-ММ-ДД-N` (дата зміни + порядковий номер за день). Інакше браузери відвідувачів візьмуть старий файл із кешу.
 - Після кожної завершеної секції — коміт з коротким описом українською.
 - Перевіряй верстку на 360px, 390px, 768px, 1440px.
 - Якщо в макеті щось незрозуміло або суперечить цим правилам — спитай, не вигадуй.

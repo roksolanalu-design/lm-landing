@@ -68,6 +68,7 @@
 
   /* ---------- Тіні ---------- */
   --shadow-sticky: 0 -4px 16px color-mix(in srgb, var(--color-neutral-900) 8%, transparent); /* Sticky CTA (mobile): тінь угору */
+  --shadow-banner: 0 8px 32px color-mix(in srgb, var(--color-neutral-900) 14%, transparent); /* банер згоди на cookies */
 
   /* ---------- Радіуси ---------- */
   --radius-sm: 6px;
