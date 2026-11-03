@@ -12,7 +12,7 @@ window.lmReady = true;
 // Токен зберігається лише в налаштуваннях (secrets) Cloudflare Worker.
 var CONFIG = {
   WEB3FORMS_KEY: 'a664bf43-7ca9-4755-ad96-ab21aacb2e26',
-  TELEGRAM_WORKER_URL: '',
+  TELEGRAM_WORKER_URL: 'https://lm-leads.mml-buh.workers.dev',
   TIMEOUT: 10000 // скільки чекати відповіді кожного каналу, мс
 };
 
