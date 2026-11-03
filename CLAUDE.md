@@ -7,7 +7,7 @@
 
 ## Стан проєкту (на 03.11.2026)
 - Усі 12 секцій зверстані, анімації зроблені, privacy.html готова (дата редакції — 2 листопада 2026 року; при суттєвих змінах політики оновлювати). Сайт на GitHub Pages із **власним доменом https://lm-buh.com.ua/** (без www; www → редирект робить GitHub Pages; домен задає файл `CNAME` у корені — не видаляти). Перевіряй зміни й на живому сайті; cache-busting (`?v=`) там актуальний.
-- Форма працює: заявки йдуть на пошту через **Web3Forms** (увімкнено, перевірено тестовою заявкою з localhost). Канал **Telegram** увімкнено: Worker «lm-leads» розгорнутий (`https://lm-leads.mml-buh.workers.dev`), адреса в `CONFIG.TELEGRAM_WORKER_URL`; перевірено CORS і відповіді без відправки, справжньої тестової заявки в Telegram ще не було.
+- Форма працює: заявки йдуть на пошту через **Web3Forms** (увімкнено, перевірено тестовою заявкою з localhost). Канал **Telegram** увімкнено: Worker «lm-leads» розгорнутий (`https://lm-leads.mml-buh.workers.dev`), адреса в `CONFIG.TELEGRAM_WORKER_URL`; перевірено тестовою заявкою з localhost 03.11.2026 — дійшла обома каналами (пошта й Telegram).
 - Sticky CTA (mobile) — готова, див. окремий розділ.
 - SEO/GEO: meta, OG, JSON-LD (AccountingService + FAQPage), robots.txt, sitemap.xml, llms.txt — зроблено, з адресою `https://lm-buh.com.ua/`.
 - Де стоїть абсолютна адреса сайту і що ще не зроблено — у коментарі на самому початку index.html.
@@ -142,6 +142,5 @@
 - Перевірка у вбудованому браузері: коли панель прихована, кадри й таймери гальмують — IntersectionObserver, плавна прокрутка й анімації можуть «відставати». Стан перевіряй, порівнюючи з геометрією (`getBoundingClientRect`), або коли кадри йдуть нормально.
 
 ## Відкриті задачі
-1. **Telegram Worker** — код готовий (див. розділ «Telegram Worker»). Worker розгорнутий у Cloudflare (`https://lm-leads.mml-buh.workers.dev`), адреса в CONFIG. Лишилось: тестова заявка — переконатися, що повідомлення доходить у Telegram (тобто секрети `BOT_TOKEN` і `CHAT_ID` задані правильно).
-2. **Пошукові системи** — додати сайт у Google Search Console і Bing Webmaster Tools, надіслати https://lm-buh.com.ua/sitemap.xml.
-3. **Web3Forms** — у налаштуваннях форми замінити Website URL на `https://lm-buh.com.ua` (і домен в обмеженнях, якщо їх увімкнено).
+1. **Пошукові системи** — додати сайт у Google Search Console і Bing Webmaster Tools, надіслати https://lm-buh.com.ua/sitemap.xml.
+2. **Web3Forms** — у налаштуваннях форми замінити Website URL на `https://lm-buh.com.ua` (і домен в обмеженнях, якщо їх увімкнено).
