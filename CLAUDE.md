@@ -5,12 +5,12 @@
 
 Я — Роксолана, UI/UX-дизайнерка, вчуся верстці. Після кожного кроку **коротко пояснюй, що ти зробив і чому** (2–5 речень, простими словами). Не роби кілька секцій за раз — одна секція за крок, потім показуй результат.
 
-## Стан проєкту (на 02.11.2026)
-- Усі 12 секцій зверстані, анімації зроблені, privacy.html готова (дата редакції — 2 листопада 2026 року; при суттєвих змінах політики оновлювати). Сайт опублікований як **тестова версія на GitHub Pages**: https://roksolanalu-design.github.io/lm-landing/ — власного домену ще немає. Перевіряй зміни й на живому сайті; cache-busting (`?v=`) там актуальний.
+## Стан проєкту (на 03.11.2026)
+- Усі 12 секцій зверстані, анімації зроблені, privacy.html готова (дата редакції — 2 листопада 2026 року; при суттєвих змінах політики оновлювати). Сайт на GitHub Pages із **власним доменом https://lm-buh.com.ua/** (без www; www → редирект робить GitHub Pages; домен задає файл `CNAME` у корені — не видаляти). Перевіряй зміни й на живому сайті; cache-busting (`?v=`) там актуальний.
 - Форма працює: заявки йдуть на пошту через **Web3Forms** (увімкнено, перевірено тестовою заявкою з localhost). Канал **Telegram** написаний, але вимкнений — чекає на Cloudflare Worker.
 - Sticky CTA (mobile) — готова, див. окремий розділ.
-- SEO/GEO: meta, OG, JSON-LD (AccountingService + FAQPage), robots.txt, sitemap.xml, llms.txt — зроблено, але з адресою-заглушкою `https://ADRESA-SAYTU.example/`.
-- Повний список заглушок, які треба замінити при запуску, — у коментарі на самому початку index.html.
+- SEO/GEO: meta, OG, JSON-LD (AccountingService + FAQPage), robots.txt, sitemap.xml, llms.txt — зроблено, з адресою `https://lm-buh.com.ua/`.
+- Де стоїть абсолютна адреса сайту і що ще не зроблено — у коментарі на самому початку index.html.
 
 ## Стек
 - Чистий HTML + CSS + vanilla JS. **Без фреймворків, без збірки, без npm-залежностей у продакшені.**
@@ -19,6 +19,7 @@
 
 ## Структура
 ```
+/CNAME              ← домен для GitHub Pages: lm-buh.com.ua
 /index.html
 /privacy.html
 /css/tokens.css      ← токени дизайн-системи (НЕ редагувати вручну без потреби)
@@ -133,7 +134,8 @@
 ## Відкриті задачі
 1. **Telegram Worker** — створити Cloudflare Worker, вписати його адресу в `CONFIG.TELEGRAM_WORKER_URL`, перевірити тестовою заявкою, оновити `?v=`.
    - Worker створюється в акаунті Cloudflare **Мирослави** (вона запросить Роксолану як учасника, коли створить акаунт для домену).
-   - Приймає запити лише з дозволених Origin: зараз `https://roksolanalu-design.github.io` і localhost; після появи домену — додати новий домен.
+   - Приймає запити лише з дозволених Origin: `https://lm-buh.com.ua`, `https://www.lm-buh.com.ua` і localhost.
    - Перевіряє поля на сервері; honeypot (`botcheck`) і перевірка часу — як у формі.
    - Токен бота і `chat_id` — **лише в secrets Worker**, ніколи не в коді сайту.
-2. **Домен і запуск** — замінити `https://ADRESA-SAYTU.example/` скрізь (список — коментар на початку index.html: canonical, og:url, og:image, JSON-LD, robots.txt, sitemap.xml, llms.txt); додати сайт у Google Search Console і Bing Webmaster Tools, надіслати sitemap.xml. Якщо у Web3Forms увімкнено обмеження доменів — додати новий домен.
+2. **Пошукові системи** — додати сайт у Google Search Console і Bing Webmaster Tools, надіслати https://lm-buh.com.ua/sitemap.xml.
+3. **Web3Forms** — у налаштуваннях форми замінити Website URL на `https://lm-buh.com.ua` (і домен в обмеженнях, якщо їх увімкнено).

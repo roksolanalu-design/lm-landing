@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <!--
-  ЗАГЛУШКИ — замінити після публікації сайту.
-  Адресу сайту всюди позначено як https://ADRESA-SAYTU.example/ — знайдіть і замініть її пошуком:
-    index.html   — <link rel="canonical">, og:url, og:image (абсолютне посилання), JSON-LD "url", "image" і фото засновниці
-    privacy.html — og:image (абсолютне посилання)
-    robots.txt   — рядок Sitemap
-    sitemap.xml  — <loc>
-    llms.txt     — посилання на сайт і форму заявки
-  Інше:
-    js/main.js   — CONFIG.TELEGRAM_WORKER_URL: адреса Cloudflare Worker для Telegram (поки порожня — канал вимкнений)
+  АДРЕСА САЙТУ: https://lm-buh.com.ua/ (без www; www → редирект робить GitHub Pages, файл CNAME у корені).
+  Абсолютна адреса стоїть у: index.html (canonical, og:url, og:image, JSON-LD), privacy.html (og:image),
+  robots.txt (Sitemap), sitemap.xml (<loc>), llms.txt. Змінюєте домен — міняйте в усіх цих місцях.
+
+  ЩЕ НЕ ЗРОБЛЕНО:
+    js/main.js        — CONFIG.TELEGRAM_WORKER_URL: адреса Cloudflare Worker для Telegram (поки порожня — канал вимкнений).
+                        Дозволені Origin у Worker: https://lm-buh.com.ua, https://www.lm-buh.com.ua, localhost
+    Search Console    — додати сайт у Google Search Console і Bing Webmaster Tools, надіслати sitemap.xml
+    Web3Forms         — у налаштуваннях форми замінити Website URL на https://lm-buh.com.ua
 -->
 <html lang="uk">
 <head>
@@ -17,7 +17,7 @@
 
   <title>Бухгалтерські послуги у Львові — супровід ФОП і ТОВ | LM</title>
   <meta name="description" content="Ведення бухгалтерії для ФОП, ТОВ і благодійних фондів у Львові та онлайн по всій Україні. 25+ років досвіду, фіксована ціна в договорі. Залиште заявку.">
-  <link rel="canonical" href="https://ADRESA-SAYTU.example/">
+  <link rel="canonical" href="https://lm-buh.com.ua/">
   <meta name="theme-color" content="#E30613">
 
   <!-- Клас .js потрібен, щоб ховати елементи для анімацій лише коли JS працює -->
@@ -47,10 +47,10 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="uk_UA">
   <meta property="og:site_name" content="LM Бухгалтерські послуги">
-  <meta property="og:url" content="https://ADRESA-SAYTU.example/">
+  <meta property="og:url" content="https://lm-buh.com.ua/">
   <meta property="og:title" content="Бухгалтерські послуги у Львові — супровід ФОП і ТОВ | LM">
   <meta property="og:description" content="Ведення бухгалтерії для ФОП, ТОВ і благодійних фондів у Львові та онлайн по всій Україні. 25+ років досвіду, фіксована ціна в договорі.">
-  <meta property="og:image" content="https://ADRESA-SAYTU.example/images/og-image.jpg">
+  <meta property="og:image" content="https://lm-buh.com.ua/images/og-image.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="LM Бухгалтерські послуги — бухгалтерський супровід у Львові">
@@ -64,8 +64,8 @@
     "@context": "https://schema.org",
     "@type": "AccountingService",
     "name": "LM Бухгалтерські послуги",
-    "url": "https://ADRESA-SAYTU.example/",
-    "image": "https://ADRESA-SAYTU.example/images/og-image.jpg",
+    "url": "https://lm-buh.com.ua/",
+    "image": "https://lm-buh.com.ua/images/og-image.jpg",
     "telephone": "+380672084631",
     "email": "mml.buh@gmail.com",
     "address": {
@@ -87,7 +87,7 @@
       "@type": "Person",
       "name": "Мирослава Луцик",
       "jobTitle": "Засновниця, головна бухгалтерка",
-      "image": "https://ADRESA-SAYTU.example/images/about-1200.jpg"
+      "image": "https://lm-buh.com.ua/images/about-1200.jpg"
     },
     "sameAs": [
       "https://www.instagram.com/buh.lmm.consulting/",
