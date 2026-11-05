@@ -301,14 +301,15 @@ initConsent();
 // ---------- Події: CTA і контакти ----------
 // Один спільний слухач кліків по посиланнях.
 //   cta_click     — кнопки з data-cta="header | hero | steps | faq | sticky_cta | menu";
-//   contact_click — телефон, e-mail, Telegram, Viber, Instagram; місце — за тим, де посилання.
+//   contact_click — телефон, e-mail, Telegram, Viber, Instagram, Facebook; місце — за тим, де посилання.
 (function () {
   var METHODS = [
     [/^tel:/, 'phone'],
     [/^mailto:/, 'email'],
     [/^https:\/\/t\.me\//, 'telegram'],
     [/^viber:/, 'viber'],
-    [/instagram\.com/, 'instagram']
+    [/instagram\.com/, 'instagram'],
+    [/facebook\.com/, 'facebook']
   ];
   var PLACES = [
     ['.mobile-menu', 'menu'],

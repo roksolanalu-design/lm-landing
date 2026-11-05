@@ -59,6 +59,13 @@
   - усередині коротких зв'язок «дієслово + займенник» («Напишіть&nbsp;нам»);
   - у цінах: між розрядами числа і перед «грн».
 
+## Контакти (однакові скрізь)
+- Телефон +38 067 208 46 31 (`tel:+380672084631`), e-mail mml.buh@gmail.com, Telegram і Viber — на той самий номер.
+- Instagram: https://www.instagram.com/buh.lm.consulting/ (нікнейм змінено з buh.lmm.consulting 05.11.2026).
+- Facebook: https://www.facebook.com/buh.lm.consulting/
+- Де стоять: футер index.html і privacy.html (Instagram і Facebook — лише у футері, `target="_blank" rel="noopener"`, прихований текст «Instagram: / Facebook: … (відкривається в новій вкладці)»), JSON-LD `sameAs`, llms.txt. Змінюєш контакт — зміни в усіх місцях.
+- Іконки месенджерів і соцмереж (Telegram, Viber, Facebook) — офіційні з Simple Icons, inline SVG `viewBox="-1.5 -1.5 27 27"` (щоб на 18px мали той самий оптичний розмір), `fill="currentColor"`.
+
 ## Тексти й обіцянки
 - Обіцянка відповіді — **«зв’яжемося протягом доби»** (не «протягом дня») скрізь: заголовок форми, вступ FAQ, попап успіху. Нерозривний пробіл перед «доби».
 - Попап успіху: «Ми зв’яжемося з вами протягом доби.» (в один рядок, у попапу без обмеження ширини тексту — клас `popup__text--wide`) + з нового рядка «Дякуємо, що обрали нас.».
@@ -124,7 +131,7 @@
 
 ## SEO і GEO (AI-пошук)
 - `<html lang="uk">`, `title`, `meta description`, canonical, Open Graph (images/og-image.jpg), favicon. privacy.html — `noindex`.
-- JSON-LD `AccountingService`: назва, телефон, e-mail, Львів; `areaServed` — Львів + Україна; `founder` — Мирослава Луцик («Засновниця, головна бухгалтерка», фото з «Про нас»); `sameAs` — Instagram і Telegram (ті самі, що у футері); `priceRange` «від 800 грн»; `makesOffer` — 6 послуг із цінами з карток. **Нічого не вигадувати — лише факти зі сторінки.**
+- JSON-LD `AccountingService`: назва, телефон, e-mail, Львів; `areaServed` — Львів + Україна; `founder` — Мирослава Луцик («Засновниця, головна бухгалтерка», фото з «Про нас»); `sameAs` — Instagram, Facebook і Telegram (ті самі, що у футері); `priceRange` «від 800 грн»; `makesOffer` — 6 послуг із цінами з карток. **Нічого не вигадувати — лише факти зі сторінки.**
 - JSON-LD `FAQPage` — тексти мають збігатися з видимими відповідями FAQ. Відповіді FAQ лежать у статичному HTML (згорнуті ховаються лише CSS) — так і має лишатися.
 - robots.txt: `User-agent: * / Allow: /` — AI-ботів не блокуємо.
 - llms.txt — до 30 рядків, лише факти з сайту.
@@ -154,7 +161,7 @@
 | `form_error` | відправка не вдалася (попап помилки) | — | — |
 | `select_service` | «Обрати» в картці послуги | `service` | event + тег `service` |
 | `cta_click` | посилання з `data-cta` | `location`: header / hero / steps / faq / sticky_cta / menu | — |
-| `contact_click` | tel:, mailto:, t.me, viber:, instagram.com | `method`: phone / email / telegram / viber / instagram; `location`: header / menu / form / popup / footer / privacy | event + теги `contact_method`, `contact_location` |
+| `contact_click` | tel:, mailto:, t.me, viber:, instagram.com, facebook.com | `method`: phone / email / telegram / viber / instagram / facebook; `location`: header / menu / form / popup / footer / privacy | event + теги `contact_method`, `contact_location` |
 | `faq_open` | розкриття питання FAQ (не закриття) | `question` (до 100 символів) | — |
 | `certificate_view` | відкриття сертифіката в перегляді | `certificate` = назва | — |
 
@@ -162,7 +169,7 @@
 - Перевірка без засмічення статистики: у Playwright підміняти `https://lm-buh.com.ua/` локальними файлами, а запити до googletagmanager.com / clarity.ms / web3forms / workers.dev перехоплювати.
 
 ## Робочий процес
-- **Cache-busting:** локальні CSS і JS підключаються з параметром версії: `css/tokens.css?v=2026-11-03-3`, `css/styles.css?v=…`, `js/main.js?v=…`. При **кожній** зміні будь-якого CSS або JS оновлюй цей параметр у **всіх** HTML-файлах (index.html, privacy.html) — одне й те саме значення для всіх файлів. Формат: `РРРР-ММ-ДД-N` (дата зміни + порядковий номер за день). Інакше браузери відвідувачів візьмуть старий файл із кешу.
+- **Cache-busting:** локальні CSS і JS підключаються з параметром версії: `css/tokens.css?v=2026-11-05-1`, `css/styles.css?v=…`, `js/main.js?v=…`. При **кожній** зміні будь-якого CSS або JS оновлюй цей параметр у **всіх** HTML-файлах (index.html, privacy.html) — одне й те саме значення для всіх файлів. Формат: `РРРР-ММ-ДД-N` (дата зміни + порядковий номер за день). Інакше браузери відвідувачів візьмуть старий файл із кешу.
 - Після кожної завершеної секції — коміт з коротким описом українською.
 - Перевіряй верстку на 360px, 390px, 768px, 1440px.
 - Якщо в макеті щось незрозуміло або суперечить цим правилам — спитай, не вигадуй.
